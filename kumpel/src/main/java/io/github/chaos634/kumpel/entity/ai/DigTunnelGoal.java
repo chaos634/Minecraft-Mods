@@ -14,12 +14,16 @@ import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.TunnelOrder;
 
 /**
- * Vortrieb: digs the Kumpel's tunnel order slice by slice, upper block first. It stops in front of water, lava
- * and drops, and when it meets a block its pickaxe can't handle.
+ * Vortrieb: digs the Kumpel's tunnel order slice by slice, upper block first. Water, lava and holes in the floor
+ * are closed with stone from the backpack (Abdämmen); without stone it stops in front of them, and it also stops
+ * when it meets a block its pickaxe can't handle.
  */
 public class DigTunnelGoal extends Goal {
 	private static final double REACH_SQ = 2.8 * 2.8;
 	private static final int STUCK_TICKS = 200;
+	private static final int SEAL_INTERVAL = 4;
+	/** After sealing a leak, flowing water that is cut off needs a moment to run dry. */
+	private static final int SETTLE_TICKS = 40;
 
 	private final KumpelEntity kumpel;
 	private final double speedModifier;
@@ -29,6 +33,8 @@ public class DigTunnelGoal extends Goal {
 	private int lastStage;
 	private int ticksWithoutProgress;
 	private int repathCooldown;
+	private int sealCooldown;
+	private int settleTicks;
 
 	public DigTunnelGoal(KumpelEntity kumpel, double speedModifier) {
 		this.kumpel = kumpel;
@@ -51,6 +57,8 @@ public class DigTunnelGoal extends Goal {
 		target = null;
 		ticksWithoutProgress = 0;
 		repathCooldown = 0;
+		sealCooldown = 0;
+		settleTicks = 0;
 	}
 
 	@Override
@@ -81,9 +89,17 @@ public class DigTunnelGoal extends Goal {
 		BlockPos upper = lower.above();
 		String problem = kumpel.tunnelProblem(level, lower);
 		if (problem != null) {
-			kumpel.stopTunnel(problem, lower);
+			BlockPos leak = kumpel.findLeakToSeal(level, lower);
+			if (leak != null) {
+				seal(level, order, leak);
+			} else if (settleTicks > 0) {
+				settleTicks--;
+			} else {
+				kumpel.stopTunnel(problem, lower);
+			}
 			return;
 		}
+		settleTicks = 0;
 
 		BlockPos next = !kumpel.isOpen(upper) ? upper : (!kumpel.isOpen(lower) ? lower : null);
 		if (next == null) {
@@ -113,11 +129,7 @@ public class DigTunnelGoal extends Goal {
 				kumpel.stopTunnel("stuck", target);
 				return;
 			}
-			if (--repathCooldown <= 0) {
-				repathCooldown = adjustedTickDelay(10);
-				BlockPos stand = order.standPosition();
-				kumpel.getNavigation().moveTo(stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5, speedModifier);
-			}
+			walkToSlice(order);
 			return;
 		}
 
@@ -142,6 +154,42 @@ public class DigTunnelGoal extends Goal {
 			level.destroyBlockProgress(kumpel.getId(), target, -1);
 			kumpel.digBlock(level, target);
 			target = null;
+		}
+	}
+
+	/** Abdämmen: walks up to the leak and closes it with a block from the backpack. */
+	private void seal(ServerLevel level, TunnelOrder order, BlockPos leak) {
+		clearTarget();
+		kumpel.setMining(false);
+		Vec3 center = Vec3.atCenterOf(leak);
+		kumpel.getLookControl().setLookAt(center.x, center.y, center.z);
+
+		if (kumpel.distanceToSqr(center) > REACH_SQ) {
+			if (++ticksWithoutProgress > STUCK_TICKS) {
+				kumpel.stopTunnel("stuck", leak);
+				return;
+			}
+			walkToSlice(order);
+			return;
+		}
+
+		kumpel.getNavigation().stop();
+		if (--sealCooldown > 0) {
+			return;
+		}
+
+		sealCooldown = SEAL_INTERVAL;
+		if (kumpel.sealLeak(level, leak)) {
+			ticksWithoutProgress = 0;
+			settleTicks = SETTLE_TICKS;
+		}
+	}
+
+	private void walkToSlice(TunnelOrder order) {
+		if (--repathCooldown <= 0) {
+			repathCooldown = adjustedTickDelay(10);
+			BlockPos stand = order.standPosition();
+			kumpel.getNavigation().moveTo(stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5, speedModifier);
 		}
 	}
 

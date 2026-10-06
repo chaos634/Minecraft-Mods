@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
@@ -20,7 +21,9 @@ public class ShiftLog {
 		ITEMS_DELIVERED("items_delivered"),
 		ITEMS_SMELTED("items_smelted"),
 		TORCHES_PLACED("torches_placed"),
-		MONSTERS_DEFEATED("monsters_defeated");
+		MONSTERS_DEFEATED("monsters_defeated"),
+		LEAKS_SEALED("leaks_sealed"),
+		COKE_MADE("coke_made");
 
 		private final String key;
 
@@ -32,6 +35,9 @@ public class ShiftLog {
 			return key;
 		}
 	}
+
+	/** Entries per book page, so that even long lines that wrap still fit. */
+	private static final int LINES_PER_PAGE = 6;
 
 	private final long[] counts = new long[Entry.values().length];
 
@@ -57,6 +63,21 @@ public class ShiftLog {
 		}
 
 		return lines;
+	}
+
+	/** The lines, a few per book page. */
+	public List<Component> pages() {
+		List<Component> pages = new ArrayList<>();
+		List<Component> lines = lines();
+		for (int start = 0; start < lines.size(); start += LINES_PER_PAGE) {
+			MutableComponent page = Component.empty();
+			for (Component line : lines.subList(start, Math.min(lines.size(), start + LINES_PER_PAGE))) {
+				page.append(line).append("\n");
+			}
+			pages.add(page);
+		}
+
+		return pages;
 	}
 
 	public void save(ValueOutput output) {

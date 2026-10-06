@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:huette",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.zollverein.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.zollverein.description"
+    },
+    "icon": {
+      "id": "kumpel:coke"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

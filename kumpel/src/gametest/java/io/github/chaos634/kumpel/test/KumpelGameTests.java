@@ -28,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -46,6 +47,7 @@ import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.block.FoerderkorbBlock;
 import io.github.chaos634.kumpel.entity.ExitTrail;
+import io.github.chaos634.kumpel.entity.OreFinds;
 import io.github.chaos634.kumpel.entity.ShiftLog;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.item.MinerHelmetItem;
@@ -546,9 +548,10 @@ public class KumpelGameTests {
 	}
 
 	@GameTest(maxTicks = 300)
-	public void tunnelStopsBeforeWater(GameTestHelper helper) {
+	public void tunnelStopsBeforeWaterWithoutStone(GameTestHelper helper) {
 		buildFloor(helper);
-		buildWall(helper);
+		// Terracotta leaves nothing the Kumpel could seal the water with.
+		buildWall(helper, Blocks.TERRACOTTA);
 		// A closed water pocket next to the third slice.
 		helper.setBlock(5, 1, 5, Blocks.STONE);
 		helper.setBlock(5, 1, 4, Blocks.WATER);
@@ -562,8 +565,39 @@ public class KumpelGameTests {
 			helper.assertTrue(kumpel.getTunnel() == null, Component.literal("The Kumpel should stop the tunnel"));
 			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(3, 1, 3))).isAir(),
 					Component.literal("The first slice is safe to dig"));
-			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(5, 1, 3))).is(Blocks.STONE),
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(5, 1, 3))).is(Blocks.TERRACOTTA),
 					Component.literal("The slice next to the water stays"));
+		});
+	}
+
+	@GameTest(maxTicks = 600)
+	public void sealsWaterAndBridgesHolesInTheTunnel(GameTestHelper helper) {
+		buildFloor(helper);
+		buildWall(helper);
+		// A closed water pocket next to the third slice, and a hole in the floor of the fourth.
+		helper.setBlock(5, 1, 5, Blocks.STONE);
+		helper.setBlock(5, 1, 4, Blocks.WATER);
+		helper.setBlock(6, 0, 3, Blocks.AIR);
+		Player owner = ownerAt(helper, 1, 5);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 3);
+		kumpel.tame(owner);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+		kumpel.startTunnel(helper.absolutePos(new BlockPos(3, 1, 3)), Direction.EAST, 4);
+
+		helper.succeedWhen(() -> {
+			for (int x = 3; x <= 6; x++) {
+				for (int y = 1; y <= 2; y++) {
+					helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(x, y, 3))).isAir(),
+							Component.literal("Tunnel block " + x + "," + y + " should be dug"));
+				}
+			}
+			helper.assertTrue(kumpel.getTunnel() == null, Component.literal("The tunnel order should be done"));
+			helper.assertTrue(helper.getLevel().getFluidState(helper.absolutePos(new BlockPos(5, 1, 4))).isEmpty(),
+					Component.literal("The water should be sealed off"));
+			helper.assertFalse(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(6, 0, 3))).isAir(),
+					Component.literal("The hole in the floor should be closed"));
+			helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.LEAKS_SEALED) == 2, Component.literal("Two leaks go into the shift log, got "
+					+ kumpel.getLog().get(ShiftLog.Entry.LEAKS_SEALED)));
 		});
 	}
 
@@ -675,8 +709,8 @@ public class KumpelGameTests {
 
 		ItemStack book = kumpel.writeShiftReport();
 		WrittenBookContent content = book.get(DataComponents.WRITTEN_BOOK_CONTENT);
-		helper.assertTrue(book.is(Items.WRITTEN_BOOK) && content != null && content.pages().size() == 2,
-				Component.literal("The report should be a written book with two pages"));
+		helper.assertTrue(book.is(Items.WRITTEN_BOOK) && content != null && content.pages().size() == 3,
+				Component.literal("The report should be a written book with a cover and two pages of log"));
 		helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.BLOCKS_DUG) == 42, Component.literal("The log keeps counting"));
 		helper.succeed();
 	}
@@ -760,6 +794,55 @@ public class KumpelGameTests {
 		helper.succeedWhen(() -> helper.assertTrue(kumpel.getHealth() > hurt, Component.literal("A sitting Kumpel should heal up a little")));
 	}
 
+	@GameTest(maxTicks = 400)
+	public void fieldForgeCokesSpareCoal(GameTestHelper helper) {
+		buildFloor(helper);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.setForge(true);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.COAL, 3));
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(count(kumpel.getPockets(), ModItems.COKE) == 2, Component.literal("Two coal should become coke, one feeds the fire (coke "
+					+ count(kumpel.getPockets(), ModItems.COKE) + ", coal " + count(kumpel.getPockets(), Items.COAL) + ")"));
+			helper.assertTrue(count(kumpel.getPockets(), Items.COAL) == 0, Component.literal("No coal left"));
+			helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.COKE_MADE) == 2, Component.literal("The coke goes into the shift log"));
+		});
+	}
+
+	@GameTest
+	public void cokeIsFuel(GameTestHelper helper) {
+		int coal = helper.getLevel().fuelValues().burnDuration(new ItemStack(Items.COAL));
+		int coke = helper.getLevel().fuelValues().burnDuration(new ItemStack(ModItems.COKE));
+		helper.assertTrue(coke * 2 == coal * 3, Component.literal("Coke should burn half as long again as coal: " + coke + " vs " + coal));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void remembersItsBestFindsForTheShiftReport(GameTestHelper helper) {
+		buildFloor(helper);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		helper.setBlock(4, 1, 4, Blocks.DIAMOND_ORE);
+		BlockPos diamond = helper.absolutePos(new BlockPos(4, 1, 4));
+		for (int i = 0; i < OreFinds.MAX_FINDS + 3; i++) {
+			BlockPos coal = helper.absolutePos(new BlockPos(i % 8, 2, i / 8));
+			kumpel.getFinds().remember(coal, Blocks.COAL_ORE.defaultBlockState(), 10);
+		}
+		kumpel.getFinds().remember(diamond, Blocks.DIAMOND_ORE.defaultBlockState(), 70);
+
+		helper.assertTrue(kumpel.getFinds().finds().size() == OreFinds.MAX_FINDS, Component.literal("Only the best finds are kept"));
+		helper.assertTrue(kumpel.getFinds().finds().getFirst().pos().equals(diamond), Component.literal("The diamond comes first"));
+
+		// The coal ore was never placed, so those finds are gone; the diamond is still there.
+		WrittenBookContent content = kumpel.writeShiftReport().get(DataComponents.WRITTEN_BOOK_CONTENT);
+		helper.assertTrue(kumpel.getFinds().finds().size() == 1, Component.literal("Ores that are gone are forgotten, left: " + kumpel.getFinds().finds()));
+		helper.assertTrue(content != null && content.pages().size() == 4, Component.literal("Cover, two log pages and one page of finds"));
+
+		helper.setBlock(4, 1, 4, Blocks.AIR);
+		kumpel.getFinds().tidyUp(helper.getLevel());
+		helper.assertTrue(kumpel.getFinds().finds().isEmpty(), Component.literal("A mined ore is forgotten"));
+		helper.succeed();
+	}
+
 	@GameTest
 	public void everyLanguageHasEveryText(GameTestHelper helper) {
 		Set<String> english = languageKeys("en_us");
@@ -822,10 +905,14 @@ public class KumpelGameTests {
 
 	/** A stone block from x = 3 to 7, three blocks high and three deep (z = 2 to 4), standing on the floor. */
 	private static void buildWall(GameTestHelper helper) {
+		buildWall(helper, Blocks.STONE);
+	}
+
+	private static void buildWall(GameTestHelper helper, Block block) {
 		for (int x = 3; x <= 7; x++) {
 			for (int y = 1; y <= 3; y++) {
 				for (int z = 2; z <= 4; z++) {
-					helper.setBlock(x, y, z, Blocks.STONE);
+					helper.setBlock(x, y, z, block);
 				}
 			}
 		}

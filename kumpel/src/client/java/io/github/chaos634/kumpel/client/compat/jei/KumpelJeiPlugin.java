@@ -48,6 +48,7 @@ public class KumpelJeiPlugin implements IModPlugin {
 		registration.addIngredientInfo(ModBlocks.FOERDERKORB, Component.translatable("guide.kumpel.foerderkorb"));
 		registration.addIngredientInfo(ModItems.MINER_HELMET, Component.translatable("guide.kumpel.miner_helmet"));
 		registration.addIngredientInfo(ModItems.RESCUE_CAPSULE, Component.translatable("guide.kumpel.rescue_capsule"));
+		registration.addIngredientInfo(ModItems.COKE, Component.translatable("guide.kumpel.coke"));
 		registration.addIngredientInfo(ModItems.KUMPEL_SPAWN_EGG, Component.translatable("guide.kumpel.spawn_egg"));
 	}
 

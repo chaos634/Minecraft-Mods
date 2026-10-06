@@ -100,3 +100,13 @@ Wenn's unter Tage brenzlig wird.
 - ✅ **Ausfahrt**: Der Kumpel merkt sich den Weg, den ihr unter Tage gegangen seid. Schleichen + Rechtsklick mit einem Kompass, und er führt dich auf demselben Weg zurück nach oben. Leuchtende Spuren zeigen, wo es langgeht.
 - ✅ **Verschnaufpause**: Wer Feierabend macht, erholt sich. Ruhende Kumpels heilen langsam.
 - ✅ **Kumpel „Barbara“**: Ein Kumpel, der Barbara heißt, trägt den Barbarazweig das ganze Jahr.
+
+## Phase 8: Tiefbau ✅
+
+Der Vortrieb wird erwachsen, und die Feldschmiede bekommt eine Kokerei.
+
+- ✅ **Abdämmen**: Stößt der Stollen auf Wasser oder Lava, dichtet der Kumpel sie mit Steinen aus seiner Kiepe ab (Bruchstein, Tiefenschiefer, Erde, Netherrack …, erweiterbar über den Tag `#kumpel:tunnel_fillers`) und gräbt weiter. Nur wenn er nichts zum Abdichten hat, hört er auf.
+- ✅ **Brückenschlag**: Ein Loch im Stollenboden wird mit Steinen aus der Kiepe geschlossen, statt dass der Vortrieb endet.
+- ✅ **Erzfunde**: Der Kumpel merkt sich die wertvollsten Erze, die er gespürt hat. Im Schichtbericht stehen sie mit Koordinaten, abgebaute fliegen raus.
+- ✅ **Kokerei** (nach der Kokerei Zollverein): Hat die Feldschmiede nichts zu schmelzen, verkokt sie Kohle aus der Kiepe. **Koks** brennt anderthalbmal so lange wie Kohle, im Ofen wie in der Feldschmiede.
+- ✅ **Fortschritt** „Zollverein“ für den ersten Koks.

@@ -5,11 +5,16 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.behaviour.FieldForge;
 
@@ -19,6 +24,8 @@ import io.github.chaos634.kumpel.entity.behaviour.FieldForge;
  */
 public class KumpelPockets extends SimpleContainer {
 	public static final int SIZE = KumpelTier.MAX_POCKET_ROWS * 9;
+	/** What the Kumpel may use to seal leaks in its tunnels; modpacks can add their stone. */
+	public static final TagKey<Item> TUNNEL_FILLERS = TagKey.create(Registries.ITEM, Kumpel.id("tunnel_fillers"));
 	private static final double MAX_USE_DISTANCE_SQ = 8.0 * 8.0;
 
 	private final KumpelEntity owner;
@@ -104,6 +111,11 @@ public class KumpelPockets extends SimpleContainer {
 		return !stack.isEmpty() && stack.is(ItemTags.PICKAXES);
 	}
 
+	/** Stone and the like that the Kumpel uses to seal leaks in its tunnels. */
+	public static boolean isTunnelFiller(ItemStack stack) {
+		return !stack.isEmpty() && stack.is(TUNNEL_FILLERS) && stack.getItem() instanceof BlockItem;
+	}
+
 	/**
 	 * Takes out everything the Kumpel should bring to its owner. It keeps its torches,
 	 * one stack of food as a packed lunch (if food sharing is on) and a pickaxe, if it has none in its hand.
@@ -138,6 +150,8 @@ public class KumpelPockets extends SimpleContainer {
 		private boolean keepFood = KumpelSettings.get().behaviour().shareFood;
 		private boolean keepPickaxe = owner.getMainHandItem().isEmpty();
 		private boolean keepFuel = owner.hasForge();
+		// A stack of stone to seal leaks with, while there is a tunnel to dig.
+		private boolean keepFiller = owner.getTunnel() != null && KumpelSettings.get().behaviour().sealTunnels;
 		// Raw ores wait for the field forge, as long as it has something to burn.
 		private final boolean keepSmeltables = owner.hasForge() && owner.getForge().hasFuel(KumpelPockets.this);
 
@@ -154,6 +168,10 @@ public class KumpelPockets extends SimpleContainer {
 			}
 			if (keepFood && isFood(stack)) {
 				keepFood = false;
+				return true;
+			}
+			if (keepFiller && isTunnelFiller(stack)) {
+				keepFiller = false;
 				return true;
 			}
 			if (keepPickaxe && isPickaxe(stack)) {

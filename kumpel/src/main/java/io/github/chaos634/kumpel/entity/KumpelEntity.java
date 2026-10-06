@@ -60,18 +60,21 @@ import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.InfestedBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -167,6 +170,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private int nextChatter = -1;
 	private TunnelOrder tunnel;
 	private final ShiftLog log = new ShiftLog();
+	private final OreFinds finds = new OreFinds();
 	private final ExitTrail exitTrail = new ExitTrail();
 	private boolean leadingOut;
 	private Boolean wasBrightOutside;
@@ -435,6 +439,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		return log;
 	}
 
+	public OreFinds getFinds() {
+		return finds;
+	}
+
 	public ExitTrail getExitTrail() {
 		return exitTrail;
 	}
@@ -477,10 +485,13 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				.append("\n\n")
 				.append(Component.translatable("book.kumpel.signature"));
 
-		MutableComponent work = Component.empty();
-		for (Component line : log.lines()) {
-			work.append(line).append("\n");
+		List<Filterable<Component>> pages = new ArrayList<>();
+		pages.add(Filterable.passThrough(cover));
+		log.pages().forEach(page -> pages.add(Filterable.passThrough(page)));
+		if (level() instanceof ServerLevel serverLevel) {
+			finds.tidyUp(serverLevel);
 		}
+		finds.pages().forEach(page -> pages.add(Filterable.passThrough(page)));
 
 		String name = getName().getString();
 		String title = "Schichtbuch " + name;
@@ -489,7 +500,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				Filterable.passThrough(title.length() > 32 ? title.substring(0, 32) : title),
 				name,
 				0,
-				List.of(Filterable.passThrough(cover), Filterable.passThrough(work)),
+				pages,
 				true));
 		return book;
 	}
@@ -997,6 +1008,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		ItemStack tool = getMainHandItem();
 
 		level.destroyBlock(pos, false, this);
+		finds.forget(pos);
 		Block.dropResources(state, level, pos, blockEntity, this, tool);
 		tool.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
 		log.add(ShiftLog.Entry.ORES_MINED);
@@ -1137,6 +1149,60 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		return null;
 	}
 
+	/**
+	 * Abdämmen &amp; Brückenschlag: a spot where water or lava leaks into the slice, or a hole in its floor,
+	 * that the Kumpel can close with a block from its backpack.
+	 *
+	 * @return where to put a block, or {@code null} if there is nothing the Kumpel can (or may) close
+	 */
+	public BlockPos findLeakToSeal(ServerLevel level, BlockPos lower) {
+		if (!behaviour().sealTunnels || pockets.count(KumpelPockets::isTunnelFiller) == 0) {
+			return null;
+		}
+
+		for (BlockPos cell : new BlockPos[] {lower, lower.above()}) {
+			for (Direction direction : Direction.values()) {
+				BlockPos neighbour = cell.relative(direction);
+				if (isLeak(level, neighbour)) {
+					return neighbour.immutable();
+				}
+			}
+			if (isLeak(level, cell)) {
+				return cell.immutable();
+			}
+		}
+
+		BlockPos below = lower.below();
+		BlockState floor = level.getBlockState(below);
+		if (floor.getCollisionShape(level, below).isEmpty() && floor.canBeReplaced() && !getBoundingBox().intersects(new AABB(below))) {
+			return below.immutable();
+		}
+
+		return null;
+	}
+
+	/** Fluid the Kumpel can simply put a block into (not a waterlogged block, and not where it stands itself). */
+	private boolean isLeak(ServerLevel level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+		return !state.getFluidState().isEmpty() && state.canBeReplaced() && !getBoundingBox().intersects(new AABB(pos));
+	}
+
+	/** Puts a block from the backpack into a leak found by {@link #findLeakToSeal}. */
+	public boolean sealLeak(ServerLevel level, BlockPos pos) {
+		ItemStack filler = pockets.takeOne(KumpelPockets::isTunnelFiller);
+		if (!(filler.getItem() instanceof BlockItem blockItem)) {
+			return false;
+		}
+
+		BlockState state = blockItem.getBlock().defaultBlockState();
+		level.setBlockAndUpdate(pos, state);
+		SoundType sound = state.getSoundType();
+		level.playSound(null, pos, sound.getPlaceSound(), SoundSource.NEUTRAL, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
+		swing(InteractionHand.MAIN_HAND);
+		log.add(ShiftLog.Entry.LEAKS_SEALED);
+		return true;
+	}
+
 	/** Breaks a tunnel block with the pickaxe and puts what drops straight into the backpack. */
 	public void digBlock(ServerLevel level, BlockPos pos) {
 		BlockState state = level.getBlockState(pos);
@@ -1145,6 +1211,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		state.spawnAfterBreak(level, pos, tool, true);
 		level.destroyBlock(pos, false, this);
+		finds.forget(pos);
 		log.add(ShiftLog.Entry.BLOCKS_DUG);
 		for (ItemStack drop : drops) {
 			ItemStack rest = pockets.addToPockets(drop);
@@ -1504,6 +1571,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private void announceOre(ServerLevel level, Player owner, SensedOre sensed) {
 		log.add(ShiftLog.Entry.ORES_SENSED);
 		BlockPos orePos = sensed.pos();
+		finds.remember(orePos, level.getBlockState(orePos), sensed.rule().value());
 		Vec3 eyes = new Vec3(getX(), getEyeY(), getZ());
 		Vec3 ore = Vec3.atCenterOf(orePos);
 		Vec3 direction = ore.subtract(eyes);
@@ -1695,6 +1763,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		output.putBoolean("field_forge", hasForge());
 		forge.save(output);
 		log.save(output);
+		finds.save(output);
 		if (tunnel != null) {
 			output.store("tunnel", TunnelOrder.CODEC, tunnel);
 		}
@@ -1713,6 +1782,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		setForge(input.getBooleanOr("field_forge", false));
 		forge.load(input);
 		log.load(input);
+		finds.load(input);
 		tunnel = input.read("tunnel", TunnelOrder.CODEC).orElse(null);
 		readInventoryFromTag(input);
 

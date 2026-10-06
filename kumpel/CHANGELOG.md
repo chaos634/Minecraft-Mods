@@ -2,6 +2,16 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.5.0
+
+### Tiefbau
+
+- Abdämmen: a tunnelling Kumpel seals water and lava with stone from its backpack and closes holes in the floor, instead of stopping. Modpacks can add their stone to `#kumpel:tunnel_fillers`.
+- Erzfunde: the shift report lists the most valuable ores your Kumpel has sensed, with coordinates.
+- Kokerei: with nothing to smelt, the field forge turns spare coal into coke, which burns half as long again as coal.
+- The shift log is spread over more pages, so long lines no longer get cut off.
+- One more advancement: Zollverein.
+
 ## 0.4.0
 
 ### Notfall & Ausfahrt

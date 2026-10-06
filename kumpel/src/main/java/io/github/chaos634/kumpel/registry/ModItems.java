@@ -17,10 +17,12 @@ import net.minecraft.world.item.equipment.ArmorType;
 
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelTier;
+import io.github.chaos634.kumpel.entity.behaviour.FieldForge;
 import io.github.chaos634.kumpel.item.CrackedKumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelSoul;
@@ -41,6 +43,7 @@ public final class ModItems {
 			new Item.Properties().stacksTo(1));
 	public static final Item RESCUE_CAPSULE = register("rescue_capsule", RescueCapsuleItem::new,
 			new Item.Properties().stacksTo(4));
+	public static final Item COKE = register("coke", Item::new, new Item.Properties());
 	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
 			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
@@ -66,6 +69,7 @@ public final class ModItems {
 				output.accept(FIELD_FORGE);
 				output.accept(ModBlocks.FOERDERKORB);
 				output.accept(RESCUE_CAPSULE);
+				output.accept(COKE);
 				output.accept(MINER_HELMET);
 				output.accept(KUMPEL_SPAWN_EGG);
 			})
@@ -89,5 +93,9 @@ public final class ModItems {
 		});
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT).register(output -> output.accept(MINER_HELMET));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(KUMPEL_SPAWN_EGG));
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS).register(output -> output.accept(COKE));
+
+		// Kokerei: coke burns half as long again as coal.
+		FuelRegistryEvents.BUILD.register((builder, context) -> builder.add(COKE, context.baseSmeltTime() * FieldForge.ITEMS_PER_COKE));
 	}
 }

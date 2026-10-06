@@ -206,6 +206,11 @@ public final class KumpelConfig {
 		public boolean tunnels = true;
 		/** How many blocks long such a tunnel is (1 to 64). */
 		public int tunnelLength = 24;
+		/**
+		 * Abdämmen: the tunnel digger seals water and lava next to its tunnel and closes holes in its floor
+		 * with stone from its backpack ({@code #kumpel:tunnel_fillers}) instead of stopping.
+		 */
+		public boolean sealTunnels = true;
 
 		/** Feldschmiede: a Kumpel carrying a field forge smelts raw ores from its backpack with coal from its backpack. */
 		public boolean fieldForge = true;
@@ -213,6 +218,8 @@ public final class KumpelConfig {
 		public int smeltTicks = 100;
 		/** Item tags the field forge smelts. */
 		public List<String> smeltTags = new ArrayList<>(List.of("c:raw_materials", "c:ores"));
+		/** Kokerei: when the field forge has nothing to smelt, it turns coal from the backpack into coke. */
+		public boolean coking = true;
 
 		/** Grubenwehr: Kumpels fight monsters that attack you or that you attack. Creepers are left alone. */
 		public boolean defendOwner = true;
