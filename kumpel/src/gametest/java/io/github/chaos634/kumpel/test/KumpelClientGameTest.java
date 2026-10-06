@@ -146,36 +146,39 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 			// Unter Tage: a closed chamber at night, lit only by the Kumpels' helmet lamps. One carries a burning field forge,
 			// one a canary, one a pickaxe; a Markentafel and a Förderkorb stand at the back, ores glint in the walls.
 			server.runCommand("time set midnight");
-			server.runCommand("execute as @p at @s run tp @s ~30 ~ ~ 0 15");
+			server.runCommand("execute as @p at @s run tp @s ~30 ~ ~ 0 20");
 			singleplayer.getConnection().waitForChunksRender();
 			server.runOnServer(minecraftServer -> {
 				ServerLevel level = singleplayer.getConnection().getServerLevel();
 				ServerPlayer player = singleplayer.getConnection().getServerPlayer();
 				BlockPos origin = player.blockPosition();
-				for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-6, -1, -3), origin.offset(6, 5, 11))) {
+				for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-6, -1, -3), origin.offset(6, 5, 8))) {
 					boolean inside = Math.abs(pos.getX() - origin.getX()) < 6 && pos.getY() >= origin.getY() && pos.getY() < origin.getY() + 5
-							&& pos.getZ() > origin.getZ() - 3 && pos.getZ() < origin.getZ() + 11;
+							&& pos.getZ() > origin.getZ() - 3 && pos.getZ() < origin.getZ() + 8;
 					level.setBlockAndUpdate(pos, inside ? Blocks.AIR.defaultBlockState() : Blocks.STONE.defaultBlockState());
 				}
-				level.setBlockAndUpdate(origin.offset(-4, 1, 11), Blocks.DIAMOND_ORE.defaultBlockState());
-				level.setBlockAndUpdate(origin.offset(3, 2, 11), Blocks.GOLD_ORE.defaultBlockState());
-				level.setBlockAndUpdate(origin.offset(6, 0, 7), Blocks.COPPER_ORE.defaultBlockState());
-				level.setBlockAndUpdate(origin.offset(1, 0, 10), ModBlocks.MARKENTAFEL.defaultBlockState()
+				level.setBlockAndUpdate(origin.offset(-3, 1, 8), Blocks.DIAMOND_ORE.defaultBlockState());
+				level.setBlockAndUpdate(origin.offset(3, 2, 8), Blocks.GOLD_ORE.defaultBlockState());
+				level.setBlockAndUpdate(origin.offset(6, 0, 5), Blocks.COPPER_ORE.defaultBlockState());
+				level.setBlockAndUpdate(origin.offset(1, 0, 7), ModBlocks.MARKENTAFEL.defaultBlockState()
 						.setValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING, net.minecraft.core.Direction.NORTH));
-				level.setBlockAndUpdate(origin.offset(-2, 0, 10), ModBlocks.FOERDERKORB.defaultBlockState());
+				level.setBlockAndUpdate(origin.offset(-2, 0, 7), ModBlocks.FOERDERKORB.defaultBlockState());
 
-				KumpelEntity smith = sittingKumpel(level, player, origin.getX() - 1.5, origin.getY(), origin.getZ() + 5.0, 200.0F, 3);
+				KumpelEntity smith = sittingKumpel(level, player, origin.getX() - 1.2, origin.getY(), origin.getZ() + 3.2, 210.0F, 3);
 				smith.setForge(true);
 				smith.getPockets().addToPockets(new ItemStack(Items.RAW_IRON, 16));
 				smith.getPockets().addToPockets(new ItemStack(Items.COAL, 8));
-				KumpelEntity hauer = sittingKumpel(level, player, origin.getX() + 2.0, origin.getY(), origin.getZ() + 4.0, 160.0F, 2);
+				KumpelEntity hauer = sittingKumpel(level, player, origin.getX() + 1.8, origin.getY(), origin.getZ() + 3.5, 150.0F, 2);
 				hauer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
-				KumpelEntity lookout = sittingKumpel(level, player, origin.getX() + 0.5, origin.getY(), origin.getZ() + 7.5, 180.0F, 5);
+				KumpelEntity lookout = sittingKumpel(level, player, origin.getX() + 0.5, origin.getY(), origin.getZ() + 5.5, 180.0F, 5);
 				lookout.setCanary(true);
 			});
 			singleplayer.getConnection().waitForChunksRender();
-			context.waitTicks(120);
+			// Without the HUD (like F1), so chat and advancement toasts don't cover the picture.
+			context.runOnClient(client -> client.options.hideGui = true);
+			context.waitTicks(160);
 			context.takeScreenshot("kumpel_unter_tage");
+			context.runOnClient(client -> client.options.hideGui = false);
 		}
 	}
 }
