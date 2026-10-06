@@ -37,10 +37,12 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | **Wünschelrute** | From level 4 (diamond) on, a sensed ore glows through the rock for a few seconds. |
 | **Steigerlied** | It dances while a jukebox is playing nearby. |
 | **Barbaratag** | On 4 December, Saint Barbara's Day, Kumpels wear a flowering branch and feeding them gives double XP. |
+| **Grubenwehr** | It fights monsters that attack you or that you attack. A weapon in its hand (or its pickaxe) makes it hit harder, and every level adds a point of damage. Creepers are left alone; those are what the Schlagwetter warning is for. |
+| **Schichtbuch** | It keeps count of everything it does. Hand it a book and it writes its shift report into it: ores found and mined, blocks dug, tunnels, items collected and delivered, ingots smelted, torches placed and monsters defeated. |
 | **Vortrieb** | Sneak-use the whistle on a wall and the nearest Kumpel with a pickaxe digs a 1×2 tunnel into it (24 blocks by default). It stops before water, lava, drops and blocks its pickaxe can't break, puts what it digs into its backpack and lights the tunnel with its torches. |
 | **Feldschmiede** | Give it a **field forge** and it smelts raw ores from its backpack into ingots, burning coal from its backpack. |
 | **Silverfish warning** | While sensing ores it also notices infested stone, marks it red and tells you. |
-| **Character** | Every new Kumpel gets a name from the Pott (Jupp, Kalle, Trude, Stani, Mehmet …), says something now and then and cheers when it finds treasure. |
+| **Character** | Every new Kumpel gets a name from the Pott (Jupp, Kalle, Trude, Stani, Mehmet …), says something now and then, cheers when it finds treasure and greets your other Kumpels with a "Glück auf!". Underground, it tells you when the sun rises or sets. |
 | **Kanarienvogel** | Give it a **canary cage** and it carries a canary on its shoulder, like miners did. The canary makes monsters near you glow, warns you about them and about running out of air underwater, and lets your Kumpel notice creepers from further away. |
 | **Its core survives** | If a Kumpel dies, it leaves a **cracked core** with its name and 80 % of its XP. Repair it with a copper block in a crafting table and use it to bring your Kumpel back. |
 
@@ -61,6 +63,7 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | Right-click with a compass | Turn ore sensing on/off |
 | Right-click with a canary cage | Put the canary on its shoulder |
 | Right-click with a field forge | Strap the forge to its back |
+| Right-click with a book | Get its shift report as a written book |
 | Sneak + right-click with an empty Kumpel Core | Pack your Kumpel into the core, e.g. to move it or take it through a portal. It keeps all its XP. |
 
 ## Steigerpfeife (Foreman's Whistle)
@@ -84,6 +87,7 @@ If the storage chest is full or out of reach, the Kumpel brings its loot to you 
 |---|---|---|
 | **Canary Cage** | Iron Bars + Feather + Yellow Dye (shapeless) | For your Kumpel's shoulder, see above. Packing the Kumpel gives the cage back. |
 | **Field Forge** | `S . S` / `C F C` (S = String, C = Copper Ingot, F = Furnace) | For your Kumpel's back, see above. Packing the Kumpel gives it back. |
+| **Förderkorb** (Mine Cage) | `C I C` / `I . I` / `C I C` (C = Copper Ingot, I = Iron Bars), makes 2 | A lift for your shaft: right-click rides up to the next cage above, sneak + right-click with an empty hand rides down. Your Kumpels nearby ride along, and a shaft bell rings. |
 | **Grubenhelm** (Miner's Helmet) | `C T C` / `C . C` (C = Copper Ingot, T = Torch) | A helmet with a lamp: wear it in the dark and you can see. Repaired with copper ingots. |
 
 ## Levels
@@ -163,6 +167,8 @@ Which items give how much XP, by `item` or by item `tag`.
 | `chatter`, `chatter_interval_ticks` | on, 6000 | Remarks now and then, and cheers for treasure |
 | `silverfish_warning` | on | Mark infested stone |
 | `tunnels`, `tunnel_length` | on, 24 | Vortrieb (also needs the `mobGriefing` game rule) |
+| `defend_owner`, `attack_damage` | on, 3 | Grubenwehr, and the damage at level 1 (+1 per level) |
+| `time_announcements` | on | Sunrise and sunset messages underground |
 | `field_forge`, `smelt_ticks`, `smelt_tags` | on, 100, `c:raw_materials` + `c:ores` | What the field forge smelts and how fast |
 
 ### Commands
@@ -176,13 +182,13 @@ Which items give how much XP, by `item` or by item `tag`.
 
 ## Compatibility
 
-- **JEI** and **REI**: info pages for the core, the whistle, the canary cage and the Grubenhelm, plus two categories: *Feeding a Kumpel* (item → XP) and *Ore sensing* (ore → level). Both are built from the config, so they show your modpack's setup.
+- **JEI** and **REI**: info pages for the core, the whistle, the canary cage, the field forge, the Förderkorb and the Grubenhelm, plus two categories: *Feeding a Kumpel* (item → XP) and *Ore sensing* (ore → level). Both are built from the config, so they show your modpack's setup.
 - **Modded ores** are found through the `c:ores` tags, **modded storage** through the Fabric Transfer API.
 - **Languages**: English, German, Polish, Turkish, Dutch, French and Spanish.
 
 ## Advancements
 
-Glück auf! · Back Again · A Place for Everything · Hewer · At the Coal Face · Smelting Works · End of Shift · Here Comes the Foreman · Early Warning · Full Crew · From Copper to Netherite · and a hidden one for 4 December.
+Glück auf! · Back Again · A Place for Everything · Hewer · At the Coal Face · Smelting Works · Shaft Ride · Mine Rescue · End of Shift · Here Comes the Foreman · Early Warning · Full Crew · From Copper to Netherite · and a hidden one for 4 December.
 
 ## Building
 
@@ -195,7 +201,7 @@ The jar ends up in `kumpel/build/libs/`. Every push also builds the mod on GitHu
 
 ### Tests
 
-- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (and stopping before water), the field forge, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, that every language has every text and that all advancements load.
+- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (and stopping before water), the field forge, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, fighting monsters (but not creepers), the Förderkorb, the shift log, that every language has every text and that all advancements load.
 - **Client game test** (`./gradlew runClientGameTest`) starts a real client with JEI and takes screenshots of every level, the sitting pose, a Kumpel sensing buried diamond ore, and the Zeche: a Hauer with pickaxe and canary, a dancing Kumpel and the Grubenhelm, all on Barbaratag. On CI the screenshots are uploaded as an artifact.
 
 ## License

@@ -619,9 +619,27 @@ public class KumpelGameTests {
 		helper.assertFalse(kumpel.wantsToAttack(creeper, owner), Component.literal("Creepers are left alone"));
 
 		helper.succeedWhen(() -> {
-			helper.assertFalse(husk.isAlive(), Component.literal("The Kumpel should defeat the husk"));
+			helper.assertFalse(husk.isAlive(), Component.literal("The Kumpel should defeat the husk (target " + kumpel.getTarget()
+					+ ", husk health " + husk.getHealth() + ", kumpel at " + kumpel.blockPosition() + ", sitting " + kumpel.isOrderedToSit()
+					+ ", owner hurt by " + owner.getLastHurtByMob() + ")"));
 			helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.MONSTERS_DEFEATED) == 1, Component.literal("The fight goes into the shift log"));
 		});
+	}
+
+	@GameTest(maxTicks = 300)
+	public void fightsATargetUntilItIsDefeated(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 2, 1, 1);
+		kumpel.tame(owner);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+		Monster husk = helper.spawn(EntityTypes.HUSK, 4, 1, 3);
+		husk.setNoAi(true);
+		kumpel.setTarget(husk);
+
+		helper.succeedWhen(() -> helper.assertFalse(husk.isAlive(), Component.literal("The Kumpel should defeat its target (target "
+				+ kumpel.getTarget() + ", husk health " + husk.getHealth() + ", kumpel at " + kumpel.blockPosition()
+				+ ", damage " + kumpel.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE) + ")")));
 	}
 
 	@GameTest

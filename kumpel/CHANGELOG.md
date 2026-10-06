@@ -2,6 +2,17 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.3.0
+
+### Grubenwehr & Seilfahrt
+
+- Grubenwehr: Kumpels fight monsters that attack you or that you attack (never creepers). Weapons help, and every level adds damage.
+- Förderkorb: a shaft cage block that takes you (and your Kumpels) up or down to the next cage, with shaft bell signals.
+- Schichtbuch: Kumpels count what they do and write their shift report into a book you hand them.
+- Underground, Kumpels tell you when the sun rises or sets.
+- Your Kumpels greet each other when they meet.
+- Two more advancements: Shaft Ride and Mine Rescue.
+
 ## 0.2.0
 
 ### Schichtbetrieb
