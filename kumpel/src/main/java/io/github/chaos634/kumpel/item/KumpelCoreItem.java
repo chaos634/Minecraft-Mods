@@ -26,6 +26,7 @@ import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
 import io.github.chaos634.kumpel.registry.ModItems;
+import io.github.chaos634.kumpel.registry.ModStats;
 
 /**
  * Used on a block, the core awakens a Kumpel that belongs to the player. An empty core creates a new Kumpel;
@@ -57,6 +58,7 @@ public class KumpelCoreItem extends Item {
 		kumpel.setPersistenceRequired();
 		if (player != null) {
 			kumpel.tame(player);
+			player.awardStat(ModStats.KUMPELS_AWAKENED);
 			if (KumpelAdvancements.award(player, KumpelAdvancements.GLUECK_AUF)) {
 				// Your very first Kumpel comes with a handbook.
 				ItemStack fibel = new ItemStack(ModItems.KUMPELFIBEL);

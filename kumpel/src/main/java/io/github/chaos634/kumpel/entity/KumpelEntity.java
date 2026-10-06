@@ -111,6 +111,7 @@ import io.github.chaos634.kumpel.registry.ModBlocks;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModItems;
 import io.github.chaos634.kumpel.registry.ModSounds;
+import io.github.chaos634.kumpel.registry.ModStats;
 import io.github.chaos634.kumpel.util.BlockScanner;
 
 /**
@@ -467,6 +468,18 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	public ShiftLog getLog() {
 		return log;
+	}
+
+	/** Counts something in the shift log, and in its owner's statistics. */
+	public void record(ShiftLog.Entry entry, long amount) {
+		log.add(entry, amount);
+		if (amount > 0 && getOwner() instanceof ServerPlayer owner) {
+			owner.awardStat(ModStats.of(entry), (int) Math.min(Integer.MAX_VALUE, amount));
+		}
+	}
+
+	public void record(ShiftLog.Entry entry) {
+		record(entry, 1);
 	}
 
 	public OreFinds getFinds() {
@@ -981,7 +994,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				long inserted = target.insert(ItemVariant.of(stack), stack.getCount(), transaction);
 				stack.shrink((int) inserted);
 				delivered += inserted;
-				log.add(ShiftLog.Entry.ITEMS_DELIVERED, inserted);
+				record(ShiftLog.Entry.ITEMS_DELIVERED, inserted);
 			}
 			transaction.commit();
 		}
@@ -1130,7 +1143,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		Block.dropResources(state, level, pos, blockEntity, this, tool);
 		tool.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
 		checkToolWear();
-		log.add(ShiftLog.Entry.ORES_MINED);
+		record(ShiftLog.Entry.ORES_MINED);
 
 		addExperience(behaviour().experiencePerOreMined + (rule != null ? rule.level() : 0));
 		KumpelAdvancements.award(getOwner(), KumpelAdvancements.HAUER);
@@ -1208,7 +1221,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			owner.sendSystemMessage(Component.translatable("message.kumpel.tunnel.done", getDisplayName(), tunnel.length()).withStyle(ChatFormatting.GOLD));
 			KumpelAdvancements.award(owner, KumpelAdvancements.VOR_ORT);
 		}
-		log.add(ShiftLog.Entry.TUNNELS_DUG);
+		record(ShiftLog.Entry.TUNNELS_DUG);
 		playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
 		tunnel = null;
 		setMining(false);
@@ -1323,7 +1336,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		level.setBlockAndUpdate(pos, state);
 		SoundType sound = state.getSoundType();
 		level.playSound(null, pos, sound.getPlaceSound(), SoundSource.NEUTRAL, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
-		log.add(ShiftLog.Entry.LEAKS_SEALED);
+		record(ShiftLog.Entry.LEAKS_SEALED);
 		return true;
 	}
 
@@ -1336,7 +1349,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		state.spawnAfterBreak(level, pos, tool, true);
 		level.destroyBlock(pos, false, this);
 		finds.forget(pos);
-		log.add(ShiftLog.Entry.BLOCKS_DUG);
+		record(ShiftLog.Entry.BLOCKS_DUG);
 		for (ItemStack drop : drops) {
 			ItemStack rest = pockets.addToPockets(drop);
 			if (!rest.isEmpty()) {
@@ -1430,7 +1443,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		take(item, taken);
-		log.add(ShiftLog.Entry.ITEMS_COLLECTED, taken);
+		record(ShiftLog.Entry.ITEMS_COLLECTED, taken);
 		if (remainder.isEmpty()) {
 			item.discard();
 		} else {
@@ -1455,7 +1468,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		ticksSinceLastPickup = 0;
-		log.add(ShiftLog.Entry.ITEMS_DELIVERED, delivered);
+		record(ShiftLog.Entry.ITEMS_DELIVERED, delivered);
 
 		if (delivered > 0) {
 			playSound(SoundEvents.ALLAY_ITEM_GIVEN, 0.8F, 1.0F);
@@ -1532,7 +1545,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			double distanceSq = distanceToSqr(owner);
 			if (tickCount % 10 == 0 && !isOrderedToSit() && distanceSq < 24.0 * 24.0) {
 				if (MinerLamp.tryPlaceTorch(this, level)) {
-					log.add(ShiftLog.Entry.TORCHES_PLACED);
+					record(ShiftLog.Entry.TORCHES_PLACED);
 				}
 			}
 			if (tickCount % 10 == 5 && distanceSq < 32.0 * 32.0) {
@@ -1725,7 +1738,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	private void announceOre(ServerLevel level, Player owner, SensedOre sensed) {
-		log.add(ShiftLog.Entry.ORES_SENSED);
+		record(ShiftLog.Entry.ORES_SENSED);
 		BlockPos orePos = sensed.pos();
 		finds.remember(orePos, level.getBlockState(orePos), sensed.rule().value());
 		Vec3 eyes = new Vec3(getX(), getEyeY(), getZ());
@@ -1802,7 +1815,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	public boolean doHurtTarget(ServerLevel level, Entity target) {
 		boolean hit = super.doHurtTarget(level, target);
 		if (hit && target instanceof LivingEntity living && !living.isAlive()) {
-			log.add(ShiftLog.Entry.MONSTERS_DEFEATED);
+			record(ShiftLog.Entry.MONSTERS_DEFEATED);
 			KumpelAdvancements.award(getOwner(), KumpelAdvancements.GRUBENWEHR);
 		}
 

@@ -2,6 +2,13 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.10.0
+
+### Werkstatt
+
+- In-game settings screen through Mod Menu and Cloth Config (both optional), for every behaviour option, in all seven languages.
+- Statistics: what your Kumpels count in their shift logs adds up in your statistics screen, plus Kumpels awakened.
+
 ## 0.9.0
 
 ### Mitfahrt

@@ -1028,6 +1028,31 @@ public class KumpelGameTests {
 	}
 
 	@GameTest
+	public void everyShiftLogEntryIsAStatistic(GameTestHelper helper) {
+		Set<String> english = languageKeys("en_us");
+		for (ShiftLog.Entry entry : ShiftLog.Entry.values()) {
+			net.minecraft.resources.Identifier stat = io.github.chaos634.kumpel.registry.ModStats.of(entry);
+			helper.assertTrue(stat != null && net.minecraft.core.registries.BuiltInRegistries.CUSTOM_STAT.containsKey(stat),
+					Component.literal("No statistic for " + entry));
+			helper.assertTrue(english.contains("stat.kumpel." + entry.key()), Component.literal("The statistic " + entry + " has no name"));
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void everyConfigOptionHasALabel(GameTestHelper helper) {
+		Set<String> english = languageKeys("en_us");
+		for (java.lang.reflect.Field field : io.github.chaos634.kumpel.config.KumpelConfig.Behaviour.class.getDeclaredFields()) {
+			if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+				continue;
+			}
+			String key = io.github.chaos634.kumpel.config.KumpelConfig.optionKey(field.getName());
+			helper.assertTrue(english.contains(key), Component.literal("The option " + field.getName() + " has no label " + key));
+		}
+		helper.succeed();
+	}
+
+	@GameTest
 	public void everyLanguageHasEveryText(GameTestHelper helper) {
 		Set<String> english = languageKeys("en_us");
 		for (String language : List.of("de_de", "pl_pl", "tr_tr", "nl_nl", "fr_fr", "es_es")) {

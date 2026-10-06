@@ -143,3 +143,10 @@ Wohin du gehst, dein Kumpel geht mit.
 
 - ✅ **Mitfahrt**: Gehst du durch ein Portal, kommen die Kumpels mit, die dir gerade folgen. Allein benutzen sie nie ein Portal, damit keiner im Nether verloren geht.
 - ✅ **Unter Tage im Bild**: Ein neuer Screenshot im Client-Test zeigt eine Kammer, die nur von den Helmlampen beleuchtet wird.
+
+## Phase 13: Werkstatt ✅
+
+Feinschliff für Spieler und Modpack-Bauer.
+
+- ✅ **Einstellungen im Spiel**: Mit Mod Menu und Cloth Config lässt sich jede Verhaltens-Option im Spiel ändern, in allen sieben Sprachen. Neue Optionen tauchen automatisch auf.
+- ✅ **Statistiken**: Alles, was die Kumpels im Schichtbuch zählen, landet auch in deinem Statistik-Bildschirm.

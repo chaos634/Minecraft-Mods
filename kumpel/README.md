@@ -124,6 +124,8 @@ All of this can be changed in the config.
 
 The config lives in `config/kumpel.json` and is created on first start. Edit it and run **`/kumpel reload`** (operators only) to apply the changes without restarting. Existing Kumpels update to the new levels right away. If the file is broken, the mod logs an error and keeps using the defaults without touching your file.
 
+With **Mod Menu** and **Cloth Config** installed, all behaviour options can also be changed in game: open the mod list, pick Kumpel and click the settings button. Changes apply right away in singleplayer; on a server, edit the server's file and reload it there.
+
 ### Levels (`tiers`)
 
 Add, remove or change levels freely. They are sorted by `experience`; the first one is where every new Kumpel starts.
@@ -210,6 +212,8 @@ Which items give how much XP, by `item` or by item `tag`.
 - **JEI** and **REI**: info pages for the core, the whistle, the canary cage, the field forge, the Förderkorb, the Grubenhelm, the rescue capsule, coke, the Markentafel, the music disc, the Kumpelfibel, the Knifte and Muckefuck, plus two categories: *Feeding a Kumpel* (item → XP) and *Ore sensing* (ore → level). Both are built from the config, so they show your modpack's setup.
 - **Modded ores** are found through the `c:ores` tags, **modded storage** through the Fabric Transfer API.
 - **Modded stone** can be used for Abdämmen by adding it to the item tag `#kumpel:tunnel_fillers`.
+- **Mod Menu** + **Cloth Config**: an in-game settings screen for every behaviour option (both optional).
+- **Statistics**: everything your Kumpels count in their shift logs also adds up in your statistics screen (ores mined by Kumpels, blocks dug, items delivered …), plus how many Kumpels you have awakened.
 - **Languages**: English, German, Polish, Turkish, Dutch, French and Spanish.
 
 ## Advancements
@@ -227,7 +231,7 @@ The jar ends up in `kumpel/build/libs/`. Every push also builds the mod on GitHu
 
 ### Tests
 
-- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (sealing water, bridging holes and stopping when there is no stone), the field forge and coking, coke as fuel, the ore finds, the Markenkontrolle, singing along to the record, the helmet lamp, the Kumpelfibel, tool protection, favourite food, apprenticeship, Muckefuck, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, fighting monsters (but not creepers), the Förderkorb, the shift log, the rescue capsule, the exit trail and being led out, resting, that every language has every text and that all advancements load.
+- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (sealing water, bridging holes and stopping when there is no stone), the field forge and coking, coke as fuel, the ore finds, the Markenkontrolle, singing along to the record, the helmet lamp, the Kumpelfibel, tool protection, favourite food, apprenticeship, Muckefuck, following through portals, statistics, labels for every config option, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, fighting monsters (but not creepers), the Förderkorb, the shift log, the rescue capsule, the exit trail and being led out, resting, that every language has every text and that all advancements load.
 - **Client game test** (`./gradlew runClientGameTest`) starts a real client with JEI and takes screenshots of every level, the sitting pose, a Kumpel sensing buried diamond ore, and the Zeche: a Hauer with pickaxe and canary, a dancing Kumpel and the Grubenhelm, all on Barbaratag. On CI the screenshots are uploaded as an artifact.
 
 ## License

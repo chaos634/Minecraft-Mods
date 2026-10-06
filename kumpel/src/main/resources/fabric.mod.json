@@ -30,6 +30,9 @@
 		],
 		"rei_client": [
 			"io.github.chaos634.kumpel.client.compat.rei.KumpelReiClientPlugin"
+		],
+		"modmenu": [
+			"io.github.chaos634.kumpel.client.compat.modmenu.KumpelModMenu"
 		]
 	},
 	"depends": {
@@ -40,6 +43,8 @@
 	},
 	"suggests": {
 		"jei": "*",
-		"roughlyenoughitems": "*"
+		"roughlyenoughitems": "*",
+		"modmenu": "*",
+		"cloth-config": "*"
 	}
 }

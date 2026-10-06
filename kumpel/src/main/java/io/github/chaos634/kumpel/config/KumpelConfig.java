@@ -297,6 +297,11 @@ public final class KumpelConfig {
 		return feeding;
 	}
 
+	/** The translation key of a behaviour option's label: {@code config.kumpel.<option_in_snake_case>}. */
+	public static String optionKey(String fieldName) {
+		return "config.kumpel." + fieldName.replaceAll("([a-z0-9])([A-Z])", "$1_$2").toLowerCase(java.util.Locale.ROOT);
+	}
+
 	public static Path path() {
 		return FabricLoader.getInstance().getConfigDir().resolve(Kumpel.MOD_ID + ".json");
 	}

@@ -78,7 +78,7 @@ public class FieldForge {
 			}
 			pockets.addToPockets(new ItemStack(ModItems.COKE));
 			fuel--;
-			kumpel.getLog().add(ShiftLog.Entry.COKE_MADE);
+			kumpel.record(ShiftLog.Entry.COKE_MADE);
 			KumpelAdvancements.award(kumpel.getOwner(), KumpelAdvancements.ZOLLVEREIN);
 			return;
 		}
@@ -87,7 +87,7 @@ public class FieldForge {
 		pockets.addToPockets(smelt.result());
 		fuel--;
 		kumpel.addExperience(1);
-		kumpel.getLog().add(ShiftLog.Entry.ITEMS_SMELTED);
+		kumpel.record(ShiftLog.Entry.ITEMS_SMELTED);
 		KumpelAdvancements.award(kumpel.getOwner(), KumpelAdvancements.HUETTE);
 	}
 
