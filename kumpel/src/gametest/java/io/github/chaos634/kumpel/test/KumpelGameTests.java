@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
@@ -23,8 +24,11 @@ public class KumpelGameTests {
 	@GameTest(maxTicks = 300)
 	public void collectsDroppedItems(GameTestHelper helper) {
 		buildFloor(helper);
+		// Tamed animals sit down when their owner can't be found, so give the Kumpel an owner standing nearby.
+		Player owner = helper.makeMockPlayer(GameType.SURVIVAL);
+		owner.snapTo(Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(2, 1, 2))));
 		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
-		kumpel.setTame(true, false);
+		kumpel.tame(owner);
 
 		BlockPos itemPos = helper.absolutePos(new BlockPos(5, 1, 5));
 		ItemEntity item = new ItemEntity(helper.getLevel(), itemPos.getX() + 0.5, itemPos.getY(), itemPos.getZ() + 0.5,

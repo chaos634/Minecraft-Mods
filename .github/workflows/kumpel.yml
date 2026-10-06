@@ -42,6 +42,7 @@ jobs:
 
   client-game-test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: kumpel
@@ -54,11 +55,14 @@ jobs:
           java-version: '25'
           distribution: 'microsoft'
       - name: install virtual display
-        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri python3-pil
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri mesa-vulkan-drivers python3-pil
       - name: run client game tests
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           chmod +x ./gradlew
-          xvfb-run -a -s "-screen 0 1920x1080x24" ./gradlew runClientGameTest --stacktrace
+          xvfb-run -a -s "-screen 0 1920x1080x24 +extension GLX +render -noreset" \
+            timeout 900 ./gradlew runClientGameTest --stacktrace
       - name: print screenshots
         if: always()
         run: |

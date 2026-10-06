@@ -28,6 +28,11 @@ fabricApi {
 	}
 }
 
+// CI starts its own virtual display (with GLX and 24-bit colour) around the whole Gradle run.
+tasks.withType(net.fabricmc.loom.task.AbstractRunTask).configureEach {
+	useXvfb = false
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
