@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [h]
+        group: [i]
     defaults:
       run:
         working-directory: kumpel
@@ -249,6 +249,42 @@ jobs:
               p net.minecraft.world.level.material.MapColor 'COLOR_ORANGE|METAL|STONE'
               for j in $MCJARS; do
                 for f in assets/minecraft/blockstates/copper_lantern.json assets/minecraft/blockstates/lodestone.json assets/minecraft/models/block/lodestone.json data/minecraft/loot_table/blocks/lodestone.json assets/minecraft/items/lodestone.json; do
+                  if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
+                done
+              done
+              ;;
+            i)
+              ls_jar '/(SavedData|SavedDataType|DimensionDataStorage|JukeboxSong|JukeboxPlayable|JukeboxSongPlayer|BuiltInLootTables|HorizontalDirectionalBlock|LootItemRandomChanceCondition)\.class'
+              p net.minecraft.world.level.saveddata.SavedData
+              p net.minecraft.world.level.saveddata.SavedDataType
+              p net.minecraft.world.level.storage.DimensionDataStorage 'computeIfAbsent|get\(|set\('
+              p net.minecraft.server.MinecraftServer 'overworld|getDataStorage|getLevel\(|getPlayerList'
+              p net.minecraft.server.level.ServerLevel 'getDataStorage'
+              p net.minecraft.world.item.JukeboxSong
+              p net.minecraft.world.item.JukeboxPlayable
+              p net.minecraft.world.item.JukeboxSongPlayer 'getSong|isPlaying|getTicksSinceSongStarted'
+              p 'net.minecraft.world.item.Item$Properties' 'jukeboxPlayable|rarity|stacksTo'
+              p net.minecraft.world.level.block.entity.JukeboxBlockEntity 'getSongPlayer|getTheItem'
+              p net.minecraft.world.level.block.JukeboxBlock 'HAS_RECORD'
+              p net.minecraft.world.level.storage.loot.BuiltInLootTables 'MINESHAFT|DUNGEON|STRONGHOLD|ANCIENT_CITY|TRIAL'
+              p net.fabricmc.fabric.api.loot.v3.LootTableEvents
+              p 'net.fabricmc.fabric.api.loot.v3.LootTableEvents$Modify'
+              p net.fabricmc.fabric.api.loot.v3.LootTableSource
+              p 'net.minecraft.world.level.storage.loot.LootPool$Builder' 'add|setRolls|when'
+              p net.minecraft.world.level.storage.loot.LootPool 'lootPool'
+              p 'net.minecraft.world.level.storage.loot.LootTable$Builder' 'withPool|pool'
+              p net.minecraft.world.level.storage.loot.entries.LootItem 'lootTableItem'
+              p net.minecraft.world.level.storage.loot.entries.EmptyLootItem 'emptyItem'
+              p 'net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer$Builder' 'setWeight'
+              p net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition 'randomChance'
+              p net.minecraft.world.level.storage.loot.providers.number.ConstantValue 'exactly'
+              p net.minecraft.core.registries.Registries 'JUKEBOX_SONG'
+              p net.minecraft.world.level.block.HorizontalDirectionalBlock
+              p net.minecraft.world.item.context.BlockPlaceContext 'getHorizontalDirection|getNearestLookingDirection'
+              p net.minecraft.world.level.block.Block 'createBlockStateDefinition|getStateForPlacement|registerDefaultState|simpleCodec|defaultBlockState'
+              p net.minecraft.core.particles.ParticleTypes 'NOTE|HAPPY_VILLAGER'
+              for j in $MCJARS; do
+                for f in data/minecraft/jukebox_song/13.json data/minecraft/jukebox_song/pigstep.json assets/minecraft/items/music_disc_13.json assets/minecraft/models/item/music_disc_13.json assets/minecraft/blockstates/furnace.json assets/minecraft/models/block/furnace.json; do
                   if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
                 done
               done
