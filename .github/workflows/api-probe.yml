@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [n]
+        group: [o]
     defaults:
       run:
         working-directory: kumpel
@@ -349,5 +349,20 @@ jobs:
               p net.minecraft.world.item.component.CookingFuel
               p net.minecraft.world.entity.ai.navigation.PathNavigation 'createPath|moveTo'
               p net.minecraft.world.entity.ai.control.MoveControl 'setWantedPosition'
+              ;;
+            o)
+              p net.minecraft.world.item.component.Consumable
+              p 'net.minecraft.world.item.component.Consumable$Builder'
+              p net.minecraft.world.item.component.Consumables
+              ls_jar 'consume_effects/[A-Za-z]+\.class'
+              p net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect
+              p net.minecraft.world.item.consume_effects.RemoveStatusEffectsConsumeEffect
+              p 'net.minecraft.world.food.FoodProperties$Builder'
+              p net.minecraft.world.food.Foods 'BREAD|HONEY'
+              p 'net.minecraft.world.item.Item$Properties' 'usingConvertsTo|food|craftRemainder|useCooldown'
+              p net.minecraft.world.item.ItemUseAnimation
+              p net.minecraft.world.effect.MobEffects 'HASTE|MINING_FATIGUE|SATURATION'
+              p net.minecraft.world.item.ItemStack 'getMaxDamage|getDamageValue|isDamageableItem|nextDamageWillBreak'
+              p net.minecraft.world.entity.LivingEntity ' heal\(|getMaxHealth'
               ;;
           esac
