@@ -1,0 +1,13 @@
+{
+	"itemGroup.zechenbau": "Zechenbau",
+	"block.zechenbau.zechenziegel": "Cegły kopalniane",
+	"block.zechenbau.zechenziegel_stairs": "Schody z cegieł kopalnianych",
+	"block.zechenbau.zechenziegel_slab": "Płyta z cegieł kopalnianych",
+	"block.zechenbau.zechenziegel_wall": "Murek z cegieł kopalnianych",
+	"block.zechenbau.stahlfachwerk": "Cegły w stalowym szkielecie",
+	"block.zechenbau.fachwerk_fenster": "Okno w stalowym szkielecie",
+	"block.zechenbau.stahltraeger": "Dźwigar stalowy",
+	"block.zechenbau.foerdergeruest": "Kratownica wieży wyciągowej",
+	"block.zechenbau.grubenlampe": "Lampa górnicza",
+	"block.zechenbau.schlaegel_und_eisen": "Płytka z pyrlikiem i żelazkiem"
+}

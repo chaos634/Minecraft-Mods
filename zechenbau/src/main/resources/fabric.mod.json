@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "zechenbau",
+	"version": "${version}",
+	"name": "Zechenbau",
+	"description": "Building blocks of the Ruhr's collieries: red colliery bricks, steel framework like Zeche Zollverein, girders, headframe lattice and miner's lamps.",
+	"authors": [
+		"chaos634"
+	],
+	"contact": {
+		"homepage": "https://github.com/chaos634/Minecraft-Mods/tree/main/zechenbau",
+		"sources": "https://github.com/chaos634/Minecraft-Mods",
+		"issues": "https://github.com/chaos634/Minecraft-Mods/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/zechenbau/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.chaos634.zechenbau.Zechenbau"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"kumpel": "*"
+	}
+}

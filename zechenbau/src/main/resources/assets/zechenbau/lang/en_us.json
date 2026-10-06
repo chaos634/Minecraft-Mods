@@ -1,0 +1,13 @@
+{
+	"itemGroup.zechenbau": "Zechenbau",
+	"block.zechenbau.zechenziegel": "Colliery Bricks",
+	"block.zechenbau.zechenziegel_stairs": "Colliery Brick Stairs",
+	"block.zechenbau.zechenziegel_slab": "Colliery Brick Slab",
+	"block.zechenbau.zechenziegel_wall": "Colliery Brick Wall",
+	"block.zechenbau.stahlfachwerk": "Steel-Framed Bricks",
+	"block.zechenbau.fachwerk_fenster": "Steel-Framed Window",
+	"block.zechenbau.stahltraeger": "Steel Girder",
+	"block.zechenbau.foerdergeruest": "Headframe Lattice",
+	"block.zechenbau.grubenlampe": "Miner's Lamp",
+	"block.zechenbau.schlaegel_und_eisen": "Hammer and Pick Tile"
+}

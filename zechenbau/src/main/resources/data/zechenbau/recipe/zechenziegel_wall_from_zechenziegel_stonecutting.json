@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "zechenbau:zechenziegel",
+  "result": {
+    "id": "zechenbau:zechenziegel_wall"
+  }
+}

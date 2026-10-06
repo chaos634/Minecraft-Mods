@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "zechenbau:zechenziegel",
+    "zechenbau:zechenziegel_stairs",
+    "zechenbau:zechenziegel_slab",
+    "zechenbau:zechenziegel_wall",
+    "zechenbau:stahlfachwerk",
+    "zechenbau:fachwerk_fenster",
+    "zechenbau:stahltraeger",
+    "zechenbau:foerdergeruest",
+    "zechenbau:grubenlampe",
+    "zechenbau:schlaegel_und_eisen"
+  ]
+}

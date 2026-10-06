@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": {
+      "sprite": "zechenbau:block/fachwerk_fenster",
+      "force_translucent": true
+    }
+  }
+}

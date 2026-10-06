@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": "minecraft:bricks",
+    "C": "minecraft:coal"
+  },
+  "pattern": [
+    "BC",
+    "CB"
+  ],
+  "result": {
+    "id": "zechenbau:zechenziegel",
+    "count": 4
+  }
+}

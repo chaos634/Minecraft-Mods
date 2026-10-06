@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "zechenbau:block/zechenziegel",
+    "top": "zechenbau:block/zechenziegel",
+    "side": "zechenbau:block/zechenziegel"
+  }
+}

@@ -1,0 +1,13 @@
+{
+	"itemGroup.zechenbau": "Zechenbau",
+	"block.zechenbau.zechenziegel": "Zechenziegel",
+	"block.zechenbau.zechenziegel_stairs": "Zechenziegeltreppe",
+	"block.zechenbau.zechenziegel_slab": "Zechenziegelstufe",
+	"block.zechenbau.zechenziegel_wall": "Zechenziegelmauer",
+	"block.zechenbau.stahlfachwerk": "Stahlfachwerk",
+	"block.zechenbau.fachwerk_fenster": "Fachwerkfenster",
+	"block.zechenbau.stahltraeger": "Stahlträger",
+	"block.zechenbau.foerdergeruest": "Fördergerüst",
+	"block.zechenbau.grubenlampe": "Grubenlampe",
+	"block.zechenbau.schlaegel_und_eisen": "Schlägel-und-Eisen-Fliese"
+}

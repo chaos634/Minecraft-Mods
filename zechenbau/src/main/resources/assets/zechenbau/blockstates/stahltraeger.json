@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "zechenbau:block/stahltraeger_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "zechenbau:block/stahltraeger"
+    },
+    "axis=z": {
+      "model": "zechenbau:block/stahltraeger_horizontal",
+      "x": 90
+    }
+  }
+}

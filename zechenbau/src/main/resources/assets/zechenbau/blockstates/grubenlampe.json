@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "hanging=false": {
+      "model": "zechenbau:block/grubenlampe"
+    },
+    "hanging=true": {
+      "model": "zechenbau:block/grubenlampe_hanging"
+    }
+  }
+}

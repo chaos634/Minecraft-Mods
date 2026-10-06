@@ -1,0 +1,13 @@
+{
+	"itemGroup.zechenbau": "Zechenbau",
+	"block.zechenbau.zechenziegel": "Ladrillos de mina",
+	"block.zechenbau.zechenziegel_stairs": "Escaleras de ladrillos de mina",
+	"block.zechenbau.zechenziegel_slab": "Losa de ladrillos de mina",
+	"block.zechenbau.zechenziegel_wall": "Muro de ladrillos de mina",
+	"block.zechenbau.stahlfachwerk": "Ladrillos con entramado de acero",
+	"block.zechenbau.fachwerk_fenster": "Ventana con entramado de acero",
+	"block.zechenbau.stahltraeger": "Viga de acero",
+	"block.zechenbau.foerdergeruest": "Celosía de castillete",
+	"block.zechenbau.grubenlampe": "Lámpara de minero",
+	"block.zechenbau.schlaegel_und_eisen": "Baldosa de mazo y puntero"
+}

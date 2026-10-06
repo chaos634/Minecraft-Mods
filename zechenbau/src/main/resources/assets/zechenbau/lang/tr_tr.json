@@ -1,0 +1,13 @@
+{
+	"itemGroup.zechenbau": "Zechenbau",
+	"block.zechenbau.zechenziegel": "Maden Tuğlası",
+	"block.zechenbau.zechenziegel_stairs": "Maden Tuğlası Merdiveni",
+	"block.zechenbau.zechenziegel_slab": "Maden Tuğlası Basamağı",
+	"block.zechenbau.zechenziegel_wall": "Maden Tuğlası Duvarı",
+	"block.zechenbau.stahlfachwerk": "Çelik Çerçeveli Tuğla",
+	"block.zechenbau.fachwerk_fenster": "Çelik Çerçeveli Pencere",
+	"block.zechenbau.stahltraeger": "Çelik Kiriş",
+	"block.zechenbau.foerdergeruest": "Kuyu Kulesi Kafesi",
+	"block.zechenbau.grubenlampe": "Madenci Lambası",
+	"block.zechenbau.schlaegel_und_eisen": "Çekiç ve Kazma Karosu"
+}

@@ -150,3 +150,9 @@ Feinschliff für Spieler und Modpack-Bauer.
 
 - ✅ **Einstellungen im Spiel**: Mit Mod Menu und Cloth Config lässt sich jede Verhaltens-Option im Spiel ändern, in allen sieben Sprachen. Neue Optionen tauchen automatisch auf.
 - ✅ **Statistiken**: Alles, was die Kumpels im Schichtbuch zählen, landet auch in deinem Statistik-Bildschirm.
+
+## Phase 14: Zechenbau ✅
+
+Eine zweite Mod in der Sammlung, damit die Kumpels auch eine Zeche zum Heimkommen haben.
+
+- ✅ **[Zechenbau](../zechenbau/)**: Bausteine der Ruhrgebiets-Zechen. Zechenziegel mit Treppe, Stufe und Mauer, Stahlfachwerk wie auf Zollverein, Fachwerkfenster, Stahlträger, Fördergerüst-Gitter, Grubenlampe und eine Schlägel-und-Eisen-Fliese für über das Tor. Läuft auch ohne Kumpel.

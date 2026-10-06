@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "Z": "zechenbau:zechenziegel"
+  },
+  "pattern": [
+    "Z  ",
+    "ZZ ",
+    "ZZZ"
+  ],
+  "result": {
+    "id": "zechenbau:zechenziegel_stairs",
+    "count": 4
+  }
+}

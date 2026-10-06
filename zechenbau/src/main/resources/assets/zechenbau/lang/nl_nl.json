@@ -1,0 +1,13 @@
+{
+	"itemGroup.zechenbau": "Zechenbau",
+	"block.zechenbau.zechenziegel": "Mijnbakstenen",
+	"block.zechenbau.zechenziegel_stairs": "Mijnbakstenen trap",
+	"block.zechenbau.zechenziegel_slab": "Mijnbakstenen plaat",
+	"block.zechenbau.zechenziegel_wall": "Mijnbakstenen muur",
+	"block.zechenbau.stahlfachwerk": "Staalvakwerkstenen",
+	"block.zechenbau.fachwerk_fenster": "Staalvakwerkraam",
+	"block.zechenbau.stahltraeger": "Stalen balk",
+	"block.zechenbau.foerdergeruest": "Schachtbokvakwerk",
+	"block.zechenbau.grubenlampe": "Mijnlamp",
+	"block.zechenbau.schlaegel_und_eisen": "Hamer-en-beiteltegel"
+}

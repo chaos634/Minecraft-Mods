@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "zechenbau:zechenziegel",
+  "result": {
+    "id": "zechenbau:zechenziegel_slab",
+    "count": 2
+  }
+}

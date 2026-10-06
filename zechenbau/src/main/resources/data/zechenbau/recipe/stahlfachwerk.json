@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "Z": "zechenbau:zechenziegel"
+  },
+  "pattern": [
+    "IZ",
+    "ZI"
+  ],
+  "result": {
+    "id": "zechenbau:stahlfachwerk",
+    "count": 4
+  }
+}

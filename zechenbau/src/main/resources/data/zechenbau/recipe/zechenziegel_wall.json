@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "Z": "zechenbau:zechenziegel"
+  },
+  "pattern": [
+    "ZZZ",
+    "ZZZ"
+  ],
+  "result": {
+    "id": "zechenbau:zechenziegel_wall",
+    "count": 6
+  }
+}

@@ -1,0 +1,13 @@
+{
+	"itemGroup.zechenbau": "Zechenbau",
+	"block.zechenbau.zechenziegel": "Briques de houillère",
+	"block.zechenbau.zechenziegel_stairs": "Escalier en briques de houillère",
+	"block.zechenbau.zechenziegel_slab": "Dalle en briques de houillère",
+	"block.zechenbau.zechenziegel_wall": "Muret en briques de houillère",
+	"block.zechenbau.stahlfachwerk": "Briques à pans d'acier",
+	"block.zechenbau.fachwerk_fenster": "Fenêtre à pans d'acier",
+	"block.zechenbau.stahltraeger": "Poutre en acier",
+	"block.zechenbau.foerdergeruest": "Treillis de chevalement",
+	"block.zechenbau.grubenlampe": "Lampe de mineur",
+	"block.zechenbau.schlaegel_und_eisen": "Carreau marteau et pic"
+}
