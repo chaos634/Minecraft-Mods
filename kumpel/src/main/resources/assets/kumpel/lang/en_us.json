@@ -1,0 +1,36 @@
+{
+	"entity.kumpel.kumpel": "Kumpel",
+	"item.kumpel.kumpel_core": "Kumpel Core",
+	"item.kumpel.kumpel_core.tooltip": "Use on a block to awaken your own Kumpel",
+
+	"kumpel.tier.copper": "Copper",
+	"kumpel.tier.iron": "Iron",
+	"kumpel.tier.gold": "Gold",
+	"kumpel.tier.diamond": "Diamond",
+	"kumpel.tier.netherite": "Netherite",
+
+	"message.kumpel.tamed": "%s is now your Kumpel!",
+	"message.kumpel.sitting": "%s waits here.",
+	"message.kumpel.following": "%s follows you.",
+	"message.kumpel.ore_sense_on": "%s is sensing ores again.",
+	"message.kumpel.ore_sense_off": "%s stops sensing ores.",
+	"message.kumpel.fed": "%1$s: +%2$s XP (%3$s)",
+	"message.kumpel.xp_progress": "%s/%s XP",
+	"message.kumpel.max_level": "max level",
+	"message.kumpel.level_up": "%1$s reached level %2$s: %3$s!",
+	"message.kumpel.status": "%1$s · Level %2$s (%3$s) · %4$s · ❤ %5$s/%6$s · carrying %7$s items · ore sensing: %8$s",
+	"message.kumpel.delivered": "%1$s hands you %2$s items.",
+	"message.kumpel.ore_sensed": "%1$s senses %2$s! %3$s blocks %4$s, %5$s",
+	"message.kumpel.below": "%s below you",
+	"message.kumpel.above": "%s above you",
+	"message.kumpel.same_height": "at your height",
+
+	"direction.kumpel.north": "north",
+	"direction.kumpel.northeast": "northeast",
+	"direction.kumpel.east": "east",
+	"direction.kumpel.southeast": "southeast",
+	"direction.kumpel.south": "south",
+	"direction.kumpel.southwest": "southwest",
+	"direction.kumpel.west": "west",
+	"direction.kumpel.northwest": "northwest"
+}

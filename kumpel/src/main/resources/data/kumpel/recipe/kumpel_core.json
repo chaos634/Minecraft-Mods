@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:amethyst_shard",
+    "C": "minecraft:copper_ingot",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    " A ",
+    "CRC",
+    "CCC"
+  ],
+  "result": {
+    "id": "kumpel:kumpel_core"
+  }
+}
