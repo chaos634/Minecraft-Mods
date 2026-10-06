@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [versions, a, b, c]
+        group: [d]
     defaults:
       run:
         working-directory: kumpel
@@ -106,6 +106,20 @@ jobs:
               p net.minecraft.util.ProblemReporter
               p net.minecraft.world.entity.Entity 'save|load|getEncodeId|RemovalReason|setRemoved|remove\(|restoreFrom|getType\(\)'
               p net.minecraft.world.entity.EntityType 'spawn|loadEntityRecursive|updateCustomEntityTag|appendDefaultStackConfig|appendCustomEntityStackConfig|createDefaultStackConfig|by\(|getKey'
+              ;;
+            d)
+              for j in $MCJARS; do
+                for f in data/minecraft/recipe/black_shulker_box.json data/minecraft/advancement/story/root.json data/minecraft/advancement/story/mine_stone.json data/minecraft/advancement/husbandry/tame_an_animal.json; do
+                  if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
+                done
+              done
+              p net.minecraft.util.ExtraCodecs 'NON_NEGATIVE_INT|POSITIVE_INT'
+              p net.minecraft.world.item.BlockItem 'getBlock'
+              p net.minecraft.world.entity.monster.Creeper 'getSwellDir|isIgnited|isPowered'
+              p net.minecraft.world.level.gameevent.GameEvent 'BLOCK_PLACE'
+              p net.minecraft.world.entity.Entity 'getCustomName|setGlowingTag|hasGlowingTag'
+              p net.minecraft.world.item.ItemStack ' has\(| get\(| set\(|getOrDefault'
+              p net.minecraft.core.component.DataComponentHolder
               ;;
             c)
               p net.minecraft.world.entity.LivingEntity 'setItemSlot|getItemBySlot|getMainHandItem|isSleeping|getSleepingPos|setItemInHand'
