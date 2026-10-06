@@ -3,7 +3,7 @@
 	"id": "kumpel",
 	"version": "${version}",
 	"name": "Kumpel",
-	"description": "A small golem buddy that follows you, collects items, senses ores and levels up from copper to netherite. Fully configurable, with JEI and REI support.",
+	"description": "A small mining golem that follows you, collects items, senses and mines ores, lights up dark tunnels and levels up from copper to netherite. Fully configurable, with JEI and REI support.",
 	"authors": [
 		"chaos634"
 	],

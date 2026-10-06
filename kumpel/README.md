@@ -40,7 +40,9 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | **Kanarienvogel** | Give it a **canary cage** and it carries a canary on its shoulder, like miners did. The canary makes monsters near you glow, warns you about them and about running out of air underwater, and lets your Kumpel notice creepers from further away. |
 | **Its core survives** | If a Kumpel dies, it leaves a **cracked core** with its name and 80 % of its XP. Repair it with a copper block in a crafting table and use it to bring your Kumpel back. |
 
-![A Kumpel pointing at buried diamond ore](../.github/media/kumpel/ore-sensing.jpg)
+![A Kumpel pointing at buried diamond ore, which glows through the ground](../.github/media/kumpel/ore-sensing.jpg)
+
+![On Barbaratag: a Kumpel dancing to a jukebox, the Grubenhelm on an armor stand, and a Hauer with its pickaxe and canary](../.github/media/kumpel/zeche.jpg)
 
 ## Controls
 
