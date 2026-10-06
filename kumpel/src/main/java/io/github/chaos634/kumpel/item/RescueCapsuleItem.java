@@ -82,7 +82,9 @@ public class RescueCapsuleItem extends Item {
 		if (!level.dimensionType().hasSkyLight() || level.dimensionType().hasCeiling()) {
 			return "no_sky";
 		}
-		if (level.canSeeSky(player.blockPosition())) {
+		// The same column check as pullUp(), so the two always agree (sky light can lag behind).
+		BlockPos pos = player.blockPosition();
+		if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) <= pos.getY()) {
 			return "already_up";
 		}
 
