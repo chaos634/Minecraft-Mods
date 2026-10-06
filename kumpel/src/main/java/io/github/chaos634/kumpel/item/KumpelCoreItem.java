@@ -19,6 +19,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 
+import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelTier;
@@ -55,11 +56,13 @@ public class KumpelCoreItem extends Item {
 		kumpel.setPersistenceRequired();
 		if (player != null) {
 			kumpel.tame(player);
+			KumpelAdvancements.award(player, KumpelAdvancements.GLUECK_AUF);
 		}
 
 		KumpelSoul soul = stack.get(ModComponents.SOUL);
 		if (soul != null) {
 			kumpel.loadSoul(soul);
+			KumpelAdvancements.award(player, KumpelAdvancements.REVIVED);
 		}
 
 		Component customName = stack.get(DataComponents.CUSTOM_NAME);

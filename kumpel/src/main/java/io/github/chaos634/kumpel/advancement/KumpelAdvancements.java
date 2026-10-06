@@ -9,12 +9,14 @@ import net.minecraft.world.entity.Entity;
 import io.github.chaos634.kumpel.Kumpel;
 
 /**
- * The Kumpel advancements. Most are triggered by vanilla criteria in their JSON files; the ones listed here
- * have a single {@code minecraft:impossible} criterion named {@value #CODE_CRITERION} and are awarded from code.
+ * The Kumpel advancements. Apart from the root, each has a single {@code minecraft:impossible} criterion
+ * named {@value #CODE_CRITERION} and is awarded from code.
  */
 public final class KumpelAdvancements {
 	public static final String CODE_CRITERION = "code";
 
+	public static final String GLUECK_AUF = "glueck_auf";
+	public static final String REVIVED = "revived";
 	public static final String MAX_LEVEL = "max_level";
 	public static final String FULL_CREW = "full_crew";
 	public static final String SHIFT_END = "shift_end";
@@ -23,10 +25,9 @@ public final class KumpelAdvancements {
 	public static final String STEIGERLIED = "steigerlied";
 	public static final String BARBARA = "barbara";
 
-	/** Every advancement the mod ships, including the ones triggered from JSON. */
+	/** Every advancement the mod ships. */
 	public static final List<String> ALL = List.of(
-			"root", "glueck_auf", "back_from_the_dead",
-			MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA);
+			"root", GLUECK_AUF, REVIVED, MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA);
 
 	private KumpelAdvancements() {
 	}

@@ -28,7 +28,7 @@ public final class Steigerlied {
 		// Looking through the block entities of the nearby chunks is much cheaper than checking every block.
 		for (int chunkX = minX; chunkX <= maxX; chunkX++) {
 			for (int chunkZ = minZ; chunkZ <= maxZ; chunkZ++) {
-				if (!level.hasChunkAt(new BlockPos(SectionPos.sectionToBlockCoord(chunkX), center.getY(), SectionPos.sectionToBlockCoord(chunkZ)))) {
+				if (!isChunkLoaded(level, chunkX, chunkZ)) {
 					continue;
 				}
 
@@ -47,5 +47,11 @@ public final class Steigerlied {
 		}
 
 		return nearest;
+	}
+
+	// hasChunkAt is deprecated, but still the way to check whether a chunk is loaded without loading it.
+	@SuppressWarnings("deprecation")
+	private static boolean isChunkLoaded(ServerLevel level, int chunkX, int chunkZ) {
+		return level.hasChunkAt(new BlockPos(SectionPos.sectionToBlockCoord(chunkX), 0, SectionPos.sectionToBlockCoord(chunkZ)));
 	}
 }

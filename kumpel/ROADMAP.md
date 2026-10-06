@@ -39,25 +39,25 @@ Legende: ✅ fertig · 🔨 in Arbeit · 💭 Idee
   - Kategorie „Erzsuche“: Erz → ab welcher Stufe es gespürt wird
 - ✅ **Saubere Repo-Struktur**: jede Mod in einem eigenen Ordner, aufgebaut wie ein normales Mod-Projekt
 
-## Phase 2: Der Kumpel wird erwachsen
+## Phase 2: Der Kumpel wird erwachsen ✅
 
-- **Die Kiepe**: Der Kumpel hat einen eigenen Rucksack, den du mit Schleichen + Rechtsklick öffnest. Er wächst mit der Stufe (9 → 27 Plätze).
-- **Der Kern bewahrt die Seele**: Stirbt ein Kumpel, bleibt ein *gesprungener Kern* mit Name, Stufe und EP zurück. Mit Kupfer reparieren, wieder einsetzen, und dein Kumpel ist zurück.
-- **Einpacken**: Mit einem leeren Kern holst du deinen Kumpel zurück in den Kern, um umzuziehen oder die Dimension zu wechseln.
-- **Grubenlampe**: Gibst du ihm Fackeln, stellt er sie in dunklen Höhlengängen selbst auf.
-- **Schlagwetter-Warnung**: Er spürt Creeper, bevor du sie hörst, und lässt sie durch Wände leuchten. Er warnt auch vor Lava direkt neben dir.
-- **Henkelmann**: Hat er Essen in der Kiepe und dein Hunger wird knapp, reicht er dir dein Bütterken.
-- **Feierabend**: Wenn du schlafen gehst, setzen sich Kumpels in deiner Nähe hin, und am Morgen geht die Schicht weiter.
+- ✅ **Die Kiepe**: Der Kumpel hat einen eigenen Rucksack, den du mit Schleichen + Rechtsklick öffnest. Er wächst mit der Stufe (9 → 27 Plätze).
+- ✅ **Der Kern bewahrt die Seele**: Stirbt ein Kumpel, bleibt ein *gesprungener Kern* mit Name, Stufe und EP zurück. Mit einem Kupferblock reparieren, wieder einsetzen, und dein Kumpel ist zurück.
+- ✅ **Einpacken**: Mit einem leeren Kern holst du deinen Kumpel zurück in den Kern, um umzuziehen oder die Dimension zu wechseln.
+- ✅ **Grubenlampe**: Gibst du ihm Fackeln, stellt er sie in dunklen Höhlengängen selbst auf.
+- ✅ **Schlagwetter-Warnung**: Er spürt Creeper, bevor du sie hörst, und lässt sie durch Wände leuchten. Er warnt auch vor Lava direkt neben dir.
+- ✅ **Henkelmann**: Hat er Essen in der Kiepe und dein Hunger wird knapp, reicht er dir dein Bütterken.
+- ✅ **Feierabend**: Wenn du schlafen gehst, setzen sich Kumpels in deiner Nähe hin, und am Morgen geht die Schicht weiter.
 
-## Phase 3: Die Zeche
+## Phase 3: Die Zeche ✅
 
-- **Steigerpfeife**: Ruft alle deine Kumpels zu dir. Mit Schleichen schickt sie alle in die Pause.
-- **Lagerkiste**: Mit der Pfeife markierst du eine Kiste, dann bringt der Kumpel seine Beute dorthin statt zu dir. Funktioniert mit allem, was die Fabric Transfer API kennt, also auch Modded-Lager.
-- **Hauer-Modus**: Mit einer Spitzhacke in der Hand baut er freiliegende Erze selbst ab. Die Werkzeugstufe zählt, die Hacke nutzt sich ab, und das Ganze lässt sich abschalten.
-- **Wünschelrute**: Hochstufige Kumpels lassen gefundenes Erz kurz durch Wände aufleuchten.
-- **Fortschritte**: „Glück auf!“, „Vom Kupfer zum Netherit“, „Ganze Belegschaft“ (5 Kumpels), „Schicht im Schacht“, „Hauer“
-- **Barbaratag** (4. Dezember, die Schutzpatronin der Bergleute): Kumpels tragen einen Barbarazweig und feiern ein bisschen.
-- **Steigerlied**: Läuft in der Nähe eine Jukebox, tanzen die Kumpels.
+- ✅ **Steigerpfeife**: Ruft alle deine Kumpels zu dir. Mit Schleichen schickt sie alle in die Pause.
+- ✅ **Lagerkiste**: Mit der Pfeife markierst du eine Kiste, dann bringt der Kumpel seine Beute dorthin statt zu dir. Funktioniert mit allem, was die Fabric Transfer API kennt, also auch Modded-Lager.
+- ✅ **Hauer-Modus**: Mit einer Spitzhacke in der Hand baut er freiliegende Erze selbst ab. Die Werkzeugstufe zählt, Verzauberungen wie Glück und Behutsamkeit auch, die Hacke nutzt sich ab, und das Ganze lässt sich abschalten (Config und `mobGriefing`). Die Hacke bekommst du zurück, wenn du seine Kiepe öffnest.
+- ✅ **Wünschelrute**: Hochstufige Kumpels lassen gefundenes Erz kurz durch Wände aufleuchten.
+- ✅ **Fortschritte**: „Glück auf!“, „Wieder da!“, „Ordnung muss sein“, „Hauer“, „Schicht im Schacht“, „Der Steiger kommt“, „Ganze Belegschaft“ (5 Kumpels), „Vom Kupfer zum Netherit“ und ein versteckter für den 4. Dezember
+- ✅ **Barbaratag** (4. Dezember, die Schutzpatronin der Bergleute): Kumpels tragen einen blühenden Barbarazweig am Helm, wünschen dir „Glück auf!“, und Füttern gibt doppelte EP.
+- ✅ **Steigerlied**: Läuft in der Nähe eine Jukebox, tanzen die Kumpels.
 
 ## Phase 4: Träume 💭
 

@@ -1,5 +1,5 @@
 {
-  "parent": "kumpel:root",
+  "parent": "kumpel:glueck_auf",
   "criteria": {
     "code": {
       "trigger": "minecraft:impossible"
@@ -7,13 +7,13 @@
   },
   "display": {
     "title": {
-      "translate": "advancements.kumpel.glueck_auf.title"
+      "translate": "advancements.kumpel.revived.title"
     },
     "description": {
-      "translate": "advancements.kumpel.glueck_auf.description"
+      "translate": "advancements.kumpel.revived.description"
     },
     "icon": {
-      "id": "minecraft:copper_ingot"
+      "id": "kumpel:cracked_kumpel_core"
     }
   },
   "requirements": [

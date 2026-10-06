@@ -329,6 +329,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				tame(player);
 				setOrderedToSit(false);
 				level().broadcastEntityEvent(this, (byte) 7);
+				KumpelAdvancements.award(player, KumpelAdvancements.GLUECK_AUF);
 				player.sendOverlayMessage(Component.translatable("message.kumpel.tamed", getDisplayName()));
 			}
 
