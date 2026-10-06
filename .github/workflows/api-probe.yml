@@ -1,0 +1,146 @@
+# TEMPORARY: prints Minecraft 26.3 class signatures (javap) so the mod can be written
+# against the exact API. Will be removed once the mod builds.
+
+name: api-probe
+
+on:
+  push:
+    branches: [claude/fervent-cray-y1lqfh]
+    paths: ['.github/workflows/api-probe.yml']
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [entity, mob, living, base, misc, client]
+    defaults:
+      run:
+        working-directory: kumpel
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: resolve classpath
+        run: |
+          chmod +x ./gradlew
+          cat >> build.gradle <<'EOF'
+          tasks.register('printClientCp') {
+            def cp = sourceSets.client.compileClasspath
+            doLast { println "CP=" + cp.asPath }
+          }
+          EOF
+          ./gradlew --no-configuration-cache -q printClientCp | grep '^CP=' | sed 's/^CP=//' > /tmp/cp.txt
+          tr ':' '\n' < /tmp/cp.txt | grep -i -E 'minecraft|mojang' | grep -v fabric || true
+      - name: javap
+        env:
+          GROUP: ${{ matrix.group }}
+        run: |
+          CP=$(cat /tmp/cp.txt)
+          MCJARS=$(tr ':' '\n' < /tmp/cp.txt | grep -i -E 'minecraft' | grep -v -i fabric)
+          p() {
+            echo "##### $1"
+            if [ -n "$2" ]; then javap -cp "$CP" -protected "$1" 2>&1 | grep -E "$2" || true
+            else javap -cp "$CP" -protected "$1" 2>&1 || true; fi
+          }
+          ls_jar() {
+            echo "##### jar entries matching $1"
+            for j in $MCJARS; do unzip -Z1 "$j" 2>/dev/null | grep -E "$1" | grep -v '\$' ; done | sort -u
+          }
+          case "$GROUP" in
+            entity)
+              ls_jar 'world/entity/ai/goal/[A-Za-z]+\.class'
+              ls_jar '(InventoryCarrier|Allay|IronGolem|CopperGolem|EntityReference|OwnableEntity)\.class'
+              p net.minecraft.world.entity.TamableAnimal
+              p net.minecraft.world.entity.animal.Animal
+              p net.minecraft.world.entity.AgeableMob
+              p net.minecraft.world.entity.PathfinderMob
+              p net.minecraft.world.entity.OwnableEntity
+              p net.minecraft.world.entity.EntityReference
+              p net.minecraft.world.entity.EntitySpawnReason
+              p net.minecraft.world.entity.EntityType 'create|spawn|Builder|sized|eyeHeight|clientTrackingRange|build'
+              p net.minecraft.world.entity.ai.goal.Goal
+              p net.minecraft.world.entity.ai.goal.FollowOwnerGoal
+              p net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal
+              p net.minecraft.world.entity.ai.goal.FloatGoal
+              p net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal
+              p net.minecraft.world.entity.ai.goal.LookAtPlayerGoal
+              p net.minecraft.world.entity.ai.goal.RandomLookAroundGoal
+              p net.minecraft.world.entity.ai.navigation.PathNavigation
+              p net.minecraft.world.entity.ai.control.LookControl
+              p net.minecraft.world.entity.ai.attributes.AttributeInstance
+              p net.minecraft.world.entity.ai.attributes.Attributes
+              p net.minecraft.world.entity.item.ItemEntity
+              p net.minecraft.world.SimpleContainer
+              p net.minecraft.world.ContainerHelper
+              p net.minecraft.world.entity.npc.InventoryCarrier
+              p net.minecraft.world.level.storage.ValueOutput
+              p net.minecraft.world.level.storage.ValueInput
+              ;;
+            mob)
+              p net.minecraft.world.entity.Mob
+              ;;
+            living)
+              p net.minecraft.world.entity.LivingEntity
+              ;;
+            base)
+              p net.minecraft.world.entity.Entity
+              ;;
+            misc)
+              ls_jar '(allay/Allay|golem/IronGolem|CopperGolem)\.class'
+              p net.minecraft.world.entity.animal.allay.Allay
+              p net.minecraft.world.entity.animal.golem.IronGolem
+              p net.minecraft.world.entity.player.Player 'Message|getInventory|addItem|isCreative|getAbilities|isShiftKeyDown|isSecondaryUseActive|playNotifySound|giveExperience'
+              p net.minecraft.world.entity.player.Inventory 'add|placeItemBack|getFreeSlot'
+              p net.minecraft.server.level.ServerPlayer 'Message|playNotifySound|sendSystem|displayClient'
+              p net.minecraft.server.level.ServerLevel 'sendParticles|playSound|getEntities|getGameRules'
+              p net.minecraft.world.level.Level 'playSound|isClientSide|getBlockState|addParticle|getEntitiesOfClass|random|getGameTime|levelEvent|broadcastEntityEvent'
+              p net.minecraft.world.item.Item 'useOn|use\(|appendHoverText|Properties|interactLivingEntity|getName|getDescriptionId'
+              p net.minecraft.world.item.Item\$Properties
+              p net.minecraft.world.item.ItemStack 'consume|shrink|is\(|getHoverName|getCount|isEmpty|copy|split|getItem\(|hurtAndBreak|getItemName'
+              p net.minecraft.world.item.context.UseOnContext
+              p net.minecraft.world.InteractionResult
+              p net.minecraft.tags.BlockTags 'ORE|DEBRIS'
+              p net.minecraft.tags.ItemTags 'COPPER|IRON|GOLD|DIAMOND'
+              p net.minecraft.core.particles.ParticleTypes
+              p net.minecraft.sounds.SoundEvents 'AMETHYST|IRON_GOLEM|COPPER_GOLEM|LEVELUP|NOTE_BLOCK|ITEM_PICKUP|EXPERIENCE|ALLAY'
+              p net.minecraft.world.damagesource.DamageSource 'getEntity|is\('
+              p net.minecraft.network.chat.Component 'translatable|literal|empty'
+              p net.minecraft.network.chat.MutableComponent 'withStyle|append|withColor'
+              p net.minecraft.world.level.block.state.BlockBehaviour\$BlockStateBase ' is\(|getBlock\(|isAir'
+              p net.minecraft.world.level.block.Block 'getName|asItem'
+              p net.minecraft.core.BlockPos 'betweenClosed|offset|getCenter|distSqr|closerThan|containing|MutableBlockPos'
+              p net.minecraft.util.Mth 'DEG_TO_RAD|RAD_TO_DEG|PI|cos|sin|clamp|lerp|atan2|wrapDegrees'
+              ;;
+            client)
+              ls_jar 'client/model/.*(IronGolem|CopperGolem|Allay)[A-Za-z]*\.class'
+              ls_jar 'client/renderer/entity/(IronGolem|CopperGolem|Allay|Wolf)[A-Za-z]*\.class'
+              ls_jar 'client/renderer/entity/state/(IronGolem|CopperGolem|Allay|Wolf|LivingEntity|Entity)[A-Za-z]*\.class'
+              ls_jar 'client/renderer/entity/layers/[A-Za-z]+\.class'
+              p net.minecraft.client.renderer.entity.MobRenderer
+              p net.minecraft.client.renderer.entity.LivingEntityRenderer
+              p net.minecraft.client.renderer.entity.EntityRenderer
+              p net.minecraft.client.renderer.entity.EntityRenderers 'register'
+              p net.minecraft.client.renderer.entity.EntityRendererProvider\$Context
+              p net.minecraft.client.renderer.entity.state.LivingEntityRenderState
+              p net.minecraft.client.renderer.entity.state.EntityRenderState
+              p net.minecraft.client.model.EntityModel
+              p net.minecraft.client.model.Model
+              p net.minecraft.client.model.geom.ModelPart
+              p net.minecraft.client.model.geom.PartPose
+              p net.minecraft.client.model.geom.builders.CubeListBuilder
+              p net.minecraft.client.model.geom.builders.PartDefinition
+              p net.minecraft.client.model.geom.builders.LayerDefinition
+              p net.minecraft.client.model.geom.PartNames
+              p net.minecraft.client.renderer.entity.layers.EyesLayer
+              p net.minecraft.client.renderer.entity.layers.RenderLayer
+              p net.minecraft.client.renderer.entity.IronGolemRenderer
+              p net.minecraft.client.renderer.entity.state.IronGolemRenderState
+              p net.minecraft.client.renderer.entity.WolfRenderer
+              p net.minecraft.client.renderer.entity.state.WolfRenderState
+              ;;
+          esac
