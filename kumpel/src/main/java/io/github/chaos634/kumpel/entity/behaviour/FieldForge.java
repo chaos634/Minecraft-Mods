@@ -19,6 +19,7 @@ import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelPockets;
+import io.github.chaos634.kumpel.entity.ShiftLog;
 
 /**
  * Feldschmiede: a small furnace on the Kumpel's back. It smelts raw ores from the backpack, one at a time,
@@ -66,6 +67,7 @@ public class FieldForge {
 		pockets.addToPockets(smelt.result());
 		fuel--;
 		kumpel.addExperience(1);
+		kumpel.getLog().add(ShiftLog.Entry.ITEMS_SMELTED);
 		KumpelAdvancements.award(kumpel.getOwner(), KumpelAdvancements.HUETTE);
 	}
 

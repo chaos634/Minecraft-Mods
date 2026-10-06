@@ -81,3 +81,13 @@ Der Kumpel arbeitet selbstständiger, bekommt Charakter und spricht mehr Sprache
 - ✅ **`/kumpel list`**: Zeigt alle deine geladenen Kumpels mit Stufe, Ort und was sie gerade tun.
 - ✅ **Eigene Sounds**: Eine echte Trillerpfeife für die Steigerpfeife, selbst erzeugt.
 - ✅ **Mehr Sprachen**: Polnisch und Türkisch (viele Bergleute im Ruhrgebiet kamen von dort), dazu Niederländisch, Französisch und Spanisch.
+
+## Phase 6: Grubenwehr & Seilfahrt
+
+Der Kumpel passt auf dich auf, und die Zeche bekommt einen Aufzug.
+
+- 🔨 **Grubenwehr**: Der Kumpel verteidigt dich. Greift dich ein Monster an (oder greifst du eins an), geht er mit. Mit einer Waffe oder Spitzhacke in der Hand haut er fester zu. Creeper lässt er in Ruhe, die überlässt er der Schlagwetter-Warnung. Abschaltbar.
+- 🔨 **Förderkorb**: Ein Aufzug-Block für Schächte. Rechtsklick fährt dich zum nächsten Förderkorb darüber, Schleichen + Rechtsklick zum nächsten darunter. Deine Kumpels in der Nähe fahren mit („Seilfahrt!“).
+- 🔨 **Schichtbuch**: Der Kumpel führt Buch: gefundene Erze, abgebaute Erze, gegrabene Blöcke, eingesammelte Items, geschmolzene Barren. Gibst du ihm ein Buch, schreibt er dir seinen Schichtbericht hinein.
+- 🔨 **Zeitansage unter Tage**: Wenn es draußen dunkel wird oder die Sonne aufgeht, sagt er dir Bescheid. Unter Tage merkt man das ja sonst nicht.
+- 🔨 **Kumpel-Treff**: Treffen sich zwei deiner Kumpels, grüßen sie sich mit „Glück auf!“.

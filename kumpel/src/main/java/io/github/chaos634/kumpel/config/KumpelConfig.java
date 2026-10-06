@@ -213,6 +213,13 @@ public final class KumpelConfig {
 		public int smeltTicks = 100;
 		/** Item tags the field forge smelts. */
 		public List<String> smeltTags = new ArrayList<>(List.of("c:raw_materials", "c:ores"));
+
+		/** Grubenwehr: Kumpels fight monsters that attack you or that you attack. Creepers are left alone. */
+		public boolean defendOwner = true;
+		/** Attack damage at level 1; every further level adds one more. */
+		public double attackDamage = 3.0;
+		/** Underground, Kumpels tell you when the sun sets or rises. */
+		public boolean timeAnnouncements = true;
 	}
 
 	private static List<Tier> defaultTiers() {

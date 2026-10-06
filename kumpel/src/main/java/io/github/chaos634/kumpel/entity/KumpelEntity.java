@@ -2,9 +2,12 @@ package io.github.chaos634.kumpel.entity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import net.minecraft.ChatFormatting;
@@ -14,12 +17,14 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.Filterable;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -32,6 +37,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,17 +48,23 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.InfestedBlock;
@@ -118,6 +130,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final int TREASURE_LINES = 3;
 	/** Ores at least this valuable make the Kumpel cheer. */
 	private static final int TREASURE_VALUE = 60;
+	private static final int GREETING_COOLDOWN = 12000;
+	/** When each owner last heard about sunset or sunrise, so several Kumpels don't all say it. */
+	private static final Map<UUID, Long> LAST_TIME_ANNOUNCEMENT = new HashMap<>();
 	private static final int POINTING_TICKS = 50;
 	private static final String[] COMPASS_DIRECTIONS = {
 			"north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"
@@ -151,6 +166,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private int lastSilverfishWarning = Integer.MIN_VALUE / 2;
 	private int nextChatter = -1;
 	private TunnelOrder tunnel;
+	private final ShiftLog log = new ShiftLog();
+	private Boolean wasBrightOutside;
+	private final Map<UUID, Integer> lastGreetings = new HashMap<>();
 
 	public KumpelEntity(EntityType<? extends KumpelEntity> type, Level level) {
 		super(type, level);
@@ -164,21 +182,27 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				.add(Attributes.MAX_HEALTH, first.maxHealth())
 				.add(Attributes.MOVEMENT_SPEED, first.movementSpeed())
 				.add(Attributes.FOLLOW_RANGE, 32.0)
-				.add(Attributes.KNOCKBACK_RESISTANCE, 0.4);
+				.add(Attributes.KNOCKBACK_RESISTANCE, 0.4)
+				.add(Attributes.ATTACK_DAMAGE, KumpelSettings.get().behaviour().attackDamage);
 	}
 
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new FloatGoal(this));
 		this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
-		this.goalSelector.addGoal(2, new DeliverItemsGoal(this, 1.15));
-		this.goalSelector.addGoal(3, new DigTunnelGoal(this, 1.0));
-		this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
-		this.goalSelector.addGoal(5, new CollectItemsGoal(this, 1.15));
-		this.goalSelector.addGoal(6, new MineOreGoal(this, 1.1));
-		this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8));
-		this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+		// Grubenwehr comes first: a monster going for the owner beats any job.
+		this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.25, true));
+		this.goalSelector.addGoal(3, new DeliverItemsGoal(this, 1.15));
+		this.goalSelector.addGoal(4, new DigTunnelGoal(this, 1.0));
+		this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
+		this.goalSelector.addGoal(6, new CollectItemsGoal(this, 1.15));
+		this.goalSelector.addGoal(7, new MineOreGoal(this, 1.1));
+		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8));
+		this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+
+		this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+		this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
 	}
 
 	@Override
@@ -321,6 +345,11 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			maxHealth.setBaseValue(tier.maxHealth());
 		}
 
+		AttributeInstance damage = getAttribute(Attributes.ATTACK_DAMAGE);
+		if (damage != null) {
+			damage.setBaseValue(behaviour().attackDamage + tier.level() - 1);
+		}
+
 		AttributeInstance speed = getAttribute(Attributes.MOVEMENT_SPEED);
 		if (speed != null) {
 			speed.setBaseValue(tier.movementSpeed());
@@ -372,6 +401,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	/** What the Kumpel is busy with, as a short key for messages ({@code command.kumpel.list.activity.<key>}). */
 	public String activity() {
+		if (getTarget() != null && getTarget().isAlive()) {
+			return "fighting";
+		}
 		if (isDancing()) {
 			return "dancing";
 		}
@@ -392,6 +424,94 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		return "following";
+	}
+
+	public ShiftLog getLog() {
+		return log;
+	}
+
+	/** Schichtbuch: a written book with the Kumpel's level and everything it has done so far. */
+	public ItemStack writeShiftReport() {
+		KumpelTier tier = getTier();
+		MutableComponent cover = Component.empty()
+				.append(Component.translatable("book.kumpel.title").withStyle(ChatFormatting.BOLD))
+				.append("\n\n")
+				.append(getDisplayName())
+				.append("\n")
+				.append(Component.translatable("book.kumpel.level", tier.level(), tier.displayName()))
+				.append("\n")
+				.append(experienceProgress())
+				.append("\n")
+				.append(Component.translatable("book.kumpel.health", (int) Math.ceil(getHealth()), (int) getMaxHealth()))
+				.append("\n\n")
+				.append(Component.translatable("book.kumpel.signature"));
+
+		MutableComponent work = Component.empty();
+		for (Component line : log.lines()) {
+			work.append(line).append("\n");
+		}
+
+		String name = getName().getString();
+		String title = "Schichtbuch " + name;
+		ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
+		book.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(
+				Filterable.passThrough(title.length() > 32 ? title.substring(0, 32) : title),
+				name,
+				0,
+				List.of(Filterable.passThrough(cover), Filterable.passThrough(work)),
+				true));
+		return book;
+	}
+
+	/** Kumpel-Treff: two of the owner's Kumpels that meet greet each other. */
+	private void greetOtherKumpels(ServerLevel level, Player owner) {
+		if (!behaviour().chatter) {
+			return;
+		}
+
+		for (KumpelEntity other : level.getEntitiesOfClass(KumpelEntity.class, getBoundingBox().inflate(4.0),
+				kumpel -> kumpel != this && kumpel.isAlive() && kumpel.isOwnedBy(owner))) {
+			Integer last = lastGreetings.get(other.getUUID());
+			if (last != null && tickCount - last < GREETING_COOLDOWN) {
+				continue;
+			}
+
+			lastGreetings.put(other.getUUID(), tickCount);
+			other.lastGreetings.put(getUUID(), other.tickCount);
+			getLookControl().setLookAt(other, 30.0F, 30.0F);
+			other.getLookControl().setLookAt(this, 30.0F, 30.0F);
+			level.sendParticles(ParticleTypes.NOTE, getX(), getY() + 1.3, getZ(), 1, 0.0, 0.0, 0.0, 0.5);
+			if (distanceToSqr(owner) < 16.0 * 16.0) {
+				owner.sendOverlayMessage(Component.translatable("chatter.kumpel.say", getDisplayName(),
+						Component.translatable("chatter.kumpel.greet", other.getDisplayName())).withStyle(ChatFormatting.GRAY));
+			}
+			return;
+		}
+	}
+
+	/** Underground you can't see the sun, so the Kumpel tells its owner when it rises or sets. */
+	private void announceTime(ServerLevel level, Player owner) {
+		if (!behaviour().timeAnnouncements || !level.dimensionType().hasSkyLight() || level.dimensionType().hasFixedTime()) {
+			wasBrightOutside = null;
+			return;
+		}
+
+		boolean bright = level.isBrightOutside();
+		boolean changed = wasBrightOutside != null && bright != wasBrightOutside;
+		wasBrightOutside = bright;
+		if (!changed || level.canSeeSky(owner.blockPosition())) {
+			return;
+		}
+
+		long now = level.getGameTime();
+		Long last = LAST_TIME_ANNOUNCEMENT.get(owner.getUUID());
+		if (last != null && now - last < 1200) {
+			return;
+		}
+
+		LAST_TIME_ANNOUNCEMENT.put(owner.getUUID(), now);
+		owner.sendSystemMessage(Component.translatable(bright ? "message.kumpel.time.dawn" : "message.kumpel.time.dusk", getDisplayName())
+				.withStyle(ChatFormatting.YELLOW));
 	}
 
 	/** Gives the Kumpel a random name from the config, unless it already has one. */
@@ -464,6 +584,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				|| packing
 				|| stack.is(Items.COMPASS)
 				|| stack.is(ItemTags.PICKAXES)
+				|| stack.is(Items.BOOK)
 				|| (stack.is(ModItems.CANARY_CAGE) && !hasCanary())
 				|| (stack.is(ModItems.FIELD_FORGE) && !hasForge())
 				|| KumpelPockets.isTorch(stack)
@@ -487,6 +608,18 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			player.setItemInHand(hand, previous);
 			playSound(SoundEvents.COPPER_GOLEM_ITEM_GET, 1.0F, 1.0F);
 			player.sendOverlayMessage(Component.translatable(canMineAtAll() ? "message.kumpel.hauer" : "message.kumpel.hauer.disabled", getDisplayName()));
+		} else if (stack.is(Items.BOOK)) {
+			ItemStack report = writeShiftReport();
+			stack.consume(1, player);
+			playSound(SoundEvents.COPPER_GOLEM_ITEM_GET, 1.0F, 1.2F);
+			if (player.getItemInHand(hand).isEmpty()) {
+				player.setItemInHand(hand, report);
+				if (player instanceof ServerPlayer serverPlayer) {
+					serverPlayer.openItemGui(report, hand);
+				}
+			} else if (level() instanceof ServerLevel serverLevel) {
+				giveOrDrop(serverLevel, player, report);
+			}
 		} else if (stack.is(ModItems.FIELD_FORGE)) {
 			stack.consume(1, player);
 			setForge(true);
@@ -700,6 +833,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				long inserted = target.insert(ItemVariant.of(stack), stack.getCount(), transaction);
 				stack.shrink((int) inserted);
 				delivered += inserted;
+				log.add(ShiftLog.Entry.ITEMS_DELIVERED, inserted);
 			}
 			transaction.commit();
 		}
@@ -825,6 +959,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		level.destroyBlock(pos, false, this);
 		Block.dropResources(state, level, pos, blockEntity, this, tool);
 		tool.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
+		log.add(ShiftLog.Entry.ORES_MINED);
 
 		addExperience(behaviour().experiencePerOreMined + (rule != null ? rule.level() : 0));
 		KumpelAdvancements.award(getOwner(), KumpelAdvancements.HAUER);
@@ -898,6 +1033,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			owner.sendSystemMessage(Component.translatable("message.kumpel.tunnel.done", getDisplayName(), tunnel.length()).withStyle(ChatFormatting.GOLD));
 			KumpelAdvancements.award(owner, KumpelAdvancements.VOR_ORT);
 		}
+		log.add(ShiftLog.Entry.TUNNELS_DUG);
 		playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
 		tunnel = null;
 		setMining(false);
@@ -969,6 +1105,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		state.spawnAfterBreak(level, pos, tool, true);
 		level.destroyBlock(pos, false, this);
+		log.add(ShiftLog.Entry.BLOCKS_DUG);
 		for (ItemStack drop : drops) {
 			ItemStack rest = pockets.addToPockets(drop);
 			if (!rest.isEmpty()) {
@@ -1061,6 +1198,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		take(item, taken);
+		log.add(ShiftLog.Entry.ITEMS_COLLECTED, taken);
 		if (remainder.isEmpty()) {
 			item.discard();
 		} else {
@@ -1085,6 +1223,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		ticksSinceLastPickup = 0;
+		log.add(ShiftLog.Entry.ITEMS_DELIVERED, delivered);
 
 		if (delivered > 0) {
 			playSound(SoundEvents.ALLAY_ITEM_GIVEN, 0.8F, 1.0F);
@@ -1139,7 +1278,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		if (isTame() && getOwner() instanceof Player owner && owner.level() == level) {
 			double distanceSq = distanceToSqr(owner);
 			if (tickCount % 10 == 0 && !isOrderedToSit() && distanceSq < 24.0 * 24.0) {
-				MinerLamp.tryPlaceTorch(this, level);
+				if (MinerLamp.tryPlaceTorch(this, level)) {
+					log.add(ShiftLog.Entry.TORCHES_PLACED);
+				}
 			}
 			if (tickCount % 10 == 5 && distanceSq < 32.0 * 32.0) {
 				dangerSense.tick(this, level, owner);
@@ -1158,6 +1299,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			}
 			if (tickCount % 20 == 5) {
 				tickChatter(owner);
+			}
+			if (tickCount % 100 == 25) {
+				greetOtherKumpels(level, owner);
+				announceTime(level, owner);
 			}
 		}
 	}
@@ -1309,6 +1454,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	private void announceOre(ServerLevel level, Player owner, SensedOre sensed) {
+		log.add(ShiftLog.Entry.ORES_SENSED);
 		BlockPos orePos = sensed.pos();
 		Vec3 eyes = new Vec3(getX(), getEyeY(), getZ());
 		Vec3 ore = Vec3.atCenterOf(orePos);
@@ -1373,6 +1519,23 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	// ------------------------------------------------------------------
 	// Golem traits
+
+	/** Grubenwehr: only monsters, and never creepers (those are for the Schlagwetter warning). */
+	@Override
+	public boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
+		return behaviour().defendOwner && target instanceof Enemy && !(target instanceof Creeper) && super.wantsToAttack(target, owner);
+	}
+
+	@Override
+	public boolean doHurtTarget(ServerLevel level, Entity target) {
+		boolean hit = super.doHurtTarget(level, target);
+		if (hit && target instanceof LivingEntity living && !living.isAlive()) {
+			log.add(ShiftLog.Entry.MONSTERS_DEFEATED);
+			KumpelAdvancements.award(getOwner(), KumpelAdvancements.GRUBENWEHR);
+		}
+
+		return hit;
+	}
 
 	@Override
 	public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
@@ -1483,6 +1646,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		output.putBoolean("canary", hasCanary());
 		output.putBoolean("field_forge", hasForge());
 		forge.save(output);
+		log.save(output);
 		if (tunnel != null) {
 			output.store("tunnel", TunnelOrder.CODEC, tunnel);
 		}
@@ -1500,6 +1664,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		setCanary(input.getBooleanOr("canary", false));
 		setForge(input.getBooleanOr("field_forge", false));
 		forge.load(input);
+		log.load(input);
 		tunnel = input.read("tunnel", TunnelOrder.CODEC).orElse(null);
 		readInventoryFromTag(input);
 

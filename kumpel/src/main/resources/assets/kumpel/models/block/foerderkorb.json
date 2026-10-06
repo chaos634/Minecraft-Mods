@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "kumpel:block/foerderkorb_top",
+    "side": "kumpel:block/foerderkorb_side"
+  }
+}

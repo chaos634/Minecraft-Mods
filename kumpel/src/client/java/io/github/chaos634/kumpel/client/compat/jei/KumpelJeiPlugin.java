@@ -12,6 +12,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.compat.KumpelGuideData;
+import io.github.chaos634.kumpel.registry.ModBlocks;
 import io.github.chaos634.kumpel.registry.ModItems;
 
 /**
@@ -43,6 +44,7 @@ public class KumpelJeiPlugin implements IModPlugin {
 		registration.addIngredientInfo(ModItems.STEIGER_WHISTLE, Component.translatable("guide.kumpel.steiger_whistle"));
 		registration.addIngredientInfo(ModItems.CANARY_CAGE, Component.translatable("guide.kumpel.canary_cage"));
 		registration.addIngredientInfo(ModItems.FIELD_FORGE, Component.translatable("guide.kumpel.field_forge"));
+		registration.addIngredientInfo(ModBlocks.FOERDERKORB, Component.translatable("guide.kumpel.foerderkorb"));
 		registration.addIngredientInfo(ModItems.MINER_HELMET, Component.translatable("guide.kumpel.miner_helmet"));
 		registration.addIngredientInfo(ModItems.KUMPEL_SPAWN_EGG, Component.translatable("guide.kumpel.spawn_egg"));
 	}

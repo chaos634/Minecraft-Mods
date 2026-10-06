@@ -22,5 +22,17 @@
     "sounds": [
       "kumpel:entity/kumpel/cheer"
     ]
+  },
+  "block.foerderkorb.up": {
+    "subtitle": "subtitles.kumpel.foerderkorb.up",
+    "sounds": [
+      "kumpel:block/foerderkorb/up"
+    ]
+  },
+  "block.foerderkorb.down": {
+    "subtitle": "subtitles.kumpel.foerderkorb.down",
+    "sounds": [
+      "kumpel:block/foerderkorb/down"
+    ]
   }
 }

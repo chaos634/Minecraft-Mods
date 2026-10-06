@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "I": "minecraft:iron_bars"
+  },
+  "pattern": [
+    "CIC",
+    "I I",
+    "CIC"
+  ],
+  "result": {
+    "id": "kumpel:foerderkorb",
+    "count": 2
+  }
+}

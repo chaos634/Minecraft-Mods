@@ -61,6 +61,7 @@ public final class ModItems {
 				output.accept(STEIGER_WHISTLE);
 				output.accept(CANARY_CAGE);
 				output.accept(FIELD_FORGE);
+				output.accept(ModBlocks.FOERDERKORB);
 				output.accept(MINER_HELMET);
 				output.accept(KUMPEL_SPAWN_EGG);
 			})

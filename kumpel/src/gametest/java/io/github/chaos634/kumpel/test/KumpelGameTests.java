@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -42,9 +44,12 @@ import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.entity.OreRule;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
+import io.github.chaos634.kumpel.block.FoerderkorbBlock;
+import io.github.chaos634.kumpel.entity.ShiftLog;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.item.MinerHelmetItem;
 import io.github.chaos634.kumpel.item.SteigerWhistleItem;
+import io.github.chaos634.kumpel.registry.ModBlocks;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
 import io.github.chaos634.kumpel.registry.ModItems;
@@ -593,6 +598,66 @@ public class KumpelGameTests {
 		kumpel.setForge(false);
 		kumpel.deliverItemsTo(player);
 		helper.assertTrue(count(player.getInventory(), Items.RAW_GOLD) == 3, Component.literal("Without a forge, raw gold is loot"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 400)
+	public void defendsItsOwnerAgainstMonsters(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 2, 1, 1);
+		kumpel.tame(owner);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+		Monster husk = helper.spawn(EntityTypes.HUSK, 5, 1, 5);
+		husk.setNoAi(true);
+		Creeper creeper = helper.spawn(EntityTypes.CREEPER, 6, 1, 1);
+		creeper.setNoAi(true);
+
+		// The husk hit the owner (an unticked mock player needs a tick count for the goal to notice).
+		owner.tickCount = 100;
+		owner.setLastHurtByMob(husk);
+		helper.assertFalse(kumpel.wantsToAttack(creeper, owner), Component.literal("Creepers are left alone"));
+
+		helper.succeedWhen(() -> {
+			helper.assertFalse(husk.isAlive(), Component.literal("The Kumpel should defeat the husk"));
+			helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.MONSTERS_DEFEATED) == 1, Component.literal("The fight goes into the shift log"));
+		});
+	}
+
+	@GameTest
+	public void foerderkorbTakesPlayerAndKumpelsUpAndDown(GameTestHelper helper) {
+		buildFloor(helper);
+		helper.setBlock(2, 1, 2, ModBlocks.FOERDERKORB);
+		helper.setBlock(2, 5, 2, ModBlocks.FOERDERKORB);
+		BlockPos bottom = helper.absolutePos(new BlockPos(2, 1, 2));
+		BlockPos top = helper.absolutePos(new BlockPos(2, 5, 2));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.snapTo(Vec3.atBottomCenterOf(bottom.above()));
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 1, 3);
+		kumpel.tame(player);
+
+		helper.assertTrue(top.equals(FoerderkorbBlock.ride(helper.getLevel(), player, bottom, true)), Component.literal("Up to the top cage"));
+		helper.assertTrue(player.blockPosition().equals(top.above()), Component.literal("The player should stand on the top cage, is at " + player.blockPosition()));
+		helper.assertTrue(kumpel.blockPosition().equals(top.above()), Component.literal("The Kumpel should ride along, is at " + kumpel.blockPosition()));
+
+		helper.assertTrue(bottom.equals(FoerderkorbBlock.ride(helper.getLevel(), player, top, false)), Component.literal("Down to the bottom cage"));
+		helper.assertTrue(player.blockPosition().equals(bottom.above()), Component.literal("Back on the bottom cage"));
+		helper.assertTrue(FoerderkorbBlock.findCage(helper.getLevel(), bottom, false) == null, Component.literal("Nothing further down"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void writesItsShiftLogIntoABook(GameTestHelper helper) {
+		buildFloor(helper);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.getLog().add(ShiftLog.Entry.ORES_MINED, 3);
+		kumpel.getLog().add(ShiftLog.Entry.BLOCKS_DUG, 42);
+
+		ItemStack book = kumpel.writeShiftReport();
+		WrittenBookContent content = book.get(DataComponents.WRITTEN_BOOK_CONTENT);
+		helper.assertTrue(book.is(Items.WRITTEN_BOOK) && content != null && content.pages().size() == 2,
+				Component.literal("The report should be a written book with two pages"));
+		helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.BLOCKS_DUG) == 42, Component.literal("The log keeps counting"));
 		helper.succeed();
 	}
 

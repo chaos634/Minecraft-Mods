@@ -13,6 +13,8 @@ public final class ModSounds {
 	public static final SoundEvent WHISTLE_BREAK = register("item.steiger_whistle.break");
 	public static final SoundEvent WHISTLE_ORDER = register("item.steiger_whistle.order");
 	public static final SoundEvent KUMPEL_CHEER = register("entity.kumpel.cheer");
+	public static final SoundEvent FOERDERKORB_UP = register("block.foerderkorb.up");
+	public static final SoundEvent FOERDERKORB_DOWN = register("block.foerderkorb.down");
 
 	private ModSounds() {
 	}

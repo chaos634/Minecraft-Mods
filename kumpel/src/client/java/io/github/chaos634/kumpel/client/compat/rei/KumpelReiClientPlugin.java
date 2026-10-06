@@ -12,6 +12,7 @@ import me.shedaniel.rei.plugin.common.displays.DefaultInformationDisplay;
 import io.github.chaos634.kumpel.compat.KumpelGuideData;
 import io.github.chaos634.kumpel.compat.rei.FeedingDisplay;
 import io.github.chaos634.kumpel.compat.rei.OreSensingDisplay;
+import io.github.chaos634.kumpel.registry.ModBlocks;
 import io.github.chaos634.kumpel.registry.ModItems;
 
 /**
@@ -47,6 +48,8 @@ public class KumpelReiClientPlugin implements REIClientPlugin {
 				.line(Component.translatable("guide.kumpel.canary_cage")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.FIELD_FORGE), Component.translatable("item.kumpel.field_forge"))
 				.line(Component.translatable("guide.kumpel.field_forge")));
+		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModBlocks.FOERDERKORB), Component.translatable("block.kumpel.foerderkorb"))
+				.line(Component.translatable("guide.kumpel.foerderkorb")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.MINER_HELMET), Component.translatable("item.kumpel.miner_helmet"))
 				.line(Component.translatable("guide.kumpel.miner_helmet")));
 	}

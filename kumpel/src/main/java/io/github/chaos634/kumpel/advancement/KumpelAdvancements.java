@@ -27,10 +27,12 @@ public final class KumpelAdvancements {
 	public static final String EARLY_WARNING = "early_warning";
 	public static final String VOR_ORT = "vor_ort";
 	public static final String HUETTE = "huette";
+	public static final String SEILFAHRT = "seilfahrt";
+	public static final String GRUBENWEHR = "grubenwehr";
 
 	/** Every advancement the mod ships. */
 	public static final List<String> ALL = List.of(
-			"root", GLUECK_AUF, REVIVED, MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA, EARLY_WARNING, VOR_ORT, HUETTE);
+			"root", GLUECK_AUF, REVIVED, MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA, EARLY_WARNING, VOR_ORT, HUETTE, SEILFAHRT, GRUBENWEHR);
 
 	private KumpelAdvancements() {
 	}
