@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [k]
+        group: [l]
     defaults:
       run:
         working-directory: kumpel
@@ -318,5 +318,16 @@ jobs:
                   if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
                 done
               done
+              ;;
+            l)
+              p net.minecraft.world.item.component.CookingFuel
+              p 'net.minecraft.world.item.Item$Properties' 'component|fuel|Fuel'
+              p net.minecraft.world.item.Items 'COAL;|CHARCOAL'
+              p net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity 'getBurnDuration|isFuel|BURN'
+              p net.minecraft.core.UUIDUtil 'CODEC'
+              p net.minecraft.core.GlobalPos 'of\(|CODEC|dimension|pos\('
+              p net.minecraft.world.entity.LivingEntity ' die\('
+              p net.minecraft.world.entity.TamableAnimal ' die\(|getOwnerReference'
+              p net.minecraft.world.item.context.UseOnContext 'getHorizontalDirection'
               ;;
           esac
