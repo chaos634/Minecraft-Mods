@@ -37,7 +37,7 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | **Wünschelrute** | From level 4 (diamond) on, a sensed ore glows through the rock for a few seconds. |
 | **Steigerlied** | It dances while a jukebox is playing nearby. |
 | **Barbaratag** | On 4 December, Saint Barbara's Day, Kumpels wear a flowering branch and feeding them gives double XP. |
-| **Grubenwehr** | It fights monsters that attack you or that you attack. A weapon in its hand (or its pickaxe) makes it hit harder, and every level adds a point of damage. Creepers are left alone; those are what the Schlagwetter warning is for. |
+| **Grubenwehr** | It fights monsters that attack you, that you attack or that are about to go for you. A weapon in its hand (or its pickaxe) makes it hit harder, and every level adds a point of damage. Creepers are left alone; those are what the Schlagwetter warning is for. |
 | **Schichtbuch** | It keeps count of everything it does. Hand it a book and it writes its shift report into it: ores found and mined, blocks dug, tunnels, items collected and delivered, ingots smelted, torches placed and monsters defeated. |
 | **Vortrieb** | Sneak-use the whistle on a wall and the nearest Kumpel with a pickaxe digs a 1×2 tunnel into it (24 blocks by default). It stops before water, lava, drops and blocks its pickaxe can't break, puts what it digs into its backpack and lights the tunnel with its torches. |
 | **Feldschmiede** | Give it a **field forge** and it smelts raw ores from its backpack into ingots, burning coal from its backpack. |

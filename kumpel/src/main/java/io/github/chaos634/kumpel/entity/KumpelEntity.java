@@ -52,8 +52,6 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
@@ -85,6 +83,7 @@ import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelConfig;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.ai.CollectItemsGoal;
+import io.github.chaos634.kumpel.entity.ai.DefendOwnerGoal;
 import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DigTunnelGoal;
 import io.github.chaos634.kumpel.entity.ai.MineOreGoal;
@@ -201,8 +200,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 
-		this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-		this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+		this.targetSelector.addGoal(1, new DefendOwnerGoal(this));
 	}
 
 	@Override

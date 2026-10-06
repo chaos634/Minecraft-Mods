@@ -91,3 +91,12 @@ Der Kumpel passt auf dich auf, und die Zeche bekommt einen Aufzug.
 - 🔨 **Schichtbuch**: Der Kumpel führt Buch: gefundene Erze, abgebaute Erze, gegrabene Blöcke, eingesammelte Items, geschmolzene Barren. Gibst du ihm ein Buch, schreibt er dir seinen Schichtbericht hinein.
 - 🔨 **Zeitansage unter Tage**: Wenn es draußen dunkel wird oder die Sonne aufgeht, sagt er dir Bescheid. Unter Tage merkt man das ja sonst nicht.
 - 🔨 **Kumpel-Treff**: Treffen sich zwei deiner Kumpels, grüßen sie sich mit „Glück auf!“.
+
+## Phase 7: Notfall & Ausfahrt
+
+Wenn's unter Tage brenzlig wird.
+
+- 🔨 **Rettungskapsel** (nach der Dahlbusch-Bombe, mit der 1963 in Lengede Bergleute gerettet wurden): Benutzen, drei Sekunden stillhalten, und du wirst senkrecht an die Oberfläche gezogen. Deine Kumpels kommen mit. Geht nur dort, wo es einen Himmel gibt.
+- 🔨 **Ausfahrt**: Der Kumpel merkt sich den Weg, den ihr unter Tage gegangen seid. Schleichen + Rechtsklick mit einem Kompass, und er führt dich auf demselben Weg zurück nach oben. Leuchtende Spuren zeigen, wo es langgeht.
+- 🔨 **Verschnaufpause**: Wer Feierabend macht, erholt sich. Ruhende Kumpels heilen langsam.
+- 🔨 **Kumpel „Barbara“**: Ein Kumpel, der Barbara heißt, trägt den Barbarazweig das ganze Jahr.
