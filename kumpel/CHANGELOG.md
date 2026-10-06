@@ -2,6 +2,19 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.2.0
+
+### Schichtbetrieb
+
+- Vortrieb: sneak-use the whistle on a wall and the nearest Kumpel with a pickaxe digs a 1×2 tunnel, stopping before water, lava, drops and blocks too hard for its pickaxe.
+- Feldschmiede: a field forge for the Kumpel's back that smelts raw ores from the backpack with coal from the backpack.
+- Kumpels get names from the Pott, say something now and then and cheer when they find treasure.
+- Silverfish warning: infested stone is noticed while sensing ores, marked and reported.
+- `/kumpel list` shows your loaded Kumpels and what they are doing.
+- Own sounds for the Steigerpfeife and a cheer for the Kumpel.
+- Polish, Turkish, Dutch, French and Spanish translations.
+- Two more advancements: At the Coal Face and Smelting Works.
+
 ## 0.1.0
 
 The first release.

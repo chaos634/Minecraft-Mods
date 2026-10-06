@@ -69,15 +69,15 @@ Legende: ✅ fertig · 🔨 in Arbeit · 💭 Idee
 - 💭 **Eigene Sounds**, zum Beispiel ein kleines „Glück auf!“, wenn er dich begrüßt
 - 💭 **Lore**: Der Kumpel fährt in der Minecart-Lore mit
 
-## Phase 5: Schichtbetrieb
+## Phase 5: Schichtbetrieb ✅
 
 Der Kumpel arbeitet selbstständiger, bekommt Charakter und spricht mehr Sprachen.
 
-- 🔨 **Namen**: Jeder neue Kumpel bekommt einen Namen aus dem Pott (Jupp, Kalle, Hotte, Trude, Stani, Mehmet …), einstellbar in der Config.
-- 🔨 **Ruhrpott-Sprüche**: Ab und zu sagt er was („Hömma, da glitzert watt!“, „Glück auf!“), ohne zu nerven. Abschaltbar.
-- 🔨 **Silberfischchen-Warnung**: Befallenes Gestein wird beim Erzscan erkannt, rot markiert und gemeldet.
-- 🔨 **Vortrieb**: Schleichend mit der Steigerpfeife auf einen Block: Der nächste Hauer gräbt von dort einen 1×2-Stollen in deine Blickrichtung. Er hält vor Wasser, Lava und Abgründen an, steckt den Abraum in die Kiepe und stellt Fackeln auf.
-- 🔨 **Feldschmiede**: Ein kleiner Ofen für den Rücken des Kumpels. Er schmilzt Roherze aus der Kiepe mit Kohle aus der Kiepe.
-- 🔨 **`/kumpel list`**: Zeigt alle deine geladenen Kumpels mit Stufe, Ort und was sie gerade tun.
-- 🔨 **Eigene Sounds**: Eine echte Trillerpfeife für die Steigerpfeife, selbst erzeugt.
-- 🔨 **Mehr Sprachen**: Polnisch und Türkisch (viele Bergleute im Ruhrgebiet kamen von dort), dazu Niederländisch, Französisch und Spanisch.
+- ✅ **Namen**: Jeder neue Kumpel bekommt einen Namen aus dem Pott (Jupp, Kalle, Hotte, Trude, Stani, Mehmet …), einstellbar in der Config.
+- ✅ **Ruhrpott-Sprüche**: Ab und zu sagt er was („Hömma, da glitzert watt!“, „Glück auf!“), ohne zu nerven. Abschaltbar.
+- ✅ **Silberfischchen-Warnung**: Befallenes Gestein wird beim Erzscan erkannt, rot markiert und gemeldet.
+- ✅ **Vortrieb**: Schleichend mit der Steigerpfeife auf eine Wand: Der nächste Hauer gräbt dort einen 1×2-Stollen hinein. Er hält vor Wasser, Lava und Abgründen an, steckt den Abraum in die Kiepe und stellt Fackeln auf.
+- ✅ **Feldschmiede**: Ein kleiner Ofen für den Rücken des Kumpels. Er schmilzt Roherze aus der Kiepe mit Kohle aus der Kiepe.
+- ✅ **`/kumpel list`**: Zeigt alle deine geladenen Kumpels mit Stufe, Ort und was sie gerade tun.
+- ✅ **Eigene Sounds**: Eine echte Trillerpfeife für die Steigerpfeife, selbst erzeugt.
+- ✅ **Mehr Sprachen**: Polnisch und Türkisch (viele Bergleute im Ruhrgebiet kamen von dort), dazu Niederländisch, Französisch und Spanisch.

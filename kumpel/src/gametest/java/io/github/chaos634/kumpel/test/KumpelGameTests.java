@@ -1,6 +1,13 @@
 package io.github.chaos634.kumpel.test;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -587,6 +594,31 @@ public class KumpelGameTests {
 		kumpel.deliverItemsTo(player);
 		helper.assertTrue(count(player.getInventory(), Items.RAW_GOLD) == 3, Component.literal("Without a forge, raw gold is loot"));
 		helper.succeed();
+	}
+
+	@GameTest
+	public void everyLanguageHasEveryText(GameTestHelper helper) {
+		Set<String> english = languageKeys("en_us");
+		for (String language : List.of("de_de", "pl_pl", "tr_tr", "nl_nl", "fr_fr", "es_es")) {
+			Set<String> keys = languageKeys(language);
+			helper.assertTrue(keys.equals(english), Component.literal(language + " differs from en_us: "
+					+ english.stream().filter(key -> !keys.contains(key)).toList() + " missing, "
+					+ keys.stream().filter(key -> !english.contains(key)).toList() + " extra"));
+		}
+		helper.succeed();
+	}
+
+	private static Set<String> languageKeys(String language) {
+		String path = "/assets/kumpel/lang/" + language + ".json";
+		try (InputStream stream = Kumpel.class.getResourceAsStream(path)) {
+			if (stream == null) {
+				throw new IllegalStateException("Missing " + path);
+			}
+			JsonObject json = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+			return json.keySet();
+		} catch (java.io.IOException e) {
+			throw new IllegalStateException("Could not read " + path, e);
+		}
 	}
 
 	@GameTest
