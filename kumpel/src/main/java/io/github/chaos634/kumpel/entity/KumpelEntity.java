@@ -435,6 +435,34 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	private void senseOres(ServerLevel level, Player owner) {
+		SensedOre best = findBestOre(level);
+		if (best == null) {
+			return;
+		}
+
+		int sinceLast = tickCount - lastAnnounceTick;
+		if (best.pos().equals(lastAnnouncedPos) && sinceLast < SAME_ORE_COOLDOWN_TICKS) {
+			return;
+		}
+
+		boolean moreValuable = lastAnnouncedKind == null || best.kind().ordinal() > lastAnnouncedKind.ordinal();
+		if (!moreValuable && sinceLast < ANNOUNCE_COOLDOWN_TICKS) {
+			return;
+		}
+
+		announceOre(level, owner, best.kind(), best.pos());
+		lastAnnouncedKind = best.kind();
+		lastAnnouncedPos = best.pos();
+		lastAnnounceTick = tickCount;
+		addExperience(1 + best.kind().minLevel());
+	}
+
+	/**
+	 * Scans the sphere around the Kumpel for the most valuable ore it can sense at its level (the nearest one, if there are several).
+	 *
+	 * @return the ore found, or {@code null} if there is none in range
+	 */
+	public SensedOre findBestOre(ServerLevel level) {
 		KumpelTier tier = getTier();
 		int radius = tier.senseRadius();
 		int radiusSq = radius * radius;
@@ -476,25 +504,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			}
 		}
 
-		if (bestKind == null) {
-			return;
-		}
+		return bestKind == null ? null : new SensedOre(bestKind, bestPos);
+	}
 
-		int sinceLast = tickCount - lastAnnounceTick;
-		if (bestPos.equals(lastAnnouncedPos) && sinceLast < SAME_ORE_COOLDOWN_TICKS) {
-			return;
-		}
-
-		boolean moreValuable = lastAnnouncedKind == null || bestKind.ordinal() > lastAnnouncedKind.ordinal();
-		if (!moreValuable && sinceLast < ANNOUNCE_COOLDOWN_TICKS) {
-			return;
-		}
-
-		announceOre(level, owner, bestKind, bestPos);
-		lastAnnouncedKind = bestKind;
-		lastAnnouncedPos = bestPos;
-		lastAnnounceTick = tickCount;
-		addExperience(1 + bestKind.minLevel());
+	public record SensedOre(OreKind kind, BlockPos pos) {
 	}
 
 	private void announceOre(ServerLevel level, Player owner, OreKind kind, BlockPos orePos) {

@@ -17,6 +17,17 @@ loom {
 	}
 }
 
+// Server game tests run as part of `build`; client game tests (with screenshots) via `runClientGameTest`.
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "kumpel-gametest"
+		enableGameTests = true
+		enableClientGameTests = true
+		eula = true
+	}
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"

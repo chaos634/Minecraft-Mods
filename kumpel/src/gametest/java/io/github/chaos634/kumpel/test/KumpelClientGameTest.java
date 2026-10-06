@@ -1,0 +1,51 @@
+package io.github.chaos634.kumpel.test;
+
+import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
+
+import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
+import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+
+import io.github.chaos634.kumpel.entity.KumpelTier;
+import io.github.chaos634.kumpel.registry.ModEntities;
+
+/**
+ * Renders Kumpels in a real client and takes screenshots, to check the model and textures.
+ */
+@SuppressWarnings("UnstableApiUsage")
+public class KumpelClientGameTest implements FabricClientGameTest {
+	@Override
+	public void runTest(ClientGameTestContext context) {
+		try (TestSingleplayerContext singleplayer = context.worldBuilder()
+				.adjustSettings(creator -> creator.setGameMode(WorldCreationUiState.SelectedGameMode.CREATIVE))
+				.create()) {
+			TestServerContext server = singleplayer.getServer();
+			server.runCommand("time set noon");
+			server.runCommand("weather clear");
+			server.runCommand("execute as @p at @s run tp @s ~ ~ ~ 0 10");
+
+			// One Kumpel of every level in a row, facing the camera.
+			KumpelTier[] tiers = KumpelTier.values();
+			for (int i = 0; i < tiers.length; i++) {
+				server.runCommand("execute at @p run summon kumpel:kumpel ~%d ~ ~5 {NoAI:1b,Rotation:[180f,0f],experience:%d}"
+						.formatted(-4 + i * 2, tiers[i].requiredExperience()));
+			}
+
+			// A close-up pair a bit further east: one standing, one sitting.
+			server.runCommand("execute at @p run summon kumpel:kumpel ~19 ~ ~2.5 {NoAI:1b,Rotation:[160f,0f],experience:180}");
+			server.runCommand("execute at @p run summon kumpel:kumpel ~21 ~ ~2.5 {NoAI:1b,Rotation:[200f,0f],Sitting:1b}");
+
+			singleplayer.getConnection().waitForClientboundEntityUpdates(ModEntities.KUMPEL);
+			singleplayer.getConnection().waitForChunksRender();
+			context.waitTicks(20);
+			context.takeScreenshot("kumpel_tiers");
+
+			server.runCommand("execute as @p at @s run tp @s ~20 ~ ~ 0 10");
+			context.waitTicks(10);
+			singleplayer.getConnection().waitForChunksRender();
+			context.waitTicks(10);
+			context.takeScreenshot("kumpel_closeup");
+		}
+	}
+}
