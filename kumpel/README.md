@@ -25,6 +25,7 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | | |
 |---|---|
 | **Follows you** | Keeps close and teleports to you if it falls behind. Never takes fall damage, never drowns. |
+| **Mitfahrt** | Go through a portal and the Kumpels following you come along. On their own they never use portals, so none of them gets lost in the Nether. |
 | **Collects loot** | Picks up dropped items near you and brings them to you (or to its storage chest). Items *you* throw away are left alone. |
 | **Senses ores** | Scans the area around it every few seconds. When it finds ore it points at it, rings a chime and tells you what it found, how far away it is and in which direction. Higher levels sense further and find rarer ores. |
 | **Levels up** | Collecting items, finding and mining ores and being fed earns XP. Every level brings more health, a bigger backpack and a new look. |
@@ -72,7 +73,8 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | Right-click with a canary cage | Put the canary on its shoulder |
 | Right-click with a field forge | Strap the forge to its back |
 | Right-click with a book | Get its shift report as a written book |
-| Sneak + right-click with an empty Kumpel Core | Pack your Kumpel into the core, e.g. to move it or take it through a portal. It keeps all its XP. |
+| Right-click with its favourite food | Heals it completely (see its shift report for what it likes) |
+| Sneak + right-click with an empty Kumpel Core | Pack your Kumpel into the core, e.g. to carry it far away. It keeps all its XP. |
 
 ## Steigerpfeife (Foreman's Whistle)
 
@@ -171,6 +173,7 @@ Which items give how much XP, by `item` or by item `tag`.
 | `creeper_warning`, `creeper_warning_radius`, `lava_warning` | on, 10, on | Schlagwetter warning |
 | `share_food`, `share_food_at_hunger` | on, 6 | Henkelmann |
 | `rest_when_owner_sleeps` | on | Feierabend |
+| `follow_through_portals` | on | Mitfahrt: following Kumpels come along through portals |
 | `whistle_range` | 64 | How far your Kumpels hear the whistle |
 | `storage_chests`, `max_storage_distance` | on, 48 | Lagerkiste |
 | `mine_ores`, `mine_radius`, `experience_per_ore_mined` | on, 6, 2 | Hauer mode (also needs the `mobGriefing` game rule) |

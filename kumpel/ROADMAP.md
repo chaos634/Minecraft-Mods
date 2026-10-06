@@ -136,3 +136,10 @@ Werkzeug pflegen, gut essen, voneinander lernen.
 - ✅ **Lehrhauer**: Junge Kumpels lernen von erfahrenen Kumpels in der Nähe und sammeln dabei langsam EP.
 - ✅ **Knifte**: Das Butterbrot aus dem Henkelmann.
 - ✅ **Muckefuck**: Malzkaffee für die Schicht. Gibt Eile und vertreibt Abbaulähmung.
+
+## Phase 12: Mitfahrt ✅
+
+Wohin du gehst, dein Kumpel geht mit.
+
+- ✅ **Mitfahrt**: Gehst du durch ein Portal, kommen die Kumpels mit, die dir gerade folgen. Allein benutzen sie nie ein Portal, damit keiner im Nether verloren geht.
+- ✅ **Unter Tage im Bild**: Ein neuer Screenshot im Client-Test zeigt eine Kammer, die nur von den Helmlampen beleuchtet wird.

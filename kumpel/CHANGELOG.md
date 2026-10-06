@@ -2,6 +2,13 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.9.0
+
+### Mitfahrt
+
+- Kumpels following you come along through portals; on their own they never use portals any more.
+- A new screenshot from underground, lit only by the Kumpels' helmet lamps.
+
 ## 0.8.0
 
 ### Henkelmann & Gezähe

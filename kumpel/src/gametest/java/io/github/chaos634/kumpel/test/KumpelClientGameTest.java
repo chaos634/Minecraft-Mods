@@ -19,6 +19,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 
+import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelTier;
@@ -146,6 +147,9 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 
 			// Unter Tage: a closed chamber at night, lit only by the Kumpels' helmet lamps. One carries a burning field forge,
 			// one a canary, one a pickaxe; a Markentafel and a Förderkorb stand at the back, ores glint in the walls.
+			// No remarks, greetings or time announcements, so the chat stays empty for the picture.
+			KumpelSettings.get().behaviour().chatter = false;
+			KumpelSettings.get().behaviour().timeAnnouncements = false;
 			server.runCommand("time set midnight");
 			server.runCommand("execute as @p at @s run tp @s ~30 ~ ~ 0 20");
 			singleplayer.getConnection().waitForChunksRender();
@@ -165,6 +169,8 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 						.setValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING, net.minecraft.core.Direction.NORTH));
 				level.setBlockAndUpdate(origin.offset(-2, 0, 7), ModBlocks.FOERDERKORB.defaultBlockState());
 
+				// The forge will smelt right away; its advancement toast should be long gone by the time of the picture.
+				KumpelAdvancements.award(player, KumpelAdvancements.HUETTE);
 				KumpelEntity smith = sittingKumpel(level, player, origin.getX() - 1.2, origin.getY(), origin.getZ() + 3.2, 210.0F, 3);
 				smith.setForge(true);
 				smith.getPockets().addToPockets(new ItemStack(Items.RAW_IRON, 16));
@@ -175,14 +181,10 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 				lookout.setCanary(true);
 			});
 			singleplayer.getConnection().waitForChunksRender();
-			context.waitTicks(160);
-			// Chat and advancement toasts would cover the picture.
-			context.runOnClient(client -> {
-				client.gui.getChat().clearMessages(false);
-				client.getToastManager().clear();
-			});
-			context.waitTicks(2);
+			context.waitTicks(CHAT_FADE_TICKS);
 			context.takeScreenshot("kumpel_unter_tage");
+			KumpelSettings.get().behaviour().chatter = true;
+			KumpelSettings.get().behaviour().timeAnnouncements = true;
 		}
 	}
 }
