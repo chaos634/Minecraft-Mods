@@ -1198,7 +1198,6 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		level.setBlockAndUpdate(pos, state);
 		SoundType sound = state.getSoundType();
 		level.playSound(null, pos, sound.getPlaceSound(), SoundSource.NEUTRAL, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
-		swing(InteractionHand.MAIN_HAND);
 		log.add(ShiftLog.Entry.LEAKS_SEALED);
 		return true;
 	}

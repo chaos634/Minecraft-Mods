@@ -17,12 +17,10 @@ import net.minecraft.world.item.equipment.ArmorType;
 
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
-import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelTier;
-import io.github.chaos634.kumpel.entity.behaviour.FieldForge;
 import io.github.chaos634.kumpel.item.CrackedKumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelSoul;
@@ -94,8 +92,5 @@ public final class ModItems {
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT).register(output -> output.accept(MINER_HELMET));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(KUMPEL_SPAWN_EGG));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS).register(output -> output.accept(COKE));
-
-		// Kokerei: coke burns half as long again as coal.
-		FuelRegistryEvents.BUILD.register((builder, context) -> builder.add(COKE, context.baseSmeltTime() * FieldForge.ITEMS_PER_COKE));
 	}
 }

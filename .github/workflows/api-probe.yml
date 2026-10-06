@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [j]
+        group: [k]
     defaults:
       run:
         working-directory: kumpel
@@ -304,5 +304,19 @@ jobs:
               p 'net.minecraft.world.level.block.entity.FuelValues$Builder'
               p net.minecraft.world.level.Level 'fuelValues'
               p net.minecraft.util.datafix.DataFixTypes 'SAVED_DATA'
+              ;;
+            k)
+              ls_jar 'Fuel|Burn|Furnace'
+              for j in $MCJARS; do unzip -Z1 "$j" | grep -iE 'fuel|furnace' | grep -v '\.class$' | head -40 || true; done
+              p net.minecraft.core.component.DataComponents 'FUEL|BURN|SMELT'
+              p net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity 'fuel|Fuel|burn|Burn|isFuel'
+              p net.minecraft.world.level.Level 'fuel|Fuel'
+              p net.minecraft.server.MinecraftServer 'fuel|Fuel'
+              p net.minecraft.tags.ItemTags 'FUEL|COAL|BURN'
+              for j in $MCJARS; do
+                for f in data/minecraft/tags/item/coals.json; do
+                  if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
+                done
+              done
               ;;
           esac

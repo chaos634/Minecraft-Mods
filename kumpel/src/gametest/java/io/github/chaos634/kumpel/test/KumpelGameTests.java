@@ -810,14 +810,6 @@ public class KumpelGameTests {
 	}
 
 	@GameTest
-	public void cokeIsFuel(GameTestHelper helper) {
-		int coal = helper.getLevel().fuelValues().burnDuration(new ItemStack(Items.COAL));
-		int coke = helper.getLevel().fuelValues().burnDuration(new ItemStack(ModItems.COKE));
-		helper.assertTrue(coke * 2 == coal * 3, Component.literal("Coke should burn half as long again as coal: " + coke + " vs " + coal));
-		helper.succeed();
-	}
-
-	@GameTest
 	public void remembersItsBestFindsForTheShiftReport(GameTestHelper helper) {
 		buildFloor(helper);
 		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
