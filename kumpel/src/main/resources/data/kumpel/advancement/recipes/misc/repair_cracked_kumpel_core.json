@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cracked_core": {
+      "conditions": {
+        "items": [
+          {
+            "items": "kumpel:cracked_kumpel_core"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_cracked_core"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "kumpel:repair_cracked_kumpel_core"
+    ]
+  }
+}

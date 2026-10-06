@@ -41,5 +41,14 @@
 	"guide.kumpel.ore_sensing.level": "From level %1$s (%2$s)",
 	"guide.kumpel.ore_sensing.value": "Value: %s",
 	"guide.kumpel.core": "Use the Kumpel Core on a block to awaken your own Kumpel: a small mining golem that follows you, collects dropped items, senses ores and levels up. Right-click it to let it sit or follow, sneak + right-click to open its backpack, feed it ores and gems for experience and repair it with copper ingots.",
-	"guide.kumpel.spawn_egg": "Spawns a wild Kumpel. Tame it with a copper ingot."
+	"guide.kumpel.spawn_egg": "Spawns a wild Kumpel. Tame it with a copper ingot.",
+	"item.kumpel.cracked_kumpel_core": "Cracked Kumpel Core",
+	"item.kumpel.cracked_kumpel_core.tooltip": "Combine with a block of copper to repair it",
+	"item.kumpel.kumpel_core.tooltip.pack": "Sneak-use on your Kumpel to pack it into the core",
+	"item.kumpel.soul": "Level %1$s (%2$s) · %3$s XP",
+	"message.kumpel.torches": "%1$s now carries %2$s torches.",
+	"message.kumpel.packed": "%s is resting in its core.",
+	"message.kumpel.creeper": "⚠ %1$s: Creeper %2$s blocks away!",
+	"message.kumpel.lava": "⚠ %s: Careful, lava!",
+	"message.kumpel.lunch": "%1$s hands you %2$s. Enjoy your meal!"
 }

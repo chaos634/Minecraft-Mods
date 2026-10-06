@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -52,6 +53,13 @@ import io.github.chaos634.kumpel.config.KumpelConfig;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.ai.CollectItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
+import io.github.chaos634.kumpel.entity.behaviour.DangerSense;
+import io.github.chaos634.kumpel.entity.behaviour.MinerLamp;
+import io.github.chaos634.kumpel.entity.behaviour.PackedLunch;
+import io.github.chaos634.kumpel.entity.behaviour.ShiftEnd;
+import io.github.chaos634.kumpel.item.KumpelSoul;
+import io.github.chaos634.kumpel.registry.ModComponents;
+import io.github.chaos634.kumpel.registry.ModItems;
 
 /**
  * The Kumpel: a small mining golem that follows its owner, collects dropped items,
@@ -74,6 +82,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	private final KumpelPockets pockets = new KumpelPockets(this);
 	private final Set<Integer> ignoredItems = new HashSet<>();
+	private final DangerSense dangerSense = new DangerSense();
+	private final PackedLunch packedLunch = new PackedLunch();
+	private final ShiftEnd shiftEnd = new ShiftEnd();
 	private int experience;
 	private boolean oreSensing = true;
 	private int settingsRevision = -1;
@@ -147,6 +158,28 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	public boolean isOreSensing() {
 		return oreSensing;
+	}
+
+	/** Takes over the experience and settings stored in a Kumpel Core. */
+	public void loadSoul(KumpelSoul soul) {
+		experience = soul.experience();
+		oreSensing = soul.oreSensing();
+		applyTier(KumpelSettings.get().tierForExperience(experience), true);
+	}
+
+	/** This Kumpel's experience and settings, keeping the given share of its experience. */
+	public KumpelSoul createSoul(double experienceShare) {
+		return new KumpelSoul((int) Math.floor(experience * Math.clamp(experienceShare, 0.0, 1.0)), oreSensing);
+	}
+
+	public ItemStack createCoreStack(net.minecraft.world.item.Item item, double experienceShare) {
+		ItemStack stack = new ItemStack(item);
+		stack.set(ModComponents.SOUL, createSoul(experienceShare));
+		if (hasCustomName()) {
+			stack.set(DataComponents.CUSTOM_NAME, getCustomName());
+		}
+
+		return stack;
 	}
 
 	public void addExperience(int amount) {
@@ -251,8 +284,11 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			return InteractionResult.SUCCESS;
 		}
 
+		boolean packing = player.isSecondaryUseActive() && stack.is(ModItems.KUMPEL_CORE) && !stack.has(ModComponents.SOUL);
 		boolean handled = stack.isEmpty()
+				|| packing
 				|| stack.is(Items.COMPASS)
+				|| KumpelPockets.isTorch(stack)
 				|| settings.isRepairItem(stack)
 				|| settings.feedExperience(stack) > 0;
 
@@ -264,7 +300,17 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			return InteractionResult.SUCCESS;
 		}
 
-		if (stack.isEmpty()) {
+		if (packing) {
+			packInto(player, stack);
+		} else if (KumpelPockets.isTorch(stack)) {
+			ItemStack rest = pockets.addToPockets(stack);
+			int stored = stack.getCount() - rest.getCount();
+			if (stored > 0) {
+				player.setItemInHand(hand, rest);
+				playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 1.0F);
+			}
+			player.sendOverlayMessage(Component.translatable("message.kumpel.torches", getDisplayName(), pockets.count(KumpelPockets::isTorch)));
+		} else if (stack.isEmpty()) {
 			if (player.isSecondaryUseActive()) {
 				openPockets(player);
 			} else {
@@ -303,6 +349,35 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		return InteractionResult.SUCCESS;
 	}
 
+	/** Puts the Kumpel back into an empty core (keeping all its experience) and hands over everything it carries. */
+	public void packInto(Player player, ItemStack emptyCore) {
+		if (!(level() instanceof ServerLevel serverLevel)) {
+			return;
+		}
+
+		for (ItemStack carried : pockets.removeAllItems()) {
+			giveOrDrop(serverLevel, player, carried);
+		}
+
+		ItemStack core = createCoreStack(ModItems.KUMPEL_CORE, 1.0);
+		emptyCore.consume(1, player);
+		giveOrDrop(serverLevel, player, core);
+
+		serverLevel.sendParticles(ParticleTypes.WAX_OFF, getX(), getY() + 0.5, getZ(), 20, 0.3, 0.5, 0.3, 0.0);
+		serverLevel.playSound(null, getX(), getY(), getZ(), SoundEvents.COPPER_GOLEM_BECOME_STATUE, SoundSource.NEUTRAL, 1.0F, 1.2F);
+		player.sendOverlayMessage(Component.translatable("message.kumpel.packed", getDisplayName()));
+		discard();
+	}
+
+	private static void giveOrDrop(ServerLevel level, Player player, ItemStack stack) {
+		player.getInventory().add(stack);
+		if (!stack.isEmpty()) {
+			ItemEntity drop = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), stack);
+			drop.setThrower(player);
+			level.addFreshEntity(drop);
+		}
+	}
+
 	/** Opens the Kumpel's backpack; its size depends on the Kumpel's level. */
 	public void openPockets(Player player) {
 		int rows = getTier().pocketRows();
@@ -330,7 +405,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	public boolean hasItemsToDeliver() {
-		return !pockets.isEmpty();
+		return pockets.hasLoot();
 	}
 
 	public boolean wantsToDeliver() {
@@ -405,16 +480,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		int delivered = 0;
-		for (ItemStack stack : pockets.removeAllItems()) {
+		for (ItemStack stack : pockets.takeLoot()) {
 			delivered += stack.getCount();
-			player.getInventory().add(stack);
-
-			if (!stack.isEmpty()) {
-				// Inventory is full: drop the rest at the owner's feet (marked as thrown by them, so it isn't picked up again).
-				ItemEntity drop = new ItemEntity(serverLevel, player.getX(), player.getY() + 0.5, player.getZ(), stack);
-				drop.setThrower(player);
-				serverLevel.addFreshEntity(drop);
-			}
+			// If the inventory is full, the rest lands at the owner's feet, marked as thrown by them so it isn't picked up again.
+			giveOrDrop(serverLevel, player, stack);
 		}
 
 		ticksSinceLastPickup = 0;
@@ -455,6 +524,29 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				senseOres(level, owner);
 			}
 		}
+
+		if (isTame() && getOwner() instanceof Player owner && owner.level() == level) {
+			double distanceSq = distanceToSqr(owner);
+			if (tickCount % 10 == 0 && !isOrderedToSit() && distanceSq < 24.0 * 24.0) {
+				MinerLamp.tryPlaceTorch(this, level);
+			}
+			if (tickCount % 10 == 5 && distanceSq < 32.0 * 32.0) {
+				dangerSense.tick(this, level, owner);
+			}
+			if (tickCount % 20 == 10 && distanceSq < 16.0 * 16.0) {
+				packedLunch.tick(this, level, owner);
+			}
+			if (tickCount % 20 == 0) {
+				shiftEnd.tick(this, owner);
+			}
+		}
+	}
+
+	/** Turns the Kumpel's head and right arm towards a point for a moment. */
+	public void pointAt(Vec3 target) {
+		pointingTarget = target;
+		pointingTicks = POINTING_TICKS;
+		this.entityData.set(DATA_POINTING, true);
 	}
 
 	private void senseOres(ServerLevel level, Player owner) {
@@ -554,9 +646,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		level.sendParticles(ParticleTypes.WAX_ON, ore.x, ore.y, ore.z, 10, 0.4, 0.4, 0.4, 0.0);
 		level.playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.NEUTRAL, 1.5F, sensed.rule().pitch());
 
-		pointingTarget = ore;
-		pointingTicks = POINTING_TICKS;
-		this.entityData.set(DATA_POINTING, true);
+		pointAt(ore);
 
 		BlockState state = level.getBlockState(orePos);
 		owner.sendOverlayMessage(Component.translatable("message.kumpel.ore_sensed",
@@ -627,6 +717,15 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	@Override
+	protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean killedByPlayer) {
+		super.dropCustomDeathLoot(level, source, killedByPlayer);
+		if (isTame()) {
+			// The core survives, cracked: it can be repaired and keeps most of the Kumpel's experience.
+			spawnAtLocation(level, createCoreStack(ModItems.CRACKED_KUMPEL_CORE, behaviour().deathExperienceKept));
+		}
+	}
+
+	@Override
 	protected void dropEquipment(ServerLevel level) {
 		super.dropEquipment(level);
 		for (ItemStack stack : pockets.removeAllItems()) {
@@ -674,6 +773,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		super.addAdditionalSaveData(output);
 		output.putInt("experience", experience);
 		output.putBoolean("ore_sensing", oreSensing);
+		output.putBoolean("resting", shiftEnd.isResting());
 		writeInventoryToTag(output);
 	}
 
@@ -682,6 +782,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		super.readAdditionalSaveData(input);
 		experience = input.getIntOr("experience", 0);
 		oreSensing = input.getBooleanOr("ore_sensing", true);
+		shiftEnd.setResting(input.getBooleanOr("resting", false));
 		readInventoryFromTag(input);
 
 		healOnFirstRefresh = false;

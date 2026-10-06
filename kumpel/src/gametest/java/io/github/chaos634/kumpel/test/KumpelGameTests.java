@@ -1,25 +1,35 @@
 package io.github.chaos634.kumpel.test;
 
+import java.util.List;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
+import io.github.chaos634.kumpel.entity.KumpelPockets;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.entity.OreRule;
+import io.github.chaos634.kumpel.item.KumpelSoul;
+import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
+import io.github.chaos634.kumpel.registry.ModItems;
 
 public class KumpelGameTests {
 	private static KumpelSettings settings() {
@@ -138,6 +148,128 @@ public class KumpelGameTests {
 		helper.assertTrue(count(player.getInventory(), Items.DIAMOND) == 5, Component.literal("Owner should have received 5 diamonds"));
 		helper.assertTrue(kumpel.getInventory().isEmpty(), Component.literal("Kumpel should have emptied its pockets"));
 		helper.succeed();
+	}
+
+	@GameTest
+	public void soulSurvivesPackingAndUnpacking(GameTestHelper helper) {
+		buildFloor(helper);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(player);
+		kumpel.addExperience(settings().tier(3).requiredExperience() + 5);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.EMERALD, 2));
+
+		kumpel.packInto(player, new ItemStack(ModItems.KUMPEL_CORE));
+
+		helper.assertTrue(kumpel.isRemoved(), Component.literal("The packed Kumpel should be gone"));
+		helper.assertTrue(count(player.getInventory(), Items.EMERALD) == 2, Component.literal("Its loot should go to the owner"));
+		ItemStack core = findInInventory(player, ModItems.KUMPEL_CORE);
+		KumpelSoul soul = core.get(ModComponents.SOUL);
+		helper.assertTrue(soul != null && soul.experience() == settings().tier(3).requiredExperience() + 5,
+				Component.literal("The core should remember all experience, got " + soul));
+
+		KumpelEntity revived = helper.spawn(ModEntities.KUMPEL, 2, 1, 2);
+		revived.loadSoul(soul);
+		helper.assertTrue(revived.getTier().level() == 3, Component.literal("The revived Kumpel should be level 3 again"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 100)
+	public void leavesCrackedCoreWhenItDies(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = helper.makeMockPlayer(GameType.SURVIVAL);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 1, 3);
+		kumpel.tame(owner);
+		kumpel.addExperience(100);
+		int expected = (int) Math.floor(100 * settings().behaviour().deathExperienceKept);
+
+		kumpel.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 1000.0F);
+
+		AABB area = new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8.0);
+		helper.succeedWhen(() -> {
+			List<ItemEntity> drops = helper.getLevel().getEntitiesOfClass(ItemEntity.class, area,
+					item -> item.getItem().is(ModItems.CRACKED_KUMPEL_CORE));
+			helper.assertTrue(!drops.isEmpty(), Component.literal("A cracked core should drop"));
+			KumpelSoul soul = drops.getFirst().getItem().get(ModComponents.SOUL);
+			helper.assertTrue(soul != null && soul.experience() == expected,
+					Component.literal("The cracked core should keep " + expected + " XP, got " + soul));
+		});
+	}
+
+	@GameTest(maxTicks = 200)
+	public void placesTorchesInTheDark(GameTestHelper helper) {
+		buildFloor(helper);
+		for (int x = 0; x < 8; x++) {
+			for (int z = 0; z < 8; z++) {
+				helper.setBlock(x, 3, z, Blocks.STONE);
+			}
+		}
+
+		Player owner = helper.makeMockPlayer(GameType.SURVIVAL);
+		owner.snapTo(Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(4, 1, 4))));
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 1, 3);
+		kumpel.tame(owner);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.TORCH, 8));
+
+		helper.succeedWhen(() -> helper.assertTrue(kumpel.getPockets().count(KumpelPockets::isTorch) < 8,
+				Component.literal("The Kumpel should have placed a torch in the dark")));
+	}
+
+	@GameTest(maxTicks = 100)
+	public void makesCreepersGlow(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = helper.makeMockPlayer(GameType.SURVIVAL);
+		owner.snapTo(Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(2, 1, 2))));
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+		Creeper creeper = helper.spawn(EntityTypes.CREEPER, 6, 1, 6);
+		creeper.setNoAi(true);
+
+		helper.succeedWhen(() -> helper.assertTrue(creeper.hasEffect(MobEffects.GLOWING),
+				Component.literal("The creeper should glow")));
+	}
+
+	@GameTest(maxTicks = 100)
+	public void sharesLunchWhenOwnerIsHungry(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = helper.makeMockPlayer(GameType.SURVIVAL);
+		owner.snapTo(Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(2, 1, 2))));
+		owner.getFoodData().setFoodLevel(2);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.BREAD, 3));
+
+		helper.succeedWhen(() -> helper.assertTrue(count(owner.getInventory(), Items.BREAD) == 1,
+				Component.literal("The Kumpel should hand over one bread")));
+	}
+
+	@GameTest
+	public void keepsTorchesAndLunchWhenDelivering(GameTestHelper helper) {
+		buildFloor(helper);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.TORCH, 16));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.BREAD, 5));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.DIAMOND, 3));
+
+		kumpel.deliverItemsTo(player);
+
+		helper.assertTrue(count(player.getInventory(), Items.DIAMOND) == 3, Component.literal("Loot is delivered"));
+		helper.assertTrue(count(player.getInventory(), Items.TORCH) == 0, Component.literal("Torches stay with the Kumpel"));
+		helper.assertTrue(count(kumpel.getPockets(), Items.BREAD) == 5, Component.literal("The packed lunch stays with the Kumpel"));
+		helper.assertFalse(kumpel.hasItemsToDeliver(), Component.literal("Nothing left to deliver"));
+		helper.succeed();
+	}
+
+	private static ItemStack findInInventory(Player player, Item item) {
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			ItemStack stack = player.getInventory().getItem(i);
+			if (stack.is(item)) {
+				return stack;
+			}
+		}
+
+		return ItemStack.EMPTY;
 	}
 
 	private static void buildFloor(GameTestHelper helper) {

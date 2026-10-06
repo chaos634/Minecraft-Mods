@@ -137,6 +137,30 @@ public final class KumpelConfig {
 		public int deliverDelayTicks = 80;
 		/** Items further away from the owner than this are left alone. */
 		public int maxCollectDistanceFromOwner = 16;
+		/** Share of its experience a Kumpel keeps in its cracked core when it dies (0 to 1). */
+		public double deathExperienceKept = 0.8;
+
+		/** Grubenlampe: the Kumpel places torches from its backpack in dark places underground. */
+		public boolean placeTorches = true;
+		/** Torches are placed where the block light is below this. */
+		public int torchLightLevel = 7;
+		/** Items the Kumpel uses as torches (they must place a block). */
+		public List<String> torchItems = new ArrayList<>(List.of("minecraft:torch", "minecraft:copper_torch", "minecraft:soul_torch"));
+
+		/** Schlagwetter warning: creepers near you start glowing and the Kumpel warns you. */
+		public boolean creeperWarning = true;
+		/** Warning radius around you at level 1; every further level adds 2 blocks. */
+		public int creeperWarningRadius = 10;
+		/** Warn when you are about to step next to lava. */
+		public boolean lavaWarning = true;
+
+		/** Henkelmann: the Kumpel keeps one stack of food and hands it to you when you get hungry. */
+		public boolean shareFood = true;
+		/** The Kumpel hands you food when your hunger bar drops to this (20 is full). */
+		public int shareFoodAtHunger = 6;
+
+		/** Feierabend: when you go to bed, nearby Kumpels sit down, and they get up again in the morning. */
+		public boolean restWhenOwnerSleeps = true;
 	}
 
 	private static List<Tier> defaultTiers() {

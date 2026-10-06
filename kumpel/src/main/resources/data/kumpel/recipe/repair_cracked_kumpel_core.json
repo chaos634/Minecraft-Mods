@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_transmute",
+  "category": "misc",
+  "input": "kumpel:cracked_kumpel_core",
+  "material": "minecraft:copper_block",
+  "result": {
+    "id": "kumpel:kumpel_core"
+  }
+}

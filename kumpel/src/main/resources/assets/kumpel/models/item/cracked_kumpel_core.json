@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "kumpel:item/cracked_kumpel_core"
+  }
+}

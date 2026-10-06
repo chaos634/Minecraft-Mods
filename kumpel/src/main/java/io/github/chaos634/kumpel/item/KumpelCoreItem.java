@@ -19,11 +19,16 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 
+import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
+import io.github.chaos634.kumpel.entity.KumpelTier;
+import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
 
 /**
- * Used on a block, the core awakens a new Kumpel that belongs to the player.
+ * Used on a block, the core awakens a Kumpel that belongs to the player. An empty core creates a new Kumpel;
+ * a core holding a soul (a packed-up or revived Kumpel) brings back that Kumpel with its name and experience.
+ * Sneak-using an empty core on your Kumpel packs it into the core.
  */
 public class KumpelCoreItem extends Item {
 	public KumpelCoreItem(Properties properties) {
@@ -52,6 +57,11 @@ public class KumpelCoreItem extends Item {
 			kumpel.tame(player);
 		}
 
+		KumpelSoul soul = stack.get(ModComponents.SOUL);
+		if (soul != null) {
+			kumpel.loadSoul(soul);
+		}
+
 		Component customName = stack.get(DataComponents.CUSTOM_NAME);
 		if (customName != null) {
 			kumpel.setCustomName(customName);
@@ -69,6 +79,18 @@ public class KumpelCoreItem extends Item {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
-		tooltip.accept(Component.translatable("item.kumpel.kumpel_core.tooltip").withStyle(ChatFormatting.GRAY));
+		KumpelSoul soul = stack.get(ModComponents.SOUL);
+		if (soul == null) {
+			tooltip.accept(Component.translatable("item.kumpel.kumpel_core.tooltip").withStyle(ChatFormatting.GRAY));
+			tooltip.accept(Component.translatable("item.kumpel.kumpel_core.tooltip.pack").withStyle(ChatFormatting.DARK_GRAY));
+		} else {
+			appendSoulTooltip(soul, tooltip);
+		}
+	}
+
+	static void appendSoulTooltip(KumpelSoul soul, Consumer<Component> tooltip) {
+		KumpelTier tier = KumpelSettings.get().tierForExperience(soul.experience());
+		tooltip.accept(Component.translatable("item.kumpel.soul", tier.level(), tier.displayName(), soul.experience())
+				.withStyle(ChatFormatting.GOLD));
 	}
 }

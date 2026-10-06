@@ -18,11 +18,17 @@ import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 
 import io.github.chaos634.kumpel.Kumpel;
+import io.github.chaos634.kumpel.config.KumpelSettings;
+import io.github.chaos634.kumpel.entity.KumpelTier;
+import io.github.chaos634.kumpel.item.CrackedKumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelCoreItem;
+import io.github.chaos634.kumpel.item.KumpelSoul;
 
 public final class ModItems {
 	public static final Item KUMPEL_CORE = register("kumpel_core", KumpelCoreItem::new,
 			new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+	public static final Item CRACKED_KUMPEL_CORE = register("cracked_kumpel_core", CrackedKumpelCoreItem::new,
+			new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant());
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
 			new Item.Properties().spawnEgg(ModEntities.KUMPEL));
 
@@ -32,6 +38,15 @@ public final class ModItems {
 			.icon(() -> new ItemStack(KUMPEL_CORE))
 			.displayItems((parameters, output) -> {
 				output.accept(KUMPEL_CORE);
+				// A ready-made core for every level, handy for testing and for map makers.
+				for (KumpelTier tier : KumpelSettings.get().tiers()) {
+					if (tier.level() > 1) {
+						ItemStack core = new ItemStack(KUMPEL_CORE);
+						core.set(ModComponents.SOUL, new KumpelSoul(tier.requiredExperience(), true));
+						output.accept(core);
+					}
+				}
+				output.accept(CRACKED_KUMPEL_CORE);
 				output.accept(KUMPEL_SPAWN_EGG);
 			})
 			.build();

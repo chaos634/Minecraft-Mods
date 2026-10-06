@@ -1,8 +1,15 @@
 package io.github.chaos634.kumpel.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import io.github.chaos634.kumpel.config.KumpelSettings;
 
 /**
  * The Kumpel's backpack ("Kiepe"). It always has room for six rows, but the Kumpel only fills
@@ -80,6 +87,84 @@ public class KumpelPockets extends SimpleContainer {
 		}
 
 		return true;
+	}
+
+	/** Torches the Kumpel can place itself. */
+	public static boolean isTorch(ItemStack stack) {
+		return KumpelSettings.get().torchBlock(stack) != null;
+	}
+
+	public static boolean isFood(ItemStack stack) {
+		return !stack.isEmpty() && stack.has(DataComponents.FOOD);
+	}
+
+	/**
+	 * Takes out everything the Kumpel should bring to its owner. It keeps its torches and,
+	 * if food sharing is on, one stack of food as a packed lunch.
+	 */
+	public List<ItemStack> takeLoot() {
+		boolean keepFood = KumpelSettings.get().behaviour().shareFood;
+		List<ItemStack> loot = new ArrayList<>();
+
+		for (int i = 0; i < getContainerSize(); i++) {
+			ItemStack stack = getItem(i);
+			if (stack.isEmpty() || isTorch(stack)) {
+				continue;
+			}
+			if (keepFood && isFood(stack)) {
+				keepFood = false;
+				continue;
+			}
+
+			loot.add(removeItemNoUpdate(i));
+		}
+
+		setChanged();
+		return loot;
+	}
+
+	public boolean hasLoot() {
+		boolean keepFood = KumpelSettings.get().behaviour().shareFood;
+		for (int i = 0; i < getContainerSize(); i++) {
+			ItemStack stack = getItem(i);
+			if (stack.isEmpty() || isTorch(stack)) {
+				continue;
+			}
+			if (keepFood && isFood(stack)) {
+				keepFood = false;
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/** Takes one item matching the filter, or returns an empty stack. */
+	public ItemStack takeOne(Predicate<ItemStack> filter) {
+		for (int i = 0; i < getContainerSize(); i++) {
+			ItemStack stack = getItem(i);
+			if (!stack.isEmpty() && filter.test(stack)) {
+				ItemStack taken = stack.split(1);
+				setChanged();
+				return taken;
+			}
+		}
+
+		return ItemStack.EMPTY;
+	}
+
+	public int count(Predicate<ItemStack> filter) {
+		int count = 0;
+		for (int i = 0; i < getContainerSize(); i++) {
+			ItemStack stack = getItem(i);
+			if (!stack.isEmpty() && filter.test(stack)) {
+				count += stack.getCount();
+			}
+		}
+
+		return count;
 	}
 
 	public int countItems() {

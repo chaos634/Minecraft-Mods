@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import io.github.chaos634.kumpel.command.KumpelCommand;
 import io.github.chaos634.kumpel.config.KumpelSettings;
+import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
 import io.github.chaos634.kumpel.registry.ModItems;
 
@@ -21,6 +22,7 @@ public class Kumpel implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		KumpelSettings.reload();
+		ModComponents.initialize();
 		ModEntities.initialize();
 		ModItems.initialize();
 

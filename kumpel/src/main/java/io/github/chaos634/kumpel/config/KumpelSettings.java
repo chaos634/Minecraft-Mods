@@ -11,6 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -38,15 +39,18 @@ public final class KumpelSettings {
 	private final OreRule unlistedOre;
 	private final List<FoodRule> feeding;
 	private final Identifier repairItem;
+	private final List<Identifier> torchItems;
 	private final KumpelConfig.Behaviour behaviour;
 	private final Map<BlockState, OreRule> oreCache = new ConcurrentHashMap<>();
 
-	private KumpelSettings(List<KumpelTier> tiers, List<OreRule> ores, OreRule unlistedOre, List<FoodRule> feeding, Identifier repairItem, KumpelConfig.Behaviour behaviour) {
+	private KumpelSettings(List<KumpelTier> tiers, List<OreRule> ores, OreRule unlistedOre, List<FoodRule> feeding, Identifier repairItem,
+			List<Identifier> torchItems, KumpelConfig.Behaviour behaviour) {
 		this.tiers = List.copyOf(tiers);
 		this.ores = List.copyOf(ores);
 		this.unlistedOre = unlistedOre;
 		this.feeding = List.copyOf(feeding);
 		this.repairItem = repairItem;
+		this.torchItems = List.copyOf(torchItems);
 		this.behaviour = behaviour;
 	}
 
@@ -167,6 +171,15 @@ public final class KumpelSettings {
 		return repairItem;
 	}
 
+	/** The block a Kumpel places for this torch item, or {@code null} if it isn't one of the configured torches. */
+	public Block torchBlock(ItemStack stack) {
+		if (stack.isEmpty() || !(stack.getItem() instanceof BlockItem blockItem)) {
+			return null;
+		}
+
+		return torchItems.contains(BuiltInRegistries.ITEM.getKey(stack.getItem())) ? blockItem.getBlock() : null;
+	}
+
 	public KumpelConfig.Behaviour behaviour() {
 		return behaviour;
 	}
@@ -257,7 +270,17 @@ public final class KumpelSettings {
 			repairItem = Identifier.fromNamespaceAndPath("minecraft", "copper_ingot");
 		}
 
-		return new KumpelSettings(tiers, ores, unlistedOre, feeding, repairItem, config.behaviour);
+		List<Identifier> torchItems = new ArrayList<>();
+		if (config.behaviour.torchItems != null) {
+			for (String torch : config.behaviour.torchItems) {
+				Identifier id = torch == null ? null : Identifier.tryParse(torch);
+				if (id != null) {
+					torchItems.add(id);
+				}
+			}
+		}
+
+		return new KumpelSettings(tiers, ores, unlistedOre, feeding, repairItem, torchItems, config.behaviour);
 	}
 
 	private static OreRule oreRule(String tag, String block, int level, int value, float pitch) {

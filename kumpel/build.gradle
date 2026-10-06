@@ -74,6 +74,7 @@ dependencies {
 	}
 	// Types used in REI's API signatures (math helpers from Cloth Config, FluidStack from Architectury).
 	compileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { transitive = false }
+	compileOnly("me.shedaniel.cloth:basic-math:${project.basic_math_version}") { transitive = false }
 	compileOnly("dev.architectury:architectury-fabric:${project.architectury_version}") { transitive = false }
 }
 

@@ -41,5 +41,14 @@
 	"guide.kumpel.ore_sensing.level": "Ab Stufe %1$s (%2$s)",
 	"guide.kumpel.ore_sensing.value": "Wert: %s",
 	"guide.kumpel.core": "Setz den Kumpel-Kern auf einen Block, um deinen eigenen Kumpel zu erwecken: einen kleinen Bergbau-Golem, der dir folgt, Items einsammelt, Erze spürt und aufsteigt. Rechtsklick lässt ihn sitzen oder folgen, Schleichen + Rechtsklick öffnet seine Kiepe. Füttere ihn mit Erzen und Edelsteinen für Erfahrung und repariere ihn mit Kupferbarren.",
-	"guide.kumpel.spawn_egg": "Erzeugt einen wilden Kumpel. Zähme ihn mit einem Kupferbarren."
+	"guide.kumpel.spawn_egg": "Erzeugt einen wilden Kumpel. Zähme ihn mit einem Kupferbarren.",
+	"item.kumpel.cracked_kumpel_core": "Gesprungener Kumpel-Kern",
+	"item.kumpel.cracked_kumpel_core.tooltip": "Mit einem Kupferblock wieder reparieren",
+	"item.kumpel.kumpel_core.tooltip.pack": "Schleichend auf deinen Kumpel anwenden, um ihn einzupacken",
+	"item.kumpel.soul": "Stufe %1$s (%2$s) · %3$s EP",
+	"message.kumpel.torches": "%1$s trägt jetzt %2$s Fackeln.",
+	"message.kumpel.packed": "%s ruht jetzt in seinem Kern.",
+	"message.kumpel.creeper": "⚠ %1$s: Schlagwetter! Creeper %2$s Blöcke entfernt!",
+	"message.kumpel.lava": "⚠ %s: Vorsicht, Lava!",
+	"message.kumpel.lunch": "%1$s reicht dir %2$s. Hier, dein Bütterken!"
 }
