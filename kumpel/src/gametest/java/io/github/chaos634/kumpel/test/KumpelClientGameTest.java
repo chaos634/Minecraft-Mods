@@ -1,5 +1,7 @@
 package io.github.chaos634.kumpel.test;
 
+import java.util.List;
+
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -11,6 +13,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 
+import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.registry.ModEntities;
@@ -34,10 +37,10 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 			server.runCommand("execute as @p at @s run tp @s ~ ~ ~ 0 10");
 
 			// One Kumpel of every level in a row, facing the camera.
-			KumpelTier[] tiers = KumpelTier.values();
-			for (int i = 0; i < tiers.length; i++) {
+			List<KumpelTier> tiers = KumpelSettings.get().tiers();
+			for (int i = 0; i < tiers.size(); i++) {
 				server.runCommand("execute at @p run summon kumpel:kumpel ~%d ~ ~5 {NoAI:1b,Rotation:[180f,0f],experience:%d}"
-						.formatted(-4 + i * 2, tiers[i].requiredExperience()));
+						.formatted(-4 + i * 2, tiers.get(i).requiredExperience()));
 			}
 
 			// A close-up pair a bit further east: one standing, one sitting.
@@ -66,7 +69,7 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 
 				KumpelEntity kumpel = new KumpelEntity(ModEntities.KUMPEL, level);
 				kumpel.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 4.5, 180.0F, 0.0F);
-				kumpel.addExperience(KumpelTier.DIAMOND.requiredExperience());
+				kumpel.addExperience(KumpelSettings.get().tier(4).requiredExperience());
 				kumpel.tame(player);
 				level.addFreshEntity(kumpel);
 			});

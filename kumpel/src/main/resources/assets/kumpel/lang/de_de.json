@@ -2,13 +2,11 @@
 	"entity.kumpel.kumpel": "Kumpel",
 	"item.kumpel.kumpel_core": "Kumpel-Kern",
 	"item.kumpel.kumpel_core.tooltip": "Auf einen Block anwenden, um deinen eigenen Kumpel zu erwecken",
-
 	"kumpel.tier.copper": "Kupfer",
 	"kumpel.tier.iron": "Eisen",
 	"kumpel.tier.gold": "Gold",
 	"kumpel.tier.diamond": "Diamant",
 	"kumpel.tier.netherite": "Netherit",
-
 	"message.kumpel.tamed": "%s ist jetzt dein Kumpel!",
 	"message.kumpel.sitting": "%s wartet hier.",
 	"message.kumpel.following": "%s folgt dir.",
@@ -18,13 +16,12 @@
 	"message.kumpel.xp_progress": "%s/%s EP",
 	"message.kumpel.max_level": "Höchststufe",
 	"message.kumpel.level_up": "%1$s hat Stufe %2$s erreicht: %3$s!",
-	"message.kumpel.status": "%1$s · Stufe %2$s (%3$s) · %4$s · ❤ %5$s/%6$s · trägt %7$s Items · Erzsuche: %8$s",
+	"message.kumpel.status": "%1$s · Stufe %2$s (%3$s) · %4$s · ❤ %5$s/%6$s",
 	"message.kumpel.delivered": "%1$s gibt dir %2$s Items.",
 	"message.kumpel.ore_sensed": "%1$s spürt %2$s! %3$s Blöcke Richtung %4$s, %5$s",
 	"message.kumpel.below": "%s tiefer",
 	"message.kumpel.above": "%s höher",
 	"message.kumpel.same_height": "auf deiner Höhe",
-
 	"direction.kumpel.north": "Norden",
 	"direction.kumpel.northeast": "Nordosten",
 	"direction.kumpel.east": "Osten",
@@ -32,5 +29,10 @@
 	"direction.kumpel.south": "Süden",
 	"direction.kumpel.southwest": "Südwesten",
 	"direction.kumpel.west": "Westen",
-	"direction.kumpel.northwest": "Nordwesten"
+	"direction.kumpel.northwest": "Nordwesten",
+	"item.kumpel.kumpel_spawn_egg": "Kumpel-Spawn-Ei",
+	"itemGroup.kumpel": "Kumpel",
+	"command.kumpel.reloaded": "Kumpel-Config neu geladen: %1$s Stufen, %2$s Erze, %3$s Futtersorten (aus %4$s)",
+	"command.kumpel.level": "Stufe %1$s: %2$s · ab %3$s EP · ❤ %4$s · spürt %5$s Blöcke weit · %6$s Kiepenplätze",
+	"command.kumpel.ore": "%1$s · ab Stufe %2$s · Wert %3$s"
 }

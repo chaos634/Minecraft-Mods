@@ -5,7 +5,7 @@ Your Kumpel follows you, picks up loot, senses ores around you and grows stronge
 
 **Minecraft 26.3 · Fabric Loader ≥ 0.19.5 · Fabric API · Java 25**
 
-![All five Kumpel levels: netherite, diamond, gold, iron and copper](docs/tiers.jpg)
+![All five Kumpel levels: netherite, diamond, gold, iron and copper](../.github/media/kumpel/tiers.jpg)
 
 ## Getting started
 
@@ -28,7 +28,7 @@ A Kumpel spawned another way (e.g. `/summon kumpel:kumpel`) can be tamed with a 
 | **Senses ores** | Every few seconds it scans the area around it. When it finds ore it points at it, rings a chime and tells you what it found, how far away it is and in which direction. |
 | **Levels up** | Collecting items, finding ores and being fed earns XP. |
 
-![A Kumpel pointing at buried diamond ore](docs/ore-sensing.jpg)
+![A Kumpel pointing at buried diamond ore](../.github/media/kumpel/ore-sensing.jpg)
 
 ## Controls
 

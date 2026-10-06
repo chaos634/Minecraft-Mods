@@ -37,7 +37,7 @@ jobs:
             https://maven.architectury.dev/dev/architectury/architectury-fabric/maven-metadata.xml \
             https://maven.shedaniel.me/me/shedaniel/cloth/cloth-config-fabric/maven-metadata.xml ; do
             echo "##### $u"
-            curl -sSL --max-time 30 "$u" | grep -o '<version>[^<]*</version>' | tail -8 || true
+            curl -sSL --max-time 30 "$u" | grep -o '<version>[^<]*</version>' | grep -E '26\.|31\.9|22\.|alpha' | tail -12 || true
           done
       - name: resolve classpath
         if: matrix.group != 'versions'
@@ -73,7 +73,9 @@ jobs:
               p net.minecraft.core.Registry 'getValue|getOptional|containsKey| get\(|keySet|getKey|getTagOrEmpty|listElements'
               p net.minecraft.resources.Identifier 'tryParse|parse|fromNamespaceAndPath|getPath|getNamespace|withPrefix'
               p net.minecraft.tags.TagKey 'create|location'
-              p net.minecraft.world.level.BlockAndTintGetter
+              p net.minecraft.world.level.BlockAndLightGetter
+              p net.minecraft.world.level.LightLayer
+              p net.minecraft.world.level.BlockGetter 'canSeeSky|getLightEmission'
               p net.minecraft.world.level.LevelReader 'Brightness|Light|isLoaded|hasChunkAt|getMinY|getMaxY|canSeeSky|isEmptyBlock'
               p net.minecraft.world.level.Level 'destroyBlock|isDarkOutside|isBrightOutside|getDayTime|isDay|isNight|getGameTime|getOverworldClockTime|getDefaultClockTime'
               p net.minecraft.world.level.LevelWriter

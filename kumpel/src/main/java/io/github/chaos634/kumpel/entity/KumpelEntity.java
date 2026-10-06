@@ -2,7 +2,6 @@ package io.github.chaos634.kumpel.entity;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.ChatFormatting;
@@ -12,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -19,6 +19,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
@@ -37,7 +38,8 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -46,71 +48,53 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
+import io.github.chaos634.kumpel.config.KumpelConfig;
+import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.ai.CollectItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
 
 /**
  * The Kumpel: a small mining golem that follows its owner, collects dropped items,
- * senses nearby ores and grows from copper to netherite as it gains experience.
+ * senses nearby ores and grows stronger as it gains experience. Its levels, ores and food come from the config.
  */
 public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final EntityDataAccessor<Integer> DATA_LEVEL = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<String> DATA_TEXTURE = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.STRING);
 	private static final EntityDataAccessor<Boolean> DATA_POINTING = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 
-	public static final int INVENTORY_SIZE = 9;
-	/** How long the Kumpel waits after its last pickup before bringing its loot to the owner. */
-	private static final int DELIVER_DELAY_TICKS = 80;
-	private static final double MAX_COLLECT_DISTANCE_FROM_OWNER_SQ = 16.0 * 16.0;
 	private static final double MAX_SENSE_DISTANCE_FROM_OWNER_SQ = 24.0 * 24.0;
-	private static final int SENSE_INTERVAL_TICKS = 40;
-	/** Minimum time between two ore announcements, unless a more valuable ore turns up. */
-	private static final int ANNOUNCE_COOLDOWN_TICKS = 300;
-	/** The same ore block is not announced again within this time. */
-	private static final int SAME_ORE_COOLDOWN_TICKS = 2400;
 	private static final int POINTING_TICKS = 50;
-	private static final float HEAL_PER_COPPER_INGOT = 5.0F;
-
-	/** Experience gained by feeding the Kumpel ores, gems and metals. */
-	private static final Map<Item, Integer> FEED_EXPERIENCE = Map.ofEntries(
-			Map.entry(Items.COAL, 1),
-			Map.entry(Items.RAW_COPPER, 2),
-			Map.entry(Items.REDSTONE, 2),
-			Map.entry(Items.LAPIS_LAZULI, 3),
-			Map.entry(Items.QUARTZ, 3),
-			Map.entry(Items.AMETHYST_SHARD, 4),
-			Map.entry(Items.RAW_IRON, 4),
-			Map.entry(Items.IRON_INGOT, 6),
-			Map.entry(Items.RAW_GOLD, 6),
-			Map.entry(Items.GOLD_INGOT, 8),
-			Map.entry(Items.EMERALD, 25),
-			Map.entry(Items.DIAMOND, 40),
-			Map.entry(Items.NETHERITE_SCRAP, 80),
-			Map.entry(Items.NETHERITE_INGOT, 300)
-	);
 	private static final String[] COMPASS_DIRECTIONS = {
 			"north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"
 	};
+	private static final MenuType<?>[] POCKET_MENUS = {
+			MenuType.GENERIC_9x1, MenuType.GENERIC_9x2, MenuType.GENERIC_9x3,
+			MenuType.GENERIC_9x4, MenuType.GENERIC_9x5, MenuType.GENERIC_9x6
+	};
 
-	private final SimpleContainer inventory = new SimpleContainer(INVENTORY_SIZE);
+	private final KumpelPockets pockets = new KumpelPockets(this);
 	private final Set<Integer> ignoredItems = new HashSet<>();
 	private int experience;
 	private boolean oreSensing = true;
+	private int settingsRevision = -1;
+	private boolean healOnFirstRefresh = true;
 	private int ticksSinceLastPickup;
 	private int senseCooldown;
 	private int pointingTicks;
 	private Vec3 pointingTarget;
-	private OreKind lastAnnouncedKind;
+	private OreRule lastAnnouncedOre;
 	private BlockPos lastAnnouncedPos;
-	private int lastAnnounceTick = -ANNOUNCE_COOLDOWN_TICKS;
+	private int lastAnnounceTick = Integer.MIN_VALUE / 2;
 
 	public KumpelEntity(EntityType<? extends KumpelEntity> type, Level level) {
 		super(type, level);
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
+		KumpelTier first = KumpelSettings.get().firstTier();
 		return Animal.createAnimalAttributes()
-				.add(Attributes.MAX_HEALTH, KumpelTier.COPPER.maxHealth())
-				.add(Attributes.MOVEMENT_SPEED, KumpelTier.COPPER.movementSpeed())
+				.add(Attributes.MAX_HEALTH, first.maxHealth())
+				.add(Attributes.MOVEMENT_SPEED, first.movementSpeed())
 				.add(Attributes.FOLLOW_RANGE, 32.0)
 				.add(Attributes.KNOCKBACK_RESISTANCE, 0.4);
 	}
@@ -130,19 +114,39 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(DATA_LEVEL, KumpelTier.COPPER.level());
+		KumpelTier first = KumpelSettings.get().firstTier();
+		builder.define(DATA_LEVEL, first.level());
+		builder.define(DATA_TEXTURE, first.texture().toString());
 		builder.define(DATA_POINTING, false);
+	}
+
+	private static KumpelConfig.Behaviour behaviour() {
+		return KumpelSettings.get().behaviour();
 	}
 
 	// ------------------------------------------------------------------
 	// Levels & experience
 
 	public KumpelTier getTier() {
-		return KumpelTier.byLevel(this.entityData.get(DATA_LEVEL));
+		return KumpelSettings.get().tier(this.entityData.get(DATA_LEVEL));
+	}
+
+	/** The texture of the current level, as sent by the server (so it matches the server's config). */
+	public Identifier getTexture() {
+		Identifier texture = Identifier.tryParse(this.entityData.get(DATA_TEXTURE));
+		return texture != null ? texture : getTier().texture();
+	}
+
+	public int getExperience() {
+		return experience;
 	}
 
 	public boolean isPointing() {
 		return this.entityData.get(DATA_POINTING);
+	}
+
+	public boolean isOreSensing() {
+		return oreSensing;
 	}
 
 	public void addExperience(int amount) {
@@ -150,18 +154,29 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			return;
 		}
 
-		KumpelTier before = getTier();
+		int before = this.entityData.get(DATA_LEVEL);
 		experience += amount;
-		KumpelTier after = KumpelTier.forExperience(experience);
+		KumpelTier after = KumpelSettings.get().tierForExperience(experience);
 
-		if (after != before) {
-			this.entityData.set(DATA_LEVEL, after.level());
-			applyTierAttributes(after, true);
-			celebrateLevelUp(after);
+		if (after.level() != before) {
+			applyTier(after, after.level() > before);
+			if (after.level() > before) {
+				celebrateLevelUp(after);
+			}
 		}
 	}
 
-	private void applyTierAttributes(KumpelTier tier, boolean healToFull) {
+	/** Recalculates the level from the experience, e.g. after the config changed. */
+	private void refreshTier() {
+		KumpelTier tier = KumpelSettings.get().tierForExperience(experience);
+		applyTier(tier, healOnFirstRefresh);
+		healOnFirstRefresh = false;
+	}
+
+	private void applyTier(KumpelTier tier, boolean healToFull) {
+		this.entityData.set(DATA_LEVEL, tier.level());
+		this.entityData.set(DATA_TEXTURE, tier.texture().toString());
+
 		AttributeInstance maxHealth = getAttribute(Attributes.MAX_HEALTH);
 		if (maxHealth != null) {
 			maxHealth.setBaseValue(tier.maxHealth());
@@ -173,6 +188,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		if (healToFull) {
+			setHealth(getMaxHealth());
+		} else if (getHealth() > getMaxHealth()) {
 			setHealth(getMaxHealth());
 		}
 	}
@@ -190,15 +207,36 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 	}
 
+	private Component experienceProgress() {
+		KumpelSettings settings = KumpelSettings.get();
+		KumpelTier next = settings.nextTier(getTier());
+		return next == null
+				? Component.translatable("message.kumpel.max_level")
+				: Component.translatable("message.kumpel.xp_progress", experience, next.requiredExperience());
+	}
+
+	/** One line describing the Kumpel, used as the title of its backpack. */
+	public Component statusLine() {
+		KumpelTier tier = getTier();
+		return Component.translatable("message.kumpel.status",
+				getDisplayName(),
+				tier.level(),
+				tier.displayName(),
+				experienceProgress(),
+				(int) Math.ceil(getHealth()),
+				(int) getMaxHealth());
+	}
+
 	// ------------------------------------------------------------------
 	// Interaction
 
 	@Override
 	public InteractionResult mobInteract(Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
+		KumpelSettings settings = KumpelSettings.get();
 
 		if (!isTame()) {
-			if (!stack.is(Items.COPPER_INGOT)) {
+			if (!settings.isRepairItem(stack)) {
 				return super.mobInteract(player, hand);
 			}
 
@@ -215,8 +253,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		boolean handled = stack.isEmpty()
 				|| stack.is(Items.COMPASS)
-				|| stack.is(Items.COPPER_INGOT)
-				|| FEED_EXPERIENCE.containsKey(stack.getItem());
+				|| settings.isRepairItem(stack)
+				|| settings.feedExperience(stack) > 0;
 
 		if (!isOwnedBy(player) || !handled) {
 			return super.mobInteract(player, hand);
@@ -228,10 +266,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		if (stack.isEmpty()) {
 			if (player.isSecondaryUseActive()) {
-				showStatus(player);
-				if (hasItemsToDeliver()) {
-					deliverItemsTo(player);
-				}
+				openPockets(player);
 			} else {
 				boolean sit = !isOrderedToSit();
 				setOrderedToSit(sit);
@@ -244,12 +279,16 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			oreSensing = !oreSensing;
 			player.sendOverlayMessage(Component.translatable(oreSensing ? "message.kumpel.ore_sense_on" : "message.kumpel.ore_sense_off", getDisplayName()));
 			playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 1.0F, oreSensing ? 1.4F : 0.6F);
-		} else if (stack.is(Items.COPPER_INGOT) && getHealth() < getMaxHealth()) {
+		} else if (settings.isRepairItem(stack) && getHealth() < getMaxHealth()) {
 			usePlayerItem(player, hand, stack);
-			heal(HEAL_PER_COPPER_INGOT);
+			heal(behaviour().repairAmount);
 			playSound(SoundEvents.IRON_GOLEM_REPAIR, 1.0F, 1.3F + (random.nextFloat() - random.nextFloat()) * 0.2F);
 		} else {
-			int amount = stack.is(Items.COPPER_INGOT) ? 2 : FEED_EXPERIENCE.get(stack.getItem());
+			int amount = settings.feedExperience(stack);
+			if (amount <= 0) {
+				return InteractionResult.PASS;
+			}
+
 			usePlayerItem(player, hand, stack);
 			addExperience(amount);
 			playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 1.0F, 0.8F + random.nextFloat() * 0.6F);
@@ -264,25 +303,14 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		return InteractionResult.SUCCESS;
 	}
 
-	private Component experienceProgress() {
-		KumpelTier next = getTier().next();
-		return next == null
-				? Component.translatable("message.kumpel.max_level")
-				: Component.translatable("message.kumpel.xp_progress", experience, next.requiredExperience());
-	}
-
-	private void showStatus(Player player) {
-		KumpelTier tier = getTier();
-		player.sendSystemMessage(Component.translatable("message.kumpel.status",
-				getDisplayName(),
-				tier.level(),
-				tier.displayName(),
-				experienceProgress(),
-				(int) Math.ceil(getHealth()),
-				(int) getMaxHealth(),
-				countCarriedItems(),
-				Component.translatable(oreSensing ? "options.on" : "options.off")
-		).withStyle(ChatFormatting.YELLOW));
+	/** Opens the Kumpel's backpack; its size depends on the Kumpel's level. */
+	public void openPockets(Player player) {
+		int rows = getTier().pocketRows();
+		MenuType<?> menuType = POCKET_MENUS[rows - 1];
+		player.openMenu(new SimpleMenuProvider(
+				(containerId, inventory, user) -> new ChestMenu(menuType, containerId, inventory, pockets, rows),
+				statusLine()));
+		playSound(SoundEvents.BUNDLE_DROP_CONTENTS, 0.6F, 1.2F);
 	}
 
 	// ------------------------------------------------------------------
@@ -290,34 +318,23 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	@Override
 	public SimpleContainer getInventory() {
-		return inventory;
+		return pockets;
+	}
+
+	public KumpelPockets getPockets() {
+		return pockets;
 	}
 
 	public boolean isInventoryFull() {
-		for (int i = 0; i < inventory.getContainerSize(); i++) {
-			if (inventory.getItem(i).isEmpty()) {
-				return false;
-			}
-		}
-
-		return true;
+		return pockets.pocketsFull();
 	}
 
 	public boolean hasItemsToDeliver() {
-		return !inventory.isEmpty();
+		return !pockets.isEmpty();
 	}
 
 	public boolean wantsToDeliver() {
-		return hasItemsToDeliver() && (isInventoryFull() || ticksSinceLastPickup > DELIVER_DELAY_TICKS);
-	}
-
-	private int countCarriedItems() {
-		int count = 0;
-		for (int i = 0; i < inventory.getContainerSize(); i++) {
-			count += inventory.getItem(i).getCount();
-		}
-
-		return count;
+		return hasItemsToDeliver() && (isInventoryFull() || ticksSinceLastPickup > behaviour().deliverDelayTicks);
 	}
 
 	public ItemEntity findCollectableItem() {
@@ -346,12 +363,13 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		if (owner != null) {
 			// Things the owner threw away on purpose stay where they are.
-			if (item.getOwner() == owner || item.distanceToSqr(owner) > MAX_COLLECT_DISTANCE_FROM_OWNER_SQ) {
+			double maxDistance = behaviour().maxCollectDistanceFromOwner;
+			if (item.getOwner() == owner || item.distanceToSqr(owner) > maxDistance * maxDistance) {
 				return false;
 			}
 		}
 
-		return inventory.canAddItem(item.getItem());
+		return pockets.canAddToPockets(item.getItem());
 	}
 
 	public void ignoreItem(ItemEntity item) {
@@ -361,7 +379,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	public void collect(ItemEntity item) {
 		ItemStack stack = item.getItem();
 		int before = stack.getCount();
-		ItemStack remainder = inventory.addItem(stack.copy());
+		ItemStack remainder = pockets.addToPockets(stack);
 		int taken = before - remainder.getCount();
 
 		if (taken <= 0) {
@@ -378,7 +396,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		playSound(SoundEvents.ITEM_PICKUP, 0.3F, (random.nextFloat() - random.nextFloat()) * 1.4F + 2.0F);
 		ticksSinceLastPickup = 0;
-		addExperience(1);
+		addExperience(behaviour().experiencePerPickup);
 	}
 
 	public void deliverItemsTo(Player player) {
@@ -387,7 +405,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		int delivered = 0;
-		for (ItemStack stack : inventory.removeAllItems()) {
+		for (ItemStack stack : pockets.removeAllItems()) {
 			delivered += stack.getCount();
 			player.getInventory().add(stack);
 
@@ -408,12 +426,17 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	// ------------------------------------------------------------------
-	// Ore sensing
+	// Ticking & ore sensing
 
 	@Override
 	protected void customServerAiStep(ServerLevel level) {
 		super.customServerAiStep(level);
 		ticksSinceLastPickup++;
+
+		if (settingsRevision != KumpelSettings.revision()) {
+			settingsRevision = KumpelSettings.revision();
+			refreshTier();
+		}
 
 		if (pointingTicks > 0) {
 			getLookControl().setLookAt(pointingTarget.x, pointingTarget.y, pointingTarget.z);
@@ -427,7 +450,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		if (isTame() && oreSensing && --senseCooldown <= 0) {
-			senseCooldown = SENSE_INTERVAL_TICKS;
+			senseCooldown = Math.max(1, behaviour().senseIntervalTicks);
 			if (getOwner() instanceof Player owner && owner.level() == level && distanceToSqr(owner) < MAX_SENSE_DISTANCE_FROM_OWNER_SQ) {
 				senseOres(level, owner);
 			}
@@ -440,21 +463,22 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			return;
 		}
 
+		KumpelConfig.Behaviour behaviour = behaviour();
 		int sinceLast = tickCount - lastAnnounceTick;
-		if (best.pos().equals(lastAnnouncedPos) && sinceLast < SAME_ORE_COOLDOWN_TICKS) {
+		if (best.pos().equals(lastAnnouncedPos) && sinceLast < behaviour.sameOreCooldownTicks) {
 			return;
 		}
 
-		boolean moreValuable = lastAnnouncedKind == null || best.kind().ordinal() > lastAnnouncedKind.ordinal();
-		if (!moreValuable && sinceLast < ANNOUNCE_COOLDOWN_TICKS) {
+		boolean moreValuable = lastAnnouncedOre == null || best.rule().value() > lastAnnouncedOre.value();
+		if (!moreValuable && sinceLast < behaviour.announceCooldownTicks) {
 			return;
 		}
 
-		announceOre(level, owner, best.kind(), best.pos());
-		lastAnnouncedKind = best.kind();
+		announceOre(level, owner, best);
+		lastAnnouncedOre = best.rule();
 		lastAnnouncedPos = best.pos();
 		lastAnnounceTick = tickCount;
-		addExperience(1 + best.kind().minLevel());
+		addExperience(1 + best.rule().level());
 	}
 
 	/**
@@ -463,13 +487,14 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	 * @return the ore found, or {@code null} if there is none in range
 	 */
 	public SensedOre findBestOre(ServerLevel level) {
+		KumpelSettings settings = KumpelSettings.get();
 		KumpelTier tier = getTier();
 		int radius = tier.senseRadius();
 		int radiusSq = radius * radius;
 		BlockPos center = blockPosition();
 		BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
-		OreKind bestKind = null;
+		OreRule bestRule = null;
 		BlockPos bestPos = null;
 		int bestDistanceSq = Integer.MAX_VALUE;
 
@@ -487,16 +512,16 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 						continue;
 					}
 
-					OreKind kind = OreKind.of(state);
-					if (kind == null || kind.minLevel() > tier.level()) {
+					OreRule rule = settings.matchOre(state);
+					if (rule == null || rule.level() > tier.level()) {
 						continue;
 					}
 
-					boolean better = bestKind == null
-							|| kind.ordinal() > bestKind.ordinal()
-							|| (kind == bestKind && distanceSq < bestDistanceSq);
+					boolean better = bestRule == null
+							|| rule.value() > bestRule.value()
+							|| (rule.value() == bestRule.value() && distanceSq < bestDistanceSq);
 					if (better) {
-						bestKind = kind;
+						bestRule = rule;
 						bestPos = cursor.immutable();
 						bestDistanceSq = distanceSq;
 					}
@@ -504,13 +529,14 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			}
 		}
 
-		return bestKind == null ? null : new SensedOre(bestKind, bestPos);
+		return bestRule == null ? null : new SensedOre(bestRule, bestPos);
 	}
 
-	public record SensedOre(OreKind kind, BlockPos pos) {
+	public record SensedOre(OreRule rule, BlockPos pos) {
 	}
 
-	private void announceOre(ServerLevel level, Player owner, OreKind kind, BlockPos orePos) {
+	private void announceOre(ServerLevel level, Player owner, SensedOre sensed) {
+		BlockPos orePos = sensed.pos();
 		Vec3 eyes = new Vec3(getX(), getEyeY(), getZ());
 		Vec3 ore = Vec3.atCenterOf(orePos);
 		Vec3 direction = ore.subtract(eyes);
@@ -526,7 +552,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		// ...and a glimmer on the ore itself (visible once it is uncovered).
 		level.sendParticles(ParticleTypes.WAX_ON, ore.x, ore.y, ore.z, 10, 0.4, 0.4, 0.4, 0.0);
-		level.playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.NEUTRAL, 1.5F, kind.pitch());
+		level.playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.NEUTRAL, 1.5F, sensed.rule().pitch());
 
 		pointingTarget = ore;
 		pointingTicks = POINTING_TICKS;
@@ -592,7 +618,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	@Override
 	public boolean fireImmune() {
-		return getTier() == KumpelTier.NETHERITE || super.fireImmune();
+		return getTier().fireImmune() || super.fireImmune();
 	}
 
 	@Override
@@ -603,7 +629,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	@Override
 	protected void dropEquipment(ServerLevel level) {
 		super.dropEquipment(level);
-		for (ItemStack stack : inventory.removeAllItems()) {
+		for (ItemStack stack : pockets.removeAllItems()) {
 			spawnAtLocation(level, stack);
 		}
 	}
@@ -658,8 +684,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		oreSensing = input.getBooleanOr("ore_sensing", true);
 		readInventoryFromTag(input);
 
-		KumpelTier tier = KumpelTier.forExperience(experience);
+		healOnFirstRefresh = false;
+		KumpelTier tier = KumpelSettings.get().tierForExperience(experience);
 		this.entityData.set(DATA_LEVEL, tier.level());
-		applyTierAttributes(tier, false);
+		this.entityData.set(DATA_TEXTURE, tier.texture().toString());
 	}
 }

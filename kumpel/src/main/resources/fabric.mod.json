@@ -3,13 +3,16 @@
 	"id": "kumpel",
 	"version": "${version}",
 	"name": "Kumpel",
-	"description": "A small golem buddy that follows you, collects items, senses ores and levels up from copper to netherite.",
+	"description": "A small golem buddy that follows you, collects items, senses ores and levels up from copper to netherite. Fully configurable, with JEI and REI support.",
 	"authors": [
 		"chaos634"
 	],
 	"contact": {
-		"sources": "https://github.com/chaos634/Minecraft-Mods"
+		"homepage": "https://github.com/chaos634/Minecraft-Mods/tree/main/kumpel",
+		"sources": "https://github.com/chaos634/Minecraft-Mods",
+		"issues": "https://github.com/chaos634/Minecraft-Mods/issues"
 	},
+	"license": "MIT",
 	"icon": "assets/kumpel/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -25,5 +28,9 @@
 		"minecraft": "~26.3",
 		"java": ">=25",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"jei": "*",
+		"roughlyenoughitems": "*"
 	}
 }
