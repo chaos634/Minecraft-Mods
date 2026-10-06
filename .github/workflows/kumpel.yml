@@ -61,6 +61,23 @@ jobs:
           chmod +x ./gradlew
           xvfb-run -a -s "-screen 0 1920x1080x24 +extension GLX +render -noreset" \
             timeout 900 ./gradlew runClientGameTest --stacktrace
+      # TEMPORARY: dumps the screenshots into the log so they can be checked without downloading the artifact.
+      - name: print screenshots
+        if: always()
+        run: |
+          sudo apt-get install -y python3-pil > /dev/null
+          python3 - <<'EOF'
+          import base64, glob, io
+          from PIL import Image
+          for path in sorted(glob.glob('**/screenshots/*.png', recursive=True)):
+              buffer = io.BytesIO()
+              Image.open(path).convert('RGB').save(buffer, 'JPEG', quality=85)
+              data = base64.b64encode(buffer.getvalue()).decode()
+              print('=====BEGIN', path)
+              for i in range(0, len(data), 120):
+                  print(data[i:i + 120])
+              print('=====END', path)
+          EOF
       - name: upload screenshots
         if: always()
         uses: actions/upload-artifact@v7
