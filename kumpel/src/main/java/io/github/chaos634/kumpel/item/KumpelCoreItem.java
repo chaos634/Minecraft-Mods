@@ -61,7 +61,7 @@ public class KumpelCoreItem extends Item {
 				// Your very first Kumpel comes with a handbook.
 				ItemStack fibel = new ItemStack(ModItems.KUMPELFIBEL);
 				if (!player.getInventory().add(fibel)) {
-					player.drop(fibel, false);
+					player.spawnAtLocation(level, fibel);
 				}
 			}
 		}

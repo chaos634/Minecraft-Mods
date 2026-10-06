@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.block.FoerderkorbBlock;
@@ -25,7 +24,7 @@ public final class ModBlocks {
 	/** The invisible light of a Kumpel's helmet lamp; it has no item. */
 	public static final Block LAMP_LIGHT = registerBlockOnly("lamp_light", LampLightBlock::new,
 			BlockBehaviour.Properties.of().replaceable().noCollision().noLootTable().noOcclusion().strength(-1.0F, 0.0F)
-					.lightLevel(state -> state.getValue(LampLightBlock.LEVEL)).pushReaction(PushReaction.DESTROY));
+					.lightLevel(state -> state.getValue(LampLightBlock.LEVEL)));
 	public static final Block MARKENTAFEL = register("markentafel", MarkentafelBlock::new,
 			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD));
 
