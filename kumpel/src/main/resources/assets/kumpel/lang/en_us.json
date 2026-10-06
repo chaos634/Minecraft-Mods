@@ -135,5 +135,9 @@
 	"message.kumpel.tunnel.stopped.stuck": "%1$s stops after %3$s blocks: it can't get any further.",
 	"command.kumpel.list.activity.tunneling": "digging a tunnel",
 	"advancements.kumpel.vor_ort.title": "At the Coal Face",
-	"advancements.kumpel.vor_ort.description": "Let a Kumpel dig a whole tunnel"
+	"advancements.kumpel.vor_ort.description": "Let a Kumpel dig a whole tunnel",
+	"subtitles.kumpel.steiger_whistle.call": "Foreman's Whistle calls",
+	"subtitles.kumpel.steiger_whistle.break": "Foreman's Whistle: break",
+	"subtitles.kumpel.steiger_whistle.order": "Foreman's Whistle gives an order",
+	"subtitles.kumpel.kumpel.cheer": "Kumpel cheers"
 }

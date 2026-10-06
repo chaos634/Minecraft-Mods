@@ -535,7 +535,8 @@ public class KumpelGameTests {
 	public void tunnelStopsBeforeWater(GameTestHelper helper) {
 		buildFloor(helper);
 		buildWall(helper);
-		// A water pocket next to the third slice.
+		// A closed water pocket next to the third slice.
+		helper.setBlock(5, 1, 5, Blocks.STONE);
 		helper.setBlock(5, 1, 4, Blocks.WATER);
 		Player owner = ownerAt(helper, 1, 5);
 		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 3);

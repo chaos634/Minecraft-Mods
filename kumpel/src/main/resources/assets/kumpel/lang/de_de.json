@@ -135,5 +135,9 @@
 	"message.kumpel.tunnel.stopped.stuck": "%1$s hört nach %3$s Blöcken auf: Er kommt nicht weiter.",
 	"command.kumpel.list.activity.tunneling": "gräbt einen Stollen",
 	"advancements.kumpel.vor_ort.title": "Vor Ort",
-	"advancements.kumpel.vor_ort.description": "Lass einen Kumpel einen ganzen Stollen vortreiben"
+	"advancements.kumpel.vor_ort.description": "Lass einen Kumpel einen ganzen Stollen vortreiben",
+	"subtitles.kumpel.steiger_whistle.call": "Steigerpfeife ruft",
+	"subtitles.kumpel.steiger_whistle.break": "Steigerpfeife: Pause",
+	"subtitles.kumpel.steiger_whistle.order": "Steigerpfeife gibt Auftrag",
+	"subtitles.kumpel.kumpel.cheer": "Kumpel jubelt"
 }

@@ -16,6 +16,7 @@ import io.github.chaos634.kumpel.item.MinerHelmetItem;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
 import io.github.chaos634.kumpel.registry.ModItems;
+import io.github.chaos634.kumpel.registry.ModSounds;
 
 public class Kumpel implements ModInitializer {
 	public static final String MOD_ID = "kumpel";
@@ -25,6 +26,7 @@ public class Kumpel implements ModInitializer {
 	public void onInitialize() {
 		KumpelSettings.reload();
 		ModComponents.initialize();
+		ModSounds.initialize();
 		ModEntities.initialize();
 		ModItems.initialize();
 		OreGlimmer.initialize();

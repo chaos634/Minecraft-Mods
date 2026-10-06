@@ -1,0 +1,26 @@
+{
+  "item.steiger_whistle.call": {
+    "subtitle": "subtitles.kumpel.steiger_whistle.call",
+    "sounds": [
+      "kumpel:item/steiger_whistle/call"
+    ]
+  },
+  "item.steiger_whistle.break": {
+    "subtitle": "subtitles.kumpel.steiger_whistle.break",
+    "sounds": [
+      "kumpel:item/steiger_whistle/break"
+    ]
+  },
+  "item.steiger_whistle.order": {
+    "subtitle": "subtitles.kumpel.steiger_whistle.order",
+    "sounds": [
+      "kumpel:item/steiger_whistle/order"
+    ]
+  },
+  "entity.kumpel.cheer": {
+    "subtitle": "subtitles.kumpel.kumpel.cheer",
+    "sounds": [
+      "kumpel:entity/kumpel/cheer"
+    ]
+  }
+}

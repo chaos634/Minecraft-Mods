@@ -87,6 +87,7 @@ import io.github.chaos634.kumpel.entity.behaviour.Steigerlied;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModItems;
+import io.github.chaos634.kumpel.registry.ModSounds;
 import io.github.chaos634.kumpel.util.BlockScanner;
 
 /**
@@ -321,6 +322,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		playSound(SoundEvents.PLAYER_LEVELUP, 0.8F, 1.3F);
+		playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
 
 		if (getOwner() instanceof Player owner) {
 			owner.sendSystemMessage(Component.translatable("message.kumpel.level_up", getDisplayName(), tier.level(), tier.displayName())
@@ -866,7 +868,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			owner.sendSystemMessage(Component.translatable("message.kumpel.tunnel.done", getDisplayName(), tunnel.length()).withStyle(ChatFormatting.GOLD));
 			KumpelAdvancements.award(owner, KumpelAdvancements.VOR_ORT);
 		}
-		playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 1.0F, 1.5F);
+		playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
 		tunnel = null;
 		setMining(false);
 	}
@@ -1191,6 +1193,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		announceOre(level, owner, best);
 		if (best.rule().value() >= TREASURE_VALUE && moreValuable) {
 			say(owner, "treasure", TREASURE_LINES, true);
+			playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
 		}
 		lastAnnouncedOre = best.rule();
 		lastAnnouncedPos = best.pos();

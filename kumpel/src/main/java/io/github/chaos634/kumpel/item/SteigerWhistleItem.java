@@ -9,7 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,6 +26,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
+import io.github.chaos634.kumpel.registry.ModSounds;
 
 /**
  * Steigerpfeife, the foreman's whistle. Calls all your Kumpels or sends them on a break. Used sneaking on a container,
@@ -92,7 +93,7 @@ public class SteigerWhistleItem extends Item {
 			kumpel.answerWhistle(player);
 		}
 
-		whistle(level, player, 1.8F);
+		whistle(level, player, ModSounds.WHISTLE_CALL);
 		player.sendOverlayMessage(kumpels.isEmpty()
 				? Component.translatable("message.kumpel.whistle.nobody")
 				: Component.translatable("message.kumpel.whistle.called", kumpels.size()));
@@ -111,7 +112,7 @@ public class SteigerWhistleItem extends Item {
 			kumpel.takeBreak();
 		}
 
-		whistle(level, player, 1.2F);
+		whistle(level, player, ModSounds.WHISTLE_BREAK);
 		player.sendOverlayMessage(kumpels.isEmpty()
 				? Component.translatable("message.kumpel.whistle.nobody")
 				: Component.translatable("message.kumpel.whistle.break", kumpels.size()));
@@ -147,7 +148,7 @@ public class SteigerWhistleItem extends Item {
 			}
 		}
 
-		whistle(level, player, alreadyMarked ? 1.0F : 2.0F);
+		whistle(level, player, ModSounds.WHISTLE_ORDER);
 		level.sendParticles(ParticleTypes.WAX_ON, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 12, 0.3, 0.1, 0.3, 0.0);
 		player.sendOverlayMessage(Component.translatable(alreadyMarked ? "message.kumpel.storage.cleared" : "message.kumpel.storage.set",
 				kumpels.size(), level.getBlockState(pos).getBlock().getName()));
@@ -188,7 +189,7 @@ public class SteigerWhistleItem extends Item {
 		int length = KumpelSettings.get().behaviour().tunnelLength;
 
 		hauer.startTunnel(start, direction, length);
-		whistle(level, player, 1.5F);
+		whistle(level, player, ModSounds.WHISTLE_ORDER);
 		level.sendParticles(ParticleTypes.WAX_OFF, start.getX() + 0.5, start.getY() + 1.0, start.getZ() + 0.5, 12, 0.3, 0.6, 0.3, 0.0);
 		player.sendOverlayMessage(Component.translatable("message.kumpel.tunnel.started", hauer.getDisplayName(), length,
 				Component.translatable("direction.kumpel." + direction.getSerializedName())));
@@ -198,8 +199,8 @@ public class SteigerWhistleItem extends Item {
 		return Math.max(1, KumpelSettings.get().behaviour().whistleRange);
 	}
 
-	private static void whistle(ServerLevel level, Player player, float pitch) {
-		level.playSound(null, player.getX(), player.getEyeY(), player.getZ(), SoundEvents.NOTE_BLOCK_FLUTE.value(), SoundSource.PLAYERS, 2.0F, pitch);
+	private static void whistle(ServerLevel level, Player player, SoundEvent sound) {
+		level.playSound(null, player.getX(), player.getEyeY(), player.getZ(), sound, SoundSource.PLAYERS, 2.0F, 1.0F);
 	}
 
 	// Deprecated in 26.x but still the documented way to add a plain tooltip line.
