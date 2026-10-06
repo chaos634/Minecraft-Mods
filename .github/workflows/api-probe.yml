@@ -1,0 +1,130 @@
+# TEMPORARY: prints Minecraft 26.3 class signatures and JEI/REI versions. Removed again after use.
+
+name: api-probe
+
+on:
+  push:
+    branches: [claude/fervent-cray-y1lqfh]
+    paths: ['.github/workflows/api-probe.yml']
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [versions, a, b, c]
+    defaults:
+      run:
+        working-directory: kumpel
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: maven versions
+        if: matrix.group == 'versions'
+        run: |
+          for u in \
+            https://maven.blamejared.com/mezz/jei/jei-26.3-fabric/maven-metadata.xml \
+            https://maven.blamejared.com/mezz/jei/jei-26.3-fabric-api/maven-metadata.xml \
+            https://maven.blamejared.com/mezz/jei/jei-26.3-common-api/maven-metadata.xml \
+            https://maven.shedaniel.me/me/shedaniel/RoughlyEnoughItems-fabric/maven-metadata.xml \
+            https://maven.shedaniel.me/me/shedaniel/RoughlyEnoughItems-api-fabric/maven-metadata.xml \
+            https://maven.shedaniel.me/me/shedaniel/RoughlyEnoughItems-default-plugin-fabric/maven-metadata.xml \
+            https://maven.architectury.dev/dev/architectury/architectury-fabric/maven-metadata.xml \
+            https://maven.shedaniel.me/me/shedaniel/cloth/cloth-config-fabric/maven-metadata.xml ; do
+            echo "##### $u"
+            curl -sSL --max-time 30 "$u" | grep -o '<version>[^<]*</version>' | tail -8 || true
+          done
+      - name: resolve classpath
+        if: matrix.group != 'versions'
+        run: |
+          chmod +x ./gradlew
+          cat >> build.gradle <<'EOF'
+          tasks.register('printClientCp') {
+            def cp = sourceSets.client.compileClasspath
+            doLast { println "CP=" + cp.asPath }
+          }
+          EOF
+          ./gradlew --no-configuration-cache -q printClientCp | grep '^CP=' | sed 's/^CP=//' > /tmp/cp.txt
+      - name: javap
+        if: matrix.group != 'versions'
+        env:
+          GROUP: ${{ matrix.group }}
+        run: |
+          CP=$(cat /tmp/cp.txt)
+          MCJARS=$(tr ':' '\n' < /tmp/cp.txt | grep -E 'minecraft-(common|clientOnly)')
+          p() {
+            echo "##### $1"
+            if [ -n "$2" ]; then javap -cp "$CP" -protected "$1" 2>&1 | grep -E "$2" || true
+            else javap -cp "$CP" -protected "$1" 2>&1 || true; fi
+          }
+          ls_jar() {
+            echo "##### jar entries matching $1"
+            for j in $MCJARS; do unzip -Z1 "$j" | grep -E "$1" | grep -v '\$' || true; done | sort -u
+          }
+          case "$GROUP" in
+            a)
+              ls_jar '/(Creeper|SpawnEggItem|TypedEntityData|CustomData|TagValueOutput|TagValueInput|ProblemReporter|ChestMenu|SimpleMenuProvider|AdvancementHolder|ItemInHandLayer|ArmedModel|ArmedEntityRenderState|HoldingEntityRenderState|GameRules|FoodData|CreativeModeTab)\.class'
+              p net.minecraft.network.syncher.EntityDataSerializers 'public static final'
+              p net.minecraft.core.Registry 'getValue|getOptional|containsKey| get\(|keySet|getKey|getTagOrEmpty|listElements'
+              p net.minecraft.resources.Identifier 'tryParse|parse|fromNamespaceAndPath|getPath|getNamespace|withPrefix'
+              p net.minecraft.tags.TagKey 'create|location'
+              p net.minecraft.world.level.BlockAndTintGetter
+              p net.minecraft.world.level.LevelReader 'Brightness|Light|isLoaded|hasChunkAt|getMinY|getMaxY|canSeeSky|isEmptyBlock'
+              p net.minecraft.world.level.Level 'destroyBlock|isDarkOutside|isBrightOutside|getDayTime|isDay|isNight|getGameTime|getOverworldClockTime|getDefaultClockTime'
+              p net.minecraft.world.level.LevelWriter
+              p net.minecraft.world.item.ItemStack 'isCorrectToolForDrops|getDestroySpeed|getMaxStackSize|isDamageableItem|ItemStack\(|isSameItem'
+              p net.minecraft.world.entity.player.Player 'getFoodData|openMenu|isSleeping|isSleepingLongEnough|drop\('
+              p net.minecraft.world.food.FoodData
+              p net.minecraft.world.inventory.ChestMenu
+              p net.minecraft.world.SimpleMenuProvider
+              p net.minecraft.world.Container 'stillValid|default|countItem|hasAnyMatching'
+              ;;
+            b)
+              p net.minecraft.server.ServerAdvancementManager
+              p net.minecraft.server.PlayerAdvancements 'award|getOrStartProgress|revoke'
+              p net.minecraft.advancements.AdvancementHolder
+              p net.minecraft.advancements.AdvancementProgress 'isDone'
+              p net.minecraft.server.level.ServerPlayer 'getAdvancements|server|getServer|level\(\)|isSleeping'
+              p net.minecraft.server.MinecraftServer 'getAdvancements|getPlayerList|overworld'
+              p net.minecraft.commands.CommandSourceStack 'ermission|sendSuccess|sendFailure|getPlayer|getEntity|getServer|getLevel'
+              p net.minecraft.commands.Commands 'literal|argument|hasPermission|LEVEL_|isOp|Permission'
+              p net.minecraft.world.effect.MobEffects 'GLOWING|NIGHT_VISION'
+              p net.minecraft.world.effect.MobEffectInstance 'MobEffectInstance\('
+              p net.minecraft.world.item.SpawnEggItem
+              p net.minecraft.core.component.DataComponents 'ENTITY_DATA|CUSTOM_DATA|CUSTOM_NAME|LORE|ENCHANTMENT_GLINT_OVERRIDE|RARITY|ITEM_NAME|MAX_STACK_SIZE|FOOD|DAMAGE'
+              p net.minecraft.world.item.component.CustomData
+              p net.minecraft.world.item.component.TypedEntityData
+              p net.minecraft.world.level.storage.TagValueOutput
+              p net.minecraft.world.level.storage.TagValueInput
+              p net.minecraft.util.ProblemReporter
+              p net.minecraft.world.entity.Entity 'save|load|getEncodeId|RemovalReason|setRemoved|remove\(|restoreFrom|getType\(\)'
+              p net.minecraft.world.entity.EntityType 'spawn|loadEntityRecursive|updateCustomEntityTag|appendDefaultStackConfig|appendCustomEntityStackConfig|createDefaultStackConfig|by\(|getKey'
+              ;;
+            c)
+              p net.minecraft.world.entity.LivingEntity 'setItemSlot|getItemBySlot|getMainHandItem|isSleeping|getSleepingPos|setItemInHand'
+              p net.minecraft.world.entity.EquipmentSlot 'public static final'
+              p net.minecraft.world.entity.Mob 'setItemSlot|setDropChance|setGuaranteedDrop'
+              p net.minecraft.client.renderer.entity.layers.ItemInHandLayer
+              p net.minecraft.client.model.ArmedModel
+              p net.minecraft.client.renderer.entity.state.ArmedEntityRenderState
+              p net.minecraft.client.renderer.entity.state.HoldingEntityRenderState
+              p net.minecraft.client.renderer.entity.state.LivingEntityRenderState 'Item|item'
+              p net.minecraft.world.level.block.Blocks 'TORCH|WALL_TORCH'
+              p net.minecraft.world.level.block.state.BlockBehaviour\$BlockStateBase 'canSurvive|canBeReplaced|isFaceSturdy|getLightEmission|getFluidState|isSolid|blocksMotion|getDestroySpeed'
+              p net.minecraft.world.level.material.FluidState ' is\(|isEmpty|isSource'
+              p net.minecraft.tags.FluidTags 'LAVA|WATER'
+              p net.minecraft.world.item.Items 'TORCH|BREAD|COOKED_BEEF|BAKED_POTATO|NAME_TAG|BELL|GOAT_HORN|BLAZE_ROD|STICK$'
+              p net.minecraft.world.entity.player.Inventory 'getSelected|getContainerSize|getItem\(|removeItem|findSlotMatchingItem|contains|getNonEquipmentItems'
+              p net.minecraft.world.item.CreativeModeTab 'builder|Output|displayItems|icon|title|TabVisibility'
+              p net.minecraft.world.level.gamerules.GameRules 'MOB_GRIEFING|get\(|getBoolean'
+              p net.minecraft.world.level.block.entity.HopperBlockEntity 'addItem'
+              p net.minecraft.world.level.block.JukeboxBlock
+              p net.minecraft.world.level.block.entity.JukeboxBlockEntity 'isPlaying|getSongPlayer'
+              p net.minecraft.world.entity.animal.allay.Allay 'setJukeboxPlaying|isDancing'
+              ;;
+          esac
