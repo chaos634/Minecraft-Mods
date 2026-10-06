@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [d]
+        group: [c, e]
     defaults:
       run:
         working-directory: kumpel
@@ -142,5 +142,33 @@ jobs:
               p net.minecraft.world.level.block.JukeboxBlock
               p net.minecraft.world.level.block.entity.JukeboxBlockEntity 'isPlaying|getSongPlayer'
               p net.minecraft.world.entity.animal.allay.Allay 'setJukeboxPlaying|isDancing'
+              ;;
+            e)
+              ls_jar '/(LevelChunk|ChunkAccess|JukeboxSongPlayer|Display|ItemCooldowns|ServerPlayer|EntityTypes)\.class'
+              p net.minecraft.world.level.block.Block 'dropResources|getDrops|popResource'
+              p net.minecraft.world.level.chunk.LevelChunk 'getBlockEntities'
+              p net.minecraft.world.level.chunk.ChunkAccess 'getBlockEntitiesPos|getBlockEntities'
+              p net.minecraft.world.level.Level 'getChunk\(|getChunkAt|getBlockEntity|removeBlock'
+              p net.minecraft.world.item.JukeboxSongPlayer 'isPlaying|getSong'
+              p 'net.minecraft.world.entity.Display$BlockDisplay'
+              p net.minecraft.world.entity.Display 'setGlowColorOverride|setBrightnessOverride|setViewRange|setTransformation|setPosRotInterpolationDuration|setTransformationInterpolation|Display\('
+              p net.minecraft.world.entity.EntityTypes 'BLOCK_DISPLAY|CREEPER|ITEM\b'
+              p net.minecraft.world.entity.EntityType 'BLOCK_DISPLAY'
+              p net.minecraft.world.item.ItemCooldowns 'addCooldown|isOnCooldown'
+              p net.minecraft.world.entity.player.Player 'getCooldowns|isCreative|getAbilities'
+              p net.minecraft.world.entity.LivingEntity 'swing\(|getMainHandItem|setItemSlot|getItemBySlot|setItemInHand|getItemInHand'
+              p net.minecraft.world.entity.Mob 'setDropChance|setGuaranteedDrop|dropPreservedEquipment|setPersistenceRequired|getEquipmentDropChance|dropFromLootTable|DropChances'
+              p net.minecraft.world.entity.EquipmentSlot 'MAINHAND'
+              p net.minecraft.sounds.SoundEvents 'NOTE_BLOCK_FLUTE|NOTE_BLOCK_CHIME|NOTE_BLOCK_BELL|GOAT_HORN|BREEZE_WHIRL|RAID_HORN|ITEM_BREAK|COPPER_GOLEM_|AMETHYST_BLOCK_CHIME'
+              p net.minecraft.core.particles.ParticleTypes 'NOTE|CHERRY_LEAVES|PALE_OAK|WAX_|ELECTRIC_SPARK|SCRAPE|CRIT\b|BLOCK\b|DUST\b|GLOW\b'
+              p net.minecraft.core.particles.BlockParticleOption
+              p net.minecraft.world.level.block.SoundType 'getHitSound|getBreakSound|getVolume|getPitch'
+              p net.minecraft.tags.ItemTags 'PICKAXES|SWORDS|AXES|SHOVELS'
+              p net.minecraft.tags.BlockTags 'MINEABLE_WITH_PICKAXE|NEEDS_'
+              p net.minecraft.world.level.block.state.BlockBehaviour\$BlockStateBase 'getDestroySpeed|getSoundType|requiresCorrectToolForDrops|hasBlockEntity'
+              p net.minecraft.world.level.pathfinder.Path 'canReach|getTarget|getEndNode|isDone'
+              p net.minecraft.world.entity.ai.navigation.PathNavigation 'createPath|moveTo|isDone|stop'
+              p net.minecraft.server.level.ServerLevel 'getGameRules|players\(\)|getEntities\('
+              p net.minecraft.world.level.gamerules.GameRules
               ;;
           esac
