@@ -118,3 +118,11 @@ Rund um die Zeche: keiner wird vergessen, und die Kapelle spielt.
 - ✅ **Markenkontrolle**: Jeder Kumpel hängt seine Marke auf, mit Ort, Tätigkeit und Zeit. So findest du auch Kumpels in entladenen Chunks wieder, und von verunglückten weißt du, wo ihr Kern liegt.
 - ✅ **Markentafel**: Ein Block, der die Markenkontrolle zeigt, inklusive „wie viele sind unter Tage?“.
 - ✅ **Kumpelkapelle**: Eine eigene Schallplatte „Glück auf“, ein selbst komponierter und synthetisierter Blasmusik-Marsch. Liegt in verlassenen Minen. Die Kumpels singen mit, und ihre gute Laune macht dich flinker (Eile).
+
+## Phase 10: Licht & Lehre ✅
+
+Ein Kumpel bringt Licht ins Dunkel, und Neulinge lernen das Handwerk.
+
+- ✅ **Helmlampe**: Die Lampe am Helm leuchtet wirklich. Unter Tage erhellt der Kumpel die Höhle um sich herum, während er läuft. Ein unsichtbarer Lichtblock, der sich selbst löscht, sobald der Kumpel weitergeht, auch nach einem Absturz. Nie heller als die Fackel-Schwelle, damit die Grubenlampe weiter Fackeln setzt.
+- ✅ **Kumpelfibel**: Ein Handbuch mit allem, was der Kumpel kann, in jeder Sprache. Gibt's zum ersten Kumpel dazu.
+- ✅ **Koks im Ofen**: Koks brennt auch im Ofen (in 26.3 ist Brennstoff datengetrieben).

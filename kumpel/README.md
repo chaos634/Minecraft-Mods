@@ -30,6 +30,7 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | **Levels up** | Collecting items, finding and mining ores and being fed earns XP. Every level brings more health, a bigger backpack and a new look. |
 | **Kiepe** (backpack) | Sneak + right-click opens its backpack: 1 row at copper, 3 rows at netherite. |
 | **Grubenlampe** | Give it torches and it places them in dark spots underground. |
+| **Helmlampe** | Underground, the lamp on its helmet really shines: the Kumpel lights up the cave around it as it walks. (An invisible light block that goes out by itself the moment the Kumpel moves on.) |
 | **Schlagwetter warning** | Creepers near you start glowing (through walls) and your Kumpel warns you. It also warns you before you step next to lava. |
 | **Henkelmann** | It keeps one stack of food from its loot and hands you a bite when you are getting hungry. |
 | **Feierabend** | When you go to bed, your Kumpels sit down; in the morning they get back to work. A Kumpel that sits catches its breath and slowly heals. |
@@ -89,6 +90,7 @@ If the storage chest is full or out of reach, the Kumpel brings its loot to you 
 
 | Item | Recipe | |
 |---|---|---|
+| **Kumpelfibel** | Book + Copper Ingot (shapeless); you also get one with your very first Kumpel | A little handbook about everything your Kumpel can do, in your language. |
 | **Canary Cage** | Iron Bars + Feather + Yellow Dye (shapeless) | For your Kumpel's shoulder, see above. Packing the Kumpel gives the cage back. |
 | **Field Forge** | `S . S` / `C F C` (S = String, C = Copper Ingot, F = Furnace) | For your Kumpel's back, see above. Packing the Kumpel gives it back. |
 | **Förderkorb** (Mine Cage) | `C I C` / `I . I` / `C I C` (C = Copper Ingot, I = Iron Bars), makes 2 | A lift for your shaft: right-click rides up to the next cage above, sneak + right-click with an empty hand rides down. Your Kumpels nearby ride along, and a shaft bell rings. |
@@ -160,6 +162,7 @@ Which items give how much XP, by `item` or by item `tag`.
 | `max_collect_distance_from_owner` | 16 | Items further away from you are left alone |
 | `death_experience_kept` | 0.8 | Share of XP kept in the cracked core |
 | `place_torches`, `torch_light_level`, `torch_items` | on, 7, torches | Grubenlampe |
+| `helmet_lamp` | 7 | Light level of the helmet lamp underground (`0` turns it off); while torches are placed it stays at or below `torch_light_level` |
 | `creeper_warning`, `creeper_warning_radius`, `lava_warning` | on, 10, on | Schlagwetter warning |
 | `share_food`, `share_food_at_hunger` | on, 6 | Henkelmann |
 | `rest_when_owner_sleeps` | on | Feierabend |
@@ -191,7 +194,7 @@ Which items give how much XP, by `item` or by item `tag`.
 
 ## Compatibility
 
-- **JEI** and **REI**: info pages for the core, the whistle, the canary cage, the field forge, the Förderkorb, the Grubenhelm, the rescue capsule, coke, the Markentafel and the music disc, plus two categories: *Feeding a Kumpel* (item → XP) and *Ore sensing* (ore → level). Both are built from the config, so they show your modpack's setup.
+- **JEI** and **REI**: info pages for the core, the whistle, the canary cage, the field forge, the Förderkorb, the Grubenhelm, the rescue capsule, coke, the Markentafel, the music disc and the Kumpelfibel, plus two categories: *Feeding a Kumpel* (item → XP) and *Ore sensing* (ore → level). Both are built from the config, so they show your modpack's setup.
 - **Modded ores** are found through the `c:ores` tags, **modded storage** through the Fabric Transfer API.
 - **Modded stone** can be used for Abdämmen by adding it to the item tag `#kumpel:tunnel_fillers`.
 - **Languages**: English, German, Polish, Turkish, Dutch, French and Spanish.
@@ -211,7 +214,7 @@ The jar ends up in `kumpel/build/libs/`. Every push also builds the mod on GitHu
 
 ### Tests
 
-- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (sealing water, bridging holes and stopping when there is no stone), the field forge and coking, coke as fuel, the ore finds, the Markenkontrolle, singing along to the record, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, fighting monsters (but not creepers), the Förderkorb, the shift log, the rescue capsule, the exit trail and being led out, resting, that every language has every text and that all advancements load.
+- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (sealing water, bridging holes and stopping when there is no stone), the field forge and coking, coke as fuel, the ore finds, the Markenkontrolle, singing along to the record, the helmet lamp, the Kumpelfibel, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, fighting monsters (but not creepers), the Förderkorb, the shift log, the rescue capsule, the exit trail and being led out, resting, that every language has every text and that all advancements load.
 - **Client game test** (`./gradlew runClientGameTest`) starts a real client with JEI and takes screenshots of every level, the sitting pose, a Kumpel sensing buried diamond ore, and the Zeche: a Hauer with pickaxe and canary, a dancing Kumpel and the Grubenhelm, all on Barbaratag. On CI the screenshots are uploaded as an artifact.
 
 ## License

@@ -51,6 +51,7 @@ import io.github.chaos634.kumpel.entity.ExitTrail;
 import io.github.chaos634.kumpel.entity.Markenkontrolle;
 import io.github.chaos634.kumpel.entity.OreFinds;
 import io.github.chaos634.kumpel.entity.ShiftLog;
+import io.github.chaos634.kumpel.item.KumpelFibel;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.item.MinerHelmetItem;
 import io.github.chaos634.kumpel.item.RescueCapsuleItem;
@@ -903,6 +904,41 @@ public class KumpelGameTests {
 
 		markenkontrolle.takeDown(revived.getUUID());
 		helper.assertTrue(markenkontrolle.ofOwner(owner.getUUID(), now).isEmpty(), Component.literal("Packed up, the tag comes down"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 200)
+	public void helmetLampLightsTheWayAndGoesOut(GameTestHelper helper) {
+		buildFloor(helper);
+		buildRoof(helper, 3);
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 4, 1, 4);
+		kumpel.tame(owner);
+		kumpel.setOrderedToSit(true);
+		BlockPos head = helper.absolutePos(new BlockPos(4, 2, 4));
+		boolean[] lit = {false};
+
+		helper.onEachTick(() -> {
+			if (!lit[0] && helper.getLevel().getBlockState(head).is(ModBlocks.LAMP_LIGHT)) {
+				lit[0] = true;
+				helper.assertTrue(helper.getLevel().getBlockState(head).getLightEmission() > 0, Component.literal("The lamp gives off light"));
+				kumpel.discard();
+			}
+		});
+		helper.succeedWhen(() -> {
+			helper.assertTrue(lit[0], Component.literal("Underground, the Kumpel's helmet lamp should light up"));
+			helper.assertTrue(helper.getLevel().getBlockState(head).isAir(), Component.literal("Without its Kumpel, the lamp goes out"));
+		});
+	}
+
+	@GameTest
+	public void kumpelfibelIsABook(GameTestHelper helper) {
+		WrittenBookContent content = new ItemStack(ModItems.KUMPELFIBEL).get(DataComponents.WRITTEN_BOOK_CONTENT);
+		helper.assertTrue(content != null && content.pages().size() == KumpelFibel.PAGES, Component.literal("The Kumpelfibel has all its pages"));
+		Set<String> english = languageKeys("en_us");
+		for (int page = 0; page < KumpelFibel.PAGES; page++) {
+			helper.assertTrue(english.contains("fibel.kumpel.page." + page), Component.literal("Page " + page + " has a text"));
+		}
 		helper.succeed();
 	}
 

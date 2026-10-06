@@ -2,6 +2,14 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.7.0
+
+### Licht & Lehre
+
+- Helmlampe: underground, the Kumpel's helmet lamp lights up the cave around it as it walks. Set its brightness with `helmet_lamp`.
+- Kumpelfibel: a little handbook about the Kumpel in every language, given with your first Kumpel and craftable from a book and a copper ingot.
+- Coke now also burns in furnaces.
+
 ## 0.6.0
 
 ### Zechenleben

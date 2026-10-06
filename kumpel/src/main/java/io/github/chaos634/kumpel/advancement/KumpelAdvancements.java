@@ -43,15 +43,17 @@ public final class KumpelAdvancements {
 	private KumpelAdvancements() {
 	}
 
-	/** Awards one of the code-triggered advancements to a player (does nothing for anything else). */
-	public static void award(Entity entity, String name) {
+	/**
+	 * Awards one of the code-triggered advancements to a player (does nothing for anything else).
+	 *
+	 * @return whether the player just got it for the first time
+	 */
+	public static boolean award(Entity entity, String name) {
 		if (!(entity instanceof ServerPlayer player)) {
-			return;
+			return false;
 		}
 
 		AdvancementHolder advancement = player.level().getServer().getAdvancements().get(Kumpel.id(name));
-		if (advancement != null) {
-			player.getAdvancements().award(advancement, CODE_CRITERION);
-		}
+		return advancement != null && player.getAdvancements().award(advancement, CODE_CRITERION);
 	}
 }

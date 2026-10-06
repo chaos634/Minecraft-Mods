@@ -103,6 +103,8 @@ import io.github.chaos634.kumpel.entity.behaviour.PackedLunch;
 import io.github.chaos634.kumpel.entity.behaviour.ShiftEnd;
 import io.github.chaos634.kumpel.entity.behaviour.Steigerlied;
 import io.github.chaos634.kumpel.item.KumpelSoul;
+import io.github.chaos634.kumpel.block.LampLightBlock;
+import io.github.chaos634.kumpel.registry.ModBlocks;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModItems;
 import io.github.chaos634.kumpel.registry.ModSounds;
@@ -1391,6 +1393,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			forge.tick(this, level);
 		}
 
+		if (tickCount % 2 == 0) {
+			updateHelmetLamp(level);
+		}
+
 		if (tickCount % MARKE_INTERVAL == 70) {
 			hangUpMarke(level, activity());
 		}
@@ -1724,6 +1730,39 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			// Its tag stays up for a while, so you know where to look for its cracked core.
 			hangUpMarke(level, "lost");
 		}
+	}
+
+	/** How bright the helmet lamp shines (0 when it is off). */
+	public static int helmetLampLevel() {
+		KumpelConfig.Behaviour behaviour = KumpelSettings.get().behaviour();
+		int level = Mth.clamp(behaviour.helmetLamp, 0, 15);
+		return behaviour.placeTorches ? Math.min(level, behaviour.torchLightLevel) : level;
+	}
+
+	/** Helmlampe: underground, keeps the lamp light at the Kumpel's head (the old one goes out by itself). */
+	private void updateHelmetLamp(ServerLevel level) {
+		int light = helmetLampLevel();
+		if (light <= 0 || !isAlive()) {
+			return;
+		}
+
+		BlockPos head = blockPosition().above();
+		if (level.canSeeSky(head)) {
+			return;
+		}
+
+		BlockState state = level.getBlockState(head);
+		if (state.is(ModBlocks.LAMP_LIGHT) ? state.getValue(LampLightBlock.LEVEL) == light : !state.isAir()) {
+			return;
+		}
+
+		level.setBlock(head, ModBlocks.LAMP_LIGHT.defaultBlockState().setValue(LampLightBlock.LEVEL, light), Block.UPDATE_ALL);
+	}
+
+	/** Whether a Kumpel's helmet lamp belongs at this block (used by the lamp light to know when to go out). */
+	public static boolean wearsLampAt(ServerLevel level, BlockPos pos) {
+		return helmetLampLevel() > 0 && !level.getEntitiesOfClass(KumpelEntity.class, new AABB(pos).inflate(1.0),
+				kumpel -> kumpel.isAlive() && kumpel.blockPosition().above().equals(pos)).isEmpty();
 	}
 
 	/** Markenkontrolle: hangs up (or updates) this Kumpel's tag with where it is and what it does. */

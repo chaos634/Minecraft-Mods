@@ -146,6 +146,11 @@ public final class KumpelConfig {
 		public boolean placeTorches = true;
 		/** Torches are placed where the block light is below this. */
 		public int torchLightLevel = 7;
+		/**
+		 * Helmlampe: underground, the Kumpel's helmet lamp lights up its surroundings with this light level (0 turns it off).
+		 * While it places torches, the lamp is never brighter than {@code torchLightLevel}, so it still finds the dark spots.
+		 */
+		public int helmetLamp = 7;
 		/** Items the Kumpel uses as torches (they must place a block). */
 		public List<String> torchItems = new ArrayList<>(List.of("minecraft:torch", "minecraft:copper_torch", "minecraft:soul_torch"));
 

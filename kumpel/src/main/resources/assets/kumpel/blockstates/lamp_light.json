@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "kumpel:block/lamp_light"
+      }
+    }
+  ]
+}

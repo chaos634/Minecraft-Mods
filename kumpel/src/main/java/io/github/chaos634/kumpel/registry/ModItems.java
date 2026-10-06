@@ -3,6 +3,7 @@ package io.github.chaos634.kumpel.registry;
 import java.util.function.Function;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -30,6 +31,7 @@ import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.item.CrackedKumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelCoreItem;
+import io.github.chaos634.kumpel.item.KumpelFibel;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.item.MinerHelmetItem;
 import io.github.chaos634.kumpel.item.RescueCapsuleItem;
@@ -55,6 +57,8 @@ public final class ModItems {
 	public static final ResourceKey<JukeboxSong> GLUECK_AUF_SONG = ResourceKey.create(Registries.JUKEBOX_SONG, Kumpel.id("glueck_auf"));
 	public static final Item MUSIC_DISC_GLUECK_AUF = register("music_disc_glueck_auf", Item::new,
 			new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(GLUECK_AUF_SONG));
+	public static final Item KUMPELFIBEL = register("kumpelfibel", KumpelFibel::new,
+			new Item.Properties().stacksTo(1).component(DataComponents.WRITTEN_BOOK_CONTENT, KumpelFibel.content()));
 	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
 			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
@@ -69,6 +73,7 @@ public final class ModItems {
 			.icon(() -> new ItemStack(KUMPEL_CORE))
 			.displayItems((parameters, output) -> {
 				output.accept(KUMPEL_CORE);
+				output.accept(KUMPELFIBEL);
 				// A ready-made core for every level, handy for testing and for map makers.
 				for (KumpelTier tier : KumpelSettings.get().tiers()) {
 					if (tier.level() > 1) {
