@@ -815,12 +815,15 @@ public class KumpelGameTests {
 		});
 	}
 
-	@GameTest
+	@GameTest(maxTicks = 400)
 	public void cokeIsFurnaceFuel(GameTestHelper helper) {
-		helper.assertTrue(new ItemStack(ModItems.COKE).has(DataComponents.COOKING_FUEL), Component.literal("Coke burns in a furnace"));
-		helper.assertTrue(helper.getLevel().registryAccess().lookupOrThrow(Registries.CONTEXT_INT_PROVIDER).get(ModItems.COKE_BURN_TIME).isPresent(),
-				Component.literal("Its burn time kumpel:cooking/time_coke is loaded"));
-		helper.succeed();
+		helper.assertTrue(new ItemStack(ModItems.COKE).has(DataComponents.COOKING_FUEL), Component.literal("Coke has a burn time"));
+		helper.setBlock(2, 1, 2, Blocks.FURNACE);
+		Container furnace = container(helper, helper.absolutePos(new BlockPos(2, 1, 2)));
+		furnace.setItem(0, new ItemStack(Items.RAW_IRON));
+		furnace.setItem(1, new ItemStack(ModItems.COKE));
+
+		helper.succeedWhen(() -> helper.assertTrue(furnace.getItem(2).is(Items.IRON_INGOT), Component.literal("A furnace fired with coke smelts raw iron")));
 	}
 
 	@GameTest
