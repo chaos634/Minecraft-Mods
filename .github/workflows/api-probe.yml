@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [g]
+        group: [h]
     defaults:
       run:
         working-directory: kumpel
@@ -221,6 +221,35 @@ jobs:
               for j in $MCJARS; do
                 for f in assets/minecraft/sounds.json; do
                   if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f (excerpt)"; unzip -p "$j" "$f" | python3 -c "import json,sys; d=json.load(sys.stdin); print(json.dumps({k: d[k] for k in ['block.note_block.flute','entity.parrot.ambient'] if k in d}, indent=1))"; fi
+                done
+              done
+              ;;
+            h)
+              ls_jar '/(MeleeAttackGoal|OwnerHurtByTargetGoal|OwnerHurtTargetGoal|WrittenBookContent|Filterable|BlockItem)\.class'
+              p net.minecraft.world.entity.ai.goal.MeleeAttackGoal 'MeleeAttackGoal\('
+              p net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal 'OwnerHurtByTargetGoal\('
+              p net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal 'OwnerHurtTargetGoal\('
+              p net.minecraft.world.entity.Mob 'doHurtTarget|targetSelector|goalSelector'
+              p net.minecraft.world.entity.TamableAnimal 'wantsToAttack|canAttack'
+              p net.minecraft.world.entity.ai.attributes.Attributes 'ATTACK_DAMAGE|ATTACK_KNOCKBACK|ATTACK_SPEED'
+              p 'net.minecraft.world.level.block.state.BlockBehaviour$Properties' 'of\(|setId|strength|sound|lightLevel|noOcclusion|requiresCorrectToolForDrops|mapColor'
+              p net.minecraft.world.level.block.state.BlockBehaviour 'useWithoutItem|useItemOn'
+              p net.minecraft.world.item.BlockItem 'BlockItem\('
+              p 'net.minecraft.world.item.Item$Properties' 'useBlockDescriptionPrefix|useItemDescriptionPrefix'
+              p net.minecraft.world.entity.Entity 'teleportTo|moveTo|setYRot|level\(\)'
+              p net.minecraft.server.level.ServerPlayer 'teleportTo|openItemGui|connection'
+              p net.minecraft.world.entity.player.Player 'openItemGui|getDisplayName'
+              p net.minecraft.world.item.component.WrittenBookContent
+              p net.minecraft.server.network.Filterable 'passThrough|Filterable\('
+              p net.minecraft.core.component.DataComponents 'WRITTEN_BOOK_CONTENT|WRITABLE_BOOK_CONTENT'
+              p net.minecraft.world.level.Level 'getDayTime|isDarkOutside|isBrightOutside|getOverworldClockTime|dayTime|getSunAngle|getTimeOfDay'
+              p net.minecraft.world.level.LevelReader 'dimensionType'
+              p net.minecraft.world.level.dimension.DimensionType 'hasSkyLight|hasFixedTime|natural'
+              p net.minecraft.world.level.block.SoundType 'COPPER|CHAIN|METAL|LANTERN'
+              p net.minecraft.world.level.material.MapColor 'COLOR_ORANGE|METAL|STONE'
+              for j in $MCJARS; do
+                for f in assets/minecraft/blockstates/copper_lantern.json assets/minecraft/blockstates/lodestone.json assets/minecraft/models/block/lodestone.json data/minecraft/loot_table/blocks/lodestone.json assets/minecraft/items/lodestone.json; do
+                  if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
                 done
               done
               ;;
