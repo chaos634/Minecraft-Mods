@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [i]
+        group: [j]
     defaults:
       run:
         working-directory: kumpel
@@ -288,5 +288,21 @@ jobs:
                   if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
                 done
               done
+              ;;
+            j)
+              for jar in $(tr ':' '\n' < /tmp/cp.txt | grep -i fabric); do unzip -Z1 "$jar" 2>/dev/null | grep -i 'fuel' | sed "s|^|$(basename $jar): |" || true; done
+              p net.minecraft.world.level.storage.SavedDataStorage
+              p net.minecraft.world.level.storage.loot.predicates.ConditionUserBuilder
+              p 'net.minecraft.world.level.storage.loot.entries.UniformContainerBase$Builder'
+              p 'net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer$Builder'
+              p 'net.minecraft.world.level.storage.loot.predicates.LootItemCondition$Builder'
+              p net.minecraft.core.Holder 'direct'
+              p net.minecraft.world.level.storage.loot.LootPool 'CODEC'
+              p net.minecraft.world.entity.LivingEntity 'swing'
+              ls_jar '/SwingAnimation\.class'
+              p net.minecraft.world.level.block.entity.FuelValues 'burnDuration|isFuel|Builder|add'
+              p 'net.minecraft.world.level.block.entity.FuelValues$Builder'
+              p net.minecraft.world.level.Level 'fuelValues'
+              p net.minecraft.util.datafix.DataFixTypes 'SAVED_DATA'
               ;;
           esac
