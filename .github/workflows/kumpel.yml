@@ -57,8 +57,6 @@ jobs:
       - name: install virtual display
         run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri mesa-vulkan-drivers python3-pil
       - name: run client game tests
-        env:
-          LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           chmod +x ./gradlew
           xvfb-run -a -s "-screen 0 1920x1080x24 +extension GLX +render -noreset" \
