@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [o]
+        group: [p]
     defaults:
       run:
         working-directory: kumpel
@@ -364,5 +364,14 @@ jobs:
               p net.minecraft.world.effect.MobEffects 'HASTE|MINING_FATIGUE|SATURATION'
               p net.minecraft.world.item.ItemStack 'getMaxDamage|getDamageValue|isDamageableItem|nextDamageWillBreak'
               p net.minecraft.world.entity.LivingEntity ' heal\(|getMaxHealth'
+              ;;
+            p)
+              ls_jar '/(TeleportTransition|ServerEntityWorldChangeEvents)\.class'
+              p net.minecraft.world.level.portal.TeleportTransition
+              p net.minecraft.world.entity.Entity 'teleport\(|changeDimension|canUsePortal|teleportTo\('
+              p net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents
+              p 'net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents$AfterPlayerChange'
+              p 'net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents$AfterEntityChange'
+              p net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents 'JOIN|DISCONNECT'
               ;;
           esac
