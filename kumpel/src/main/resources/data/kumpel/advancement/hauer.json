@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:glueck_auf",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.hauer.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.hauer.description"
+    },
+    "icon": {
+      "id": "minecraft:iron_pickaxe"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

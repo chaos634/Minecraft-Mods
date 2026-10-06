@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:glueck_auf",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.shift_end.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.shift_end.description"
+    },
+    "icon": {
+      "id": "minecraft:red_bed"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

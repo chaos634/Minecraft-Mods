@@ -1,0 +1,25 @@
+{
+  "parent": "kumpel:storage",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.full_crew.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.full_crew.description"
+    },
+    "icon": {
+      "id": "kumpel:steiger_whistle"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

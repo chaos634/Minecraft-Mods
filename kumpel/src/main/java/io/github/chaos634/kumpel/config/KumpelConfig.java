@@ -161,6 +161,32 @@ public final class KumpelConfig {
 
 		/** Feierabend: when you go to bed, nearby Kumpels sit down, and they get up again in the morning. */
 		public boolean restWhenOwnerSleeps = true;
+
+		/** Steigerpfeife: how far (in blocks) your Kumpels hear the whistle. */
+		public int whistleRange = 64;
+
+		/** Lagerkiste: Kumpels bring their loot to a container marked with the whistle instead of to you. */
+		public boolean storageChests = true;
+		/** The Kumpel only walks to its storage if it is at most this far away. */
+		public int maxStorageDistance = 48;
+
+		/** Hauer: a Kumpel holding a pickaxe mines exposed ores near you. Also needs the mobGriefing game rule. */
+		public boolean mineOres = true;
+		/** How far from the Kumpel it looks for ores to mine. */
+		public int mineRadius = 6;
+		/** Experience the Kumpel gets for each ore it mines (plus the ore's level). */
+		public int experiencePerOreMined = 2;
+
+		/** Wünschelrute: from this level on, sensed ores glow through walls for a moment (0 turns it off). */
+		public int dowsingLevel = 4;
+		/** How long (in ticks) a sensed ore keeps glowing. */
+		public int dowsingGlowTicks = 100;
+
+		/** Steigerlied: Kumpels dance while a jukebox plays nearby. */
+		public boolean danceToJukebox = true;
+
+		/** Barbaratag (4 December): Kumpels wear a Barbara branch and feeding them gives double experience. */
+		public boolean barbaraDay = true;
 	}
 
 	private static List<Tier> defaultTiers() {

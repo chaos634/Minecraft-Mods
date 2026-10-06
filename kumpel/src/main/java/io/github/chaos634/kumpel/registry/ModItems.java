@@ -23,12 +23,15 @@ import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.item.CrackedKumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelSoul;
+import io.github.chaos634.kumpel.item.SteigerWhistleItem;
 
 public final class ModItems {
 	public static final Item KUMPEL_CORE = register("kumpel_core", KumpelCoreItem::new,
 			new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
 	public static final Item CRACKED_KUMPEL_CORE = register("cracked_kumpel_core", CrackedKumpelCoreItem::new,
 			new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant());
+	public static final Item STEIGER_WHISTLE = register("steiger_whistle", SteigerWhistleItem::new,
+			new Item.Properties().stacksTo(1));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
 			new Item.Properties().spawnEgg(ModEntities.KUMPEL));
 
@@ -47,6 +50,7 @@ public final class ModItems {
 					}
 				}
 				output.accept(CRACKED_KUMPEL_CORE);
+				output.accept(STEIGER_WHISTLE);
 				output.accept(KUMPEL_SPAWN_EGG);
 			})
 			.build();
@@ -63,7 +67,10 @@ public final class ModItems {
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, CREATIVE_TAB_KEY, CREATIVE_TAB);
 
 		// Also show up in the vanilla tabs where players would look for them.
-		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(output -> output.accept(KUMPEL_CORE));
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(output -> {
+			output.accept(KUMPEL_CORE);
+			output.accept(STEIGER_WHISTLE);
+		});
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(KUMPEL_SPAWN_EGG));
 	}
 }

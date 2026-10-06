@@ -1,0 +1,33 @@
+{
+  "criteria": {
+    "has_kumpel_core": {
+      "conditions": {
+        "items": [
+          {
+            "items": "kumpel:kumpel_core"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.root.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.root.description"
+    },
+    "icon": {
+      "id": "kumpel:kumpel_core"
+    },
+    "background": "minecraft:gui/advancements/backgrounds/stone",
+    "announce_to_chat": false,
+    "show_toast": false
+  },
+  "requirements": [
+    [
+      "has_kumpel_core"
+    ]
+  ]
+}

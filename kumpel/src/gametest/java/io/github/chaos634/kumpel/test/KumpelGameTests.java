@@ -6,8 +6,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
@@ -16,17 +18,23 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
+import io.github.chaos634.kumpel.Kumpel;
+import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelPockets;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.entity.OreRule;
+import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
+import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.item.KumpelSoul;
+import io.github.chaos634.kumpel.item.SteigerWhistleItem;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
 import io.github.chaos634.kumpel.registry.ModItems;
@@ -259,6 +267,192 @@ public class KumpelGameTests {
 		helper.assertTrue(count(kumpel.getPockets(), Items.BREAD) == 5, Component.literal("The packed lunch stays with the Kumpel"));
 		helper.assertFalse(kumpel.hasItemsToDeliver(), Component.literal("Nothing left to deliver"));
 		helper.succeed();
+	}
+
+	@GameTest
+	public void whistleCallsAndSendsOnBreak(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 2, 2);
+		KumpelEntity first = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		KumpelEntity second = helper.spawn(ModEntities.KUMPEL, 6, 1, 6);
+		KumpelEntity stranger = helper.spawn(ModEntities.KUMPEL, 4, 1, 1);
+		first.tame(owner);
+		second.tame(owner);
+
+		int resting = SteigerWhistleItem.sendOnBreak(helper.getLevel(), owner);
+		helper.assertTrue(resting == 2, Component.literal("Both of the owner's Kumpels should hear the whistle, got " + resting));
+		helper.assertTrue(first.isOrderedToSit() && second.isOrderedToSit(), Component.literal("Both should sit down"));
+		helper.assertFalse(stranger.isTame(), Component.literal("A wild Kumpel doesn't care about the whistle"));
+
+		int called = SteigerWhistleItem.callKumpels(helper.getLevel(), owner);
+		helper.assertTrue(called == 2, Component.literal("Both Kumpels should come, got " + called));
+		helper.assertFalse(first.isOrderedToSit() || second.isOrderedToSit(), Component.literal("Both should stand up again"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void fillsStorageChestAndKeepsWhatDoesNotFit(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		BlockPos chestPos = helper.absolutePos(new BlockPos(4, 1, 4));
+		helper.setBlock(4, 1, 4, Blocks.CHEST);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 1, 3);
+		kumpel.tame(owner);
+		kumpel.setStorage(helper.getLevel(), chestPos);
+		helper.assertTrue(chestPos.equals(kumpel.usableStorage()), Component.literal("The chest should be the Kumpel's storage"));
+
+		kumpel.getPockets().addToPockets(new ItemStack(Items.RAW_COPPER, 12));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.TORCH, 4));
+		kumpel.deliverItemsToStorage(helper.getLevel());
+
+		Container chest = container(helper, chestPos);
+		helper.assertTrue(count(chest, Items.RAW_COPPER) == 12, Component.literal("The raw copper should be in the chest"));
+		helper.assertTrue(count(kumpel.getPockets(), Items.TORCH) == 4, Component.literal("Torches stay with the Kumpel"));
+
+		for (int i = 0; i < chest.getContainerSize(); i++) {
+			chest.setItem(i, new ItemStack(Items.COBBLESTONE, 64));
+		}
+		kumpel.getPockets().addToPockets(new ItemStack(Items.DIAMOND, 2));
+		kumpel.deliverItemsToStorage(helper.getLevel());
+
+		helper.assertTrue(count(kumpel.getPockets(), Items.DIAMOND) == 2, Component.literal("What doesn't fit stays in the backpack"));
+		helper.assertTrue(kumpel.usableStorage() == null, Component.literal("A full chest is skipped for a while"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 400)
+	public void walksLootToStorageChest(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		BlockPos chestPos = helper.absolutePos(new BlockPos(6, 1, 6));
+		helper.setBlock(6, 1, 6, Blocks.CHEST);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 2);
+		kumpel.tame(owner);
+		kumpel.setStorage(helper.getLevel(), chestPos);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.COAL, 9));
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(count(container(helper, chestPos), Items.COAL) == 9, Component.literal("The Kumpel should carry the coal to the chest"));
+			helper.assertTrue(count(owner.getInventory(), Items.COAL) == 0, Component.literal("Nothing should go to the owner"));
+		});
+	}
+
+	@GameTest(maxTicks = 300)
+	public void minesExposedOreWithItsPickaxe(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		helper.setBlock(5, 1, 4, Blocks.COPPER_ORE);
+		helper.setBlock(2, 1, 5, Blocks.DIAMOND_ORE);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 1, 3);
+		kumpel.tame(owner);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_PICKAXE));
+
+		BlockPos copper = helper.absolutePos(new BlockPos(5, 1, 4));
+		BlockPos diamond = helper.absolutePos(new BlockPos(2, 1, 5));
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(helper.getLevel().getBlockState(copper).isAir(), Component.literal("The copper ore should be mined"));
+			helper.assertTrue(kumpel.getMainHandItem().getDamageValue() >= 1, Component.literal("Mining should wear down the pickaxe"));
+			// Too valuable for a level 1 Kumpel, and too hard for a stone pickaxe.
+			helper.assertTrue(helper.getLevel().getBlockState(diamond).is(Blocks.DIAMOND_ORE), Component.literal("The diamond ore should stay"));
+		});
+	}
+
+	@GameTest
+	public void keepsOnePickaxeAndHandsItBackWhenPacked(GameTestHelper helper) {
+		buildFloor(helper);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(player);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.IRON_PICKAXE));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.STONE_PICKAXE));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.EMERALD, 2));
+
+		kumpel.deliverItemsTo(player);
+		helper.assertTrue(count(kumpel.getPockets(), Items.IRON_PICKAXE) == 1, Component.literal("The Kumpel keeps its first pickaxe"));
+		helper.assertTrue(count(player.getInventory(), Items.STONE_PICKAXE) == 1, Component.literal("A second pickaxe is loot"));
+
+		kumpel.getPockets().removeAllItems();
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+		kumpel.stashTool();
+		helper.assertTrue(kumpel.getMainHandItem().isEmpty() && count(kumpel.getPockets(), Items.IRON_PICKAXE) == 1,
+				Component.literal("Opening the backpack puts the pickaxe in it"));
+
+		kumpel.getPockets().removeAllItems();
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_PICKAXE));
+		kumpel.packInto(player, new ItemStack(ModItems.KUMPEL_CORE));
+		helper.assertTrue(count(player.getInventory(), Items.GOLDEN_PICKAXE) == 1, Component.literal("Packing hands the pickaxe back"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 100)
+	public void dancesWhileJukeboxPlays(GameTestHelper helper) {
+		buildFloor(helper);
+		BlockPos jukeboxPos = helper.absolutePos(new BlockPos(5, 1, 5));
+		helper.setBlock(5, 1, 5, Blocks.JUKEBOX);
+		container(helper, jukeboxPos).setItem(0, new ItemStack(Items.MUSIC_DISC_CAT));
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 2, 1, 2);
+
+		helper.succeedWhen(() -> helper.assertTrue(kumpel.isDancing(), Component.literal("The Kumpel should dance to the music")));
+	}
+
+	@GameTest(maxTicks = 120)
+	public void experiencedKumpelMakesOreGlow(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 2, 2);
+		BlockPos orePos = helper.absolutePos(new BlockPos(6, 0, 6));
+		helper.setBlock(6, 0, 6, Blocks.DIAMOND_ORE);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+		kumpel.addExperience(settings().tier(settings().behaviour().dowsingLevel).requiredExperience());
+
+		helper.succeedWhen(() -> helper.assertTrue(OreGlimmer.isGlowing(helper.getLevel(), orePos),
+				Component.literal("The sensed diamond ore should glow")));
+	}
+
+	@GameTest
+	public void barbaraDayDoublesFeedingExperience(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 2, 2);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+		int diamond = settings().feedExperience(new ItemStack(Items.DIAMOND));
+
+		BarbaraDay.setOverride(true);
+		try {
+			owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND));
+			kumpel.mobInteract(owner, InteractionHand.MAIN_HAND);
+		} finally {
+			BarbaraDay.setOverride(null);
+		}
+
+		helper.assertTrue(kumpel.getExperience() == 2 * diamond,
+				Component.literal("A diamond should give " + 2 * diamond + " XP on Barbaratag, got " + kumpel.getExperience()));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void allAdvancementsAreLoaded(GameTestHelper helper) {
+		for (String name : KumpelAdvancements.ALL) {
+			helper.assertTrue(helper.getLevel().getServer().getAdvancements().get(Kumpel.id(name)) != null,
+					Component.literal("Advancement kumpel:" + name + " is missing or broken"));
+		}
+		helper.succeed();
+	}
+
+	private static Player ownerAt(GameTestHelper helper, int x, int z) {
+		Player owner = helper.makeMockPlayer(GameType.SURVIVAL);
+		owner.snapTo(Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(x, 1, z))));
+		return owner;
+	}
+
+	private static Container container(GameTestHelper helper, BlockPos absolutePos) {
+		BlockEntity blockEntity = helper.getLevel().getBlockEntity(absolutePos);
+		if (!(blockEntity instanceof Container container)) {
+			throw new IllegalStateException("No container at " + absolutePos + ": " + blockEntity);
+		}
+
+		return container;
 	}
 
 	private static ItemStack findInInventory(Player player, Item item) {

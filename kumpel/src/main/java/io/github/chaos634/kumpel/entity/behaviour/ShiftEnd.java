@@ -2,6 +2,7 @@ package io.github.chaos634.kumpel.entity.behaviour;
 
 import net.minecraft.world.entity.player.Player;
 
+import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 
@@ -23,6 +24,7 @@ public class ShiftEnd {
 				resting = true;
 				kumpel.setOrderedToSit(true);
 				kumpel.getNavigation().stop();
+				KumpelAdvancements.award(owner, KumpelAdvancements.SHIFT_END);
 			}
 		} else if (resting) {
 			resting = false;

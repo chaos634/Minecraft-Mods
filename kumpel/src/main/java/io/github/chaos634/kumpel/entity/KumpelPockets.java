@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -98,25 +99,22 @@ public class KumpelPockets extends SimpleContainer {
 		return !stack.isEmpty() && stack.has(DataComponents.FOOD);
 	}
 
+	public static boolean isPickaxe(ItemStack stack) {
+		return !stack.isEmpty() && stack.is(ItemTags.PICKAXES);
+	}
+
 	/**
-	 * Takes out everything the Kumpel should bring to its owner. It keeps its torches and,
-	 * if food sharing is on, one stack of food as a packed lunch.
+	 * Takes out everything the Kumpel should bring to its owner. It keeps its torches,
+	 * one stack of food as a packed lunch (if food sharing is on) and a pickaxe, if it has none in its hand.
 	 */
 	public List<ItemStack> takeLoot() {
-		boolean keepFood = KumpelSettings.get().behaviour().shareFood;
 		List<ItemStack> loot = new ArrayList<>();
+		Supplies supplies = new Supplies();
 
 		for (int i = 0; i < getContainerSize(); i++) {
-			ItemStack stack = getItem(i);
-			if (stack.isEmpty() || isTorch(stack)) {
-				continue;
+			if (!supplies.keeps(getItem(i))) {
+				loot.add(removeItemNoUpdate(i));
 			}
-			if (keepFood && isFood(stack)) {
-				keepFood = false;
-				continue;
-			}
-
-			loot.add(removeItemNoUpdate(i));
 		}
 
 		setChanged();
@@ -124,21 +122,36 @@ public class KumpelPockets extends SimpleContainer {
 	}
 
 	public boolean hasLoot() {
-		boolean keepFood = KumpelSettings.get().behaviour().shareFood;
+		Supplies supplies = new Supplies();
 		for (int i = 0; i < getContainerSize(); i++) {
-			ItemStack stack = getItem(i);
-			if (stack.isEmpty() || isTorch(stack)) {
-				continue;
+			if (!supplies.keeps(getItem(i))) {
+				return true;
 			}
-			if (keepFood && isFood(stack)) {
-				keepFood = false;
-				continue;
-			}
-
-			return true;
 		}
 
 		return false;
+	}
+
+	/** Decides, stack by stack, what the Kumpel keeps for itself. */
+	private class Supplies {
+		private boolean keepFood = KumpelSettings.get().behaviour().shareFood;
+		private boolean keepPickaxe = owner.getMainHandItem().isEmpty();
+
+		boolean keeps(ItemStack stack) {
+			if (stack.isEmpty() || isTorch(stack)) {
+				return true;
+			}
+			if (keepFood && isFood(stack)) {
+				keepFood = false;
+				return true;
+			}
+			if (keepPickaxe && isPickaxe(stack)) {
+				keepPickaxe = false;
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	/** Takes one item matching the filter, or returns an empty stack. */
@@ -147,6 +160,20 @@ public class KumpelPockets extends SimpleContainer {
 			ItemStack stack = getItem(i);
 			if (!stack.isEmpty() && filter.test(stack)) {
 				ItemStack taken = stack.split(1);
+				setChanged();
+				return taken;
+			}
+		}
+
+		return ItemStack.EMPTY;
+	}
+
+	/** Takes out the first whole stack matching the filter, or returns an empty stack. */
+	public ItemStack takeFirst(Predicate<ItemStack> filter) {
+		for (int i = 0; i < getContainerSize(); i++) {
+			ItemStack stack = getItem(i);
+			if (!stack.isEmpty() && filter.test(stack)) {
+				ItemStack taken = removeItemNoUpdate(i);
 				setChanged();
 				return taken;
 			}

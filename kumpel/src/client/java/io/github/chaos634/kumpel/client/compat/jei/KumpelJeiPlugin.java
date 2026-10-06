@@ -39,7 +39,8 @@ public class KumpelJeiPlugin implements IModPlugin {
 	public void registerRecipes(IRecipeRegistration registration) {
 		registration.addRecipes(FEEDING, KumpelGuideData.feeding());
 		registration.addRecipes(ORE_SENSING, KumpelGuideData.ores());
-		registration.addIngredientInfo(ModItems.KUMPEL_CORE, Component.translatable("guide.kumpel.core"));
+		registration.addIngredientInfo(ModItems.KUMPEL_CORE, Component.translatable("guide.kumpel.core"), Component.translatable("guide.kumpel.hauer"));
+		registration.addIngredientInfo(ModItems.STEIGER_WHISTLE, Component.translatable("guide.kumpel.steiger_whistle"));
 		registration.addIngredientInfo(ModItems.KUMPEL_SPAWN_EGG, Component.translatable("guide.kumpel.spawn_egg"));
 	}
 

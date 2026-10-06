@@ -1,0 +1,25 @@
+{
+  "parent": "kumpel:hauer",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.max_level.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.max_level.description"
+    },
+    "icon": {
+      "id": "minecraft:netherite_ingot"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

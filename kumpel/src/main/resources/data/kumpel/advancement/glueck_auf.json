@@ -1,0 +1,35 @@
+{
+  "parent": "kumpel:root",
+  "criteria": {
+    "tamed_kumpel": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "kumpel:kumpel"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.glueck_auf.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.glueck_auf.description"
+    },
+    "icon": {
+      "id": "minecraft:copper_ingot"
+    }
+  },
+  "requirements": [
+    [
+      "tamed_kumpel"
+    ]
+  ]
+}

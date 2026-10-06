@@ -1,0 +1,26 @@
+{
+  "parent": "kumpel:glueck_auf",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.barbara.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.barbara.description"
+    },
+    "icon": {
+      "id": "minecraft:cherry_sapling"
+    },
+    "frame": "goal",
+    "hidden": true
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

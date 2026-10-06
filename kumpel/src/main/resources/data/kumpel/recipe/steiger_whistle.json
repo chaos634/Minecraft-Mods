@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "tools",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "N": "minecraft:iron_nugget"
+  },
+  "pattern": [
+    "CCN"
+  ],
+  "result": {
+    "id": "kumpel:steiger_whistle"
+  }
+}

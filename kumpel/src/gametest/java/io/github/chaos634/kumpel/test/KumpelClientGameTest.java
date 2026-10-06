@@ -6,6 +6,10 @@ import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
@@ -16,6 +20,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContex
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelTier;
+import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.registry.ModEntities;
 
 /**
@@ -75,6 +80,41 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 			});
 			context.waitTicks(15);
 			context.takeScreenshot("kumpel_senses_ore");
+
+			// The Zeche: a Hauer with its pickaxe, a Kumpel dancing to a jukebox, and everyone dressed up for Barbaratag.
+			server.runCommand("execute as @p at @s run tp @s ~20 ~ ~ 0 10");
+			server.runCommand("item replace entity @p weapon.mainhand with kumpel:steiger_whistle");
+			singleplayer.getConnection().waitForChunksRender();
+			context.waitTicks(CHAT_FADE_TICKS);
+			BarbaraDay.setOverride(true);
+			server.runOnServer(minecraftServer -> {
+				ServerLevel level = singleplayer.getConnection().getServerLevel();
+				ServerPlayer player = singleplayer.getConnection().getServerPlayer();
+				BlockPos origin = player.blockPosition();
+
+				KumpelEntity hauer = new KumpelEntity(ModEntities.KUMPEL, level);
+				hauer.snapTo(origin.getX() - 1.0, origin.getY(), origin.getZ() + 4.0, 205.0F, 0.0F);
+				hauer.addExperience(KumpelSettings.get().tier(2).requiredExperience());
+				hauer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+				hauer.setNoAi(true);
+				hauer.setMining(true);
+				level.addFreshEntity(hauer);
+
+				BlockPos jukebox = origin.offset(3, 0, 6);
+				level.setBlockAndUpdate(jukebox, Blocks.JUKEBOX.defaultBlockState());
+				if (level.getBlockEntity(jukebox) instanceof Container container) {
+					container.setItem(0, new ItemStack(Items.MUSIC_DISC_CAT));
+				}
+				level.setBlockAndUpdate(origin.offset(-3, 0, 6), Blocks.CHEST.defaultBlockState());
+
+				KumpelEntity dancer = new KumpelEntity(ModEntities.KUMPEL, level);
+				dancer.snapTo(origin.getX() + 2.0, origin.getY(), origin.getZ() + 4.5, 160.0F, 0.0F);
+				dancer.addExperience(KumpelSettings.get().tier(3).requiredExperience());
+				level.addFreshEntity(dancer);
+			});
+			context.waitTicks(40);
+			context.takeScreenshot("kumpel_zeche");
+			BarbaraDay.setOverride(null);
 		}
 	}
 }
