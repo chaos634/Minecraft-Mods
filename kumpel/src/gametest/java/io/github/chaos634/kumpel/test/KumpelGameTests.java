@@ -1011,6 +1011,22 @@ public class KumpelGameTests {
 	}
 
 	@GameTest
+	public void followsItsOwnerIntoAnotherDimension(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 2, 1, 2);
+		kumpel.tame(owner);
+		helper.assertFalse(kumpel.canUsePortal(false), Component.literal("A tamed Kumpel never uses a portal on its own"));
+
+		net.minecraft.server.level.ServerLevel nether = helper.getLevel().getServer().getLevel(net.minecraft.world.level.Level.NETHER);
+		net.minecraft.world.entity.Entity moved = kumpel.followOwnerTo(nether, new Vec3(0.5, 100.0, 0.5));
+		helper.assertTrue(moved instanceof KumpelEntity && moved.level() == nether, Component.literal("The Kumpel should arrive in the Nether"));
+		helper.assertTrue(((KumpelEntity) moved).isOwnedBy(owner), Component.literal("and still be yours"));
+		moved.discard();
+		helper.succeed();
+	}
+
+	@GameTest
 	public void everyLanguageHasEveryText(GameTestHelper helper) {
 		Set<String> english = languageKeys("en_us");
 		for (String language : List.of("de_de", "pl_pl", "tr_tr", "nl_nl", "fr_fr", "es_es")) {

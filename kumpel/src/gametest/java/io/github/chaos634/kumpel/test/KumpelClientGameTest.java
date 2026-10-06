@@ -42,6 +42,7 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 		kumpel.addExperience(KumpelSettings.get().tier(tier).requiredExperience());
 		kumpel.tame(owner);
 		kumpel.setOrderedToSit(true);
+		kumpel.setOreSensing(false);
 		level.addFreshEntity(kumpel);
 		return kumpel;
 	}
@@ -174,11 +175,14 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 				lookout.setCanary(true);
 			});
 			singleplayer.getConnection().waitForChunksRender();
-			// Without the HUD (like F1), so chat and advancement toasts don't cover the picture.
-			context.runOnClient(client -> client.options.hideGui = true);
 			context.waitTicks(160);
+			// Chat and advancement toasts would cover the picture.
+			context.runOnClient(client -> {
+				client.gui.getChat().clearMessages(false);
+				client.getToastManager().clear();
+			});
+			context.waitTicks(2);
 			context.takeScreenshot("kumpel_unter_tage");
-			context.runOnClient(client -> client.options.hideGui = false);
 		}
 	}
 }

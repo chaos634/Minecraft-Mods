@@ -166,6 +166,9 @@ public final class KumpelConfig {
 		/** The Kumpel hands you food when your hunger bar drops to this (20 is full). */
 		public int shareFoodAtHunger = 6;
 
+		/** Mitfahrt: Kumpels following you come along through portals; on their own they never use portals. */
+		public boolean followThroughPortals = true;
+
 		/** Feierabend: when you go to bed, nearby Kumpels sit down, and they get up again in the morning. */
 		public boolean restWhenOwnerSleeps = true;
 

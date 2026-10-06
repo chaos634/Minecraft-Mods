@@ -76,6 +76,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
@@ -144,6 +145,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Experience per level of difference, each time a Kumpel learns from an older one. */
 	private static final int APPRENTICE_EXPERIENCE = 2;
 	private static final int APPRENTICE_INTERVAL = 1200;
+	/** Mitfahrt: how close to its owner a Kumpel must have been to follow them into another dimension. */
+	private static final double PORTAL_FOLLOW_RANGE_SQ = 16.0 * 16.0;
 	private static final long SING_ALONG_COOLDOWN = 2400;
 	/** How often (in ticks) the Kumpel updates its tag at the Markenkontrolle. */
 	private static final int MARKE_INTERVAL = 100;
@@ -192,6 +195,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private long lastSingAlong = Long.MIN_VALUE / 2;
 	/** Leibgericht: chosen when first needed, from {@code favorite_foods} in the config. */
 	private Identifier favoriteFood;
+	/** Whether the owner was close by at the last check, in this dimension. */
+	private boolean nearOwnerBefore;
 	private final ExitTrail exitTrail = new ExitTrail();
 	private boolean leadingOut;
 	private Boolean wasBrightOutside;
@@ -272,6 +277,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	public boolean isOreSensing() {
 		return oreSensing;
+	}
+
+	public void setOreSensing(boolean oreSensing) {
+		this.oreSensing = oreSensing;
 	}
 
 	/** Swinging its pickaxe at an ore right now. */
@@ -1495,6 +1504,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			updateHelmetLamp(level);
 		}
 
+		if (tickCount % 10 == 5) {
+			followOwnerAcrossDimensions(level);
+		}
+
 		if (tickCount % APPRENTICE_INTERVAL == 300) {
 			learnFromOthers(level);
 		}
@@ -1865,6 +1878,47 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	public static boolean wearsLampAt(ServerLevel level, BlockPos pos) {
 		return helmetLampLevel() > 0 && !level.getEntitiesOfClass(KumpelEntity.class, new AABB(pos).inflate(1.0),
 				kumpel -> kumpel.isAlive() && kumpel.blockPosition().above().equals(pos)).isEmpty();
+	}
+
+	/**
+	 * Mitfahrt: when the owner it was following goes through a portal (or changes dimension any other way),
+	 * the Kumpel comes along. On its own, it never uses portals.
+	 */
+	private void followOwnerAcrossDimensions(ServerLevel level) {
+		if (!behaviour().followThroughPortals || !isTame() || isOrderedToSit() || getOwnerReference() == null) {
+			nearOwnerBefore = false;
+			return;
+		}
+
+		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(getOwnerReference().getUUID());
+		if (owner == null || !owner.isAlive()) {
+			nearOwnerBefore = false;
+			return;
+		}
+		if (owner.level() == level) {
+			nearOwnerBefore = distanceToSqr(owner) < PORTAL_FOLLOW_RANGE_SQ;
+			return;
+		}
+		if (nearOwnerBefore) {
+			nearOwnerBefore = false;
+			followOwnerTo(owner.level(), owner.position());
+		}
+	}
+
+	/** Takes the Kumpel into another dimension; returns the Kumpel there, or {@code null} if that failed. */
+	public Entity followOwnerTo(ServerLevel destination, Vec3 position) {
+		Entity moved = teleport(new TeleportTransition(destination, position, Vec3.ZERO, getYRot(), getXRot(), TeleportTransition.DO_NOTHING));
+		if (moved != null) {
+			// It arrives in the portal its owner just came out of; don't let it bounce straight back.
+			moved.setPortalCooldown();
+		}
+		return moved;
+	}
+
+	@Override
+	public boolean canUsePortal(boolean allowPassengers) {
+		// A Kumpel of yours doesn't wander off through a portal on its own; it follows you instead.
+		return !isTame() && super.canUsePortal(allowPassengers);
 	}
 
 	/** Markenkontrolle: hangs up (or updates) this Kumpel's tag with where it is and what it does. */
