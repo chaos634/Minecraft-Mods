@@ -19,11 +19,13 @@ import io.github.chaos634.kumpel.Kumpel;
 
 /**
  * A stocky little golem (about one block tall) with a miner's helmet and lamp.
- * Texture layout (64x32): head 0,0 · lamp 24,0 · arm 32,0 · leg 44,0 · body 0,12 · Barbara branch 28,12 · blossom 32,12.
+ * Texture layout (64x32): head 0,0 · lamp 24,0 · arm 32,0 · leg 44,0 · body 0,12 · Barbara branch 28,12 · blossom 32,12
+ * · canary cage 40,12 · canary 52,12.
  */
 public class KumpelModel extends EntityModel<KumpelRenderState> implements ArmedModel<KumpelRenderState> {
 	public static final ModelLayerLocation LAYER = new ModelLayerLocation(Kumpel.id("kumpel"), "main");
 	private static final String BARBARA_BRANCH = "barbara_branch";
+	private static final String CANARY_CAGE = "canary_cage";
 	/** Held items are scaled down to fit the small golem. */
 	private static final float HELD_ITEM_SCALE = 0.75F;
 
@@ -37,6 +39,7 @@ public class KumpelModel extends EntityModel<KumpelRenderState> implements Armed
 	private final ModelPart head;
 	private final ModelPart barbaraBranch;
 	private final ModelPart body;
+	private final ModelPart canaryCage;
 	private final ModelPart rightArm;
 	private final ModelPart leftArm;
 	private final ModelPart rightLeg;
@@ -47,6 +50,7 @@ public class KumpelModel extends EntityModel<KumpelRenderState> implements Armed
 		this.head = root.getChild(PartNames.HEAD);
 		this.barbaraBranch = head.getChild(BARBARA_BRANCH);
 		this.body = root.getChild(PartNames.BODY);
+		this.canaryCage = body.getChild(CANARY_CAGE);
 		this.rightArm = root.getChild(PartNames.RIGHT_ARM);
 		this.leftArm = root.getChild(PartNames.LEFT_ARM);
 		this.rightLeg = root.getChild(PartNames.RIGHT_LEG);
@@ -70,9 +74,15 @@ public class KumpelModel extends EntityModel<KumpelRenderState> implements Armed
 						.texOffs(32, 12).addBox(-1.0F, -7.5F, -1.0F, 2.0F, 2.0F, 2.0F)
 						.texOffs(32, 12).addBox(0.0F, -4.5F, -1.5F, 2.0F, 2.0F, 2.0F),
 				PartPose.offsetAndRotation(2.5F, -4.5F, 1.0F, -0.3F, 0.0F, 0.35F));
-		root.addOrReplaceChild(PartNames.BODY,
+		PartDefinition body = root.addOrReplaceChild(PartNames.BODY,
 				CubeListBuilder.create().texOffs(0, 12).addBox(-4.0F, 0.0F, -2.5F, 8.0F, 7.0F, 5.0F),
 				PartPose.offset(0.0F, BODY_Y, 0.0F));
+		// A small bird cage on the left shoulder, with the canary inside.
+		body.addOrReplaceChild(CANARY_CAGE,
+				CubeListBuilder.create()
+						.texOffs(40, 12).addBox(-1.5F, -4.0F, -1.5F, 3.0F, 4.0F, 3.0F)
+						.texOffs(52, 12).addBox(-0.5F, -2.0F, -1.0F, 1.0F, 1.0F, 2.0F),
+				PartPose.offset(5.0F, 0.0F, 0.0F));
 		root.addOrReplaceChild(PartNames.RIGHT_ARM,
 				CubeListBuilder.create().texOffs(32, 0).addBox(-2.0F, -1.0F, -1.5F, 2.0F, 8.0F, 3.0F),
 				PartPose.offset(-4.0F, ARM_Y, 0.0F));
@@ -103,6 +113,7 @@ public class KumpelModel extends EntityModel<KumpelRenderState> implements Armed
 		head.xRot = state.xRot * Mth.DEG_TO_RAD;
 		head.zRot = 0.0F;
 		barbaraBranch.visible = state.barbaraDay;
+		canaryCage.visible = state.canary;
 
 		float walkPos = state.walkAnimationPos;
 		float walkSpeed = state.walkAnimationSpeed;

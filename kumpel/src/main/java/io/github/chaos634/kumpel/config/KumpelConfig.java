@@ -187,6 +187,9 @@ public final class KumpelConfig {
 
 		/** Barbaratag (4 December): Kumpels wear a Barbara branch and feeding them gives double experience. */
 		public boolean barbaraDay = true;
+
+		/** Grubenhelm: wearing the miner's helmet lets you see in the dark. */
+		public boolean minerHelmetLamp = true;
 	}
 
 	private static List<Tier> defaultTiers() {

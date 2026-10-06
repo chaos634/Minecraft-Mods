@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.equipment.ArmorType;
 
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
@@ -23,6 +24,7 @@ import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.item.CrackedKumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelSoul;
+import io.github.chaos634.kumpel.item.MinerHelmetItem;
 import io.github.chaos634.kumpel.item.SteigerWhistleItem;
 
 public final class ModItems {
@@ -32,6 +34,10 @@ public final class ModItems {
 			new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant());
 	public static final Item STEIGER_WHISTLE = register("steiger_whistle", SteigerWhistleItem::new,
 			new Item.Properties().stacksTo(1));
+	public static final Item CANARY_CAGE = register("canary_cage", Item::new,
+			new Item.Properties().stacksTo(1));
+	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
+			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
 			new Item.Properties().spawnEgg(ModEntities.KUMPEL));
 
@@ -51,6 +57,8 @@ public final class ModItems {
 				}
 				output.accept(CRACKED_KUMPEL_CORE);
 				output.accept(STEIGER_WHISTLE);
+				output.accept(CANARY_CAGE);
+				output.accept(MINER_HELMET);
 				output.accept(KUMPEL_SPAWN_EGG);
 			})
 			.build();
@@ -71,6 +79,7 @@ public final class ModItems {
 			output.accept(KUMPEL_CORE);
 			output.accept(STEIGER_WHISTLE);
 		});
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT).register(output -> output.accept(MINER_HELMET));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(KUMPEL_SPAWN_EGG));
 	}
 }

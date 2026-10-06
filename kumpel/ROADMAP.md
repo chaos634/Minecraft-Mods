@@ -59,11 +59,12 @@ Legende: ✅ fertig · 🔨 in Arbeit · 💭 Idee
 - ✅ **Barbaratag** (4. Dezember, die Schutzpatronin der Bergleute): Kumpels tragen einen blühenden Barbarazweig am Helm, wünschen dir „Glück auf!“, und Füttern gibt doppelte EP.
 - ✅ **Steigerlied**: Läuft in der Nähe eine Jukebox, tanzen die Kumpels.
 
-## Phase 4: Träume 💭
+## Phase 4: Träume
 
-- **Kanarienvogel** im Käfig als Gefahren-Frühwarnsystem auf der Schulter des Kumpels
-- **Förderturm-Multiblock** als Basis der Zeche, an dem alle Kumpels ihre Beute abliefern
-- **Arbeitsteilung**: Mehrere Kumpels teilen sich die Arbeit (Sammler, Lampenträger, Hauer)
-- **Eigene Sounds**, zum Beispiel ein kleines „Glück auf!“, wenn er dich begrüßt
-- **Grubenhelm** für dich selbst, mit Lampe
-- **Lore**: Der Kumpel fährt in der Minecart-Lore mit
+- ✅ **Kanarienvogel** im Käfig als Gefahren-Frühwarnsystem auf der Schulter des Kumpels: Monster in der Nähe leuchten, er warnt vor Luftnot unter Wasser, und Creeper werden früher gespürt
+- ✅ **Grubenhelm** für dich selbst, mit Lampe: Im Dunkeln siehst du trotzdem
+- ✅ **Schnellere Erzsuche**: Chunk-Abschnitte ohne passendes Erz in ihrer Palette werden übersprungen, damit auch viele Kumpels in großen Modpacks kaum Leistung kosten
+- 💭 **Förderturm-Multiblock** als Basis der Zeche, an dem alle Kumpels ihre Beute abliefern
+- 💭 **Arbeitsteilung**: Mehrere Kumpels teilen sich die Arbeit (Sammler, Lampenträger, Hauer)
+- 💭 **Eigene Sounds**, zum Beispiel ein kleines „Glück auf!“, wenn er dich begrüßt
+- 💭 **Lore**: Der Kumpel fährt in der Minecart-Lore mit

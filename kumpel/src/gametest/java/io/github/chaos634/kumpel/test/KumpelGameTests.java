@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +35,7 @@ import io.github.chaos634.kumpel.entity.OreRule;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.item.KumpelSoul;
+import io.github.chaos634.kumpel.item.MinerHelmetItem;
 import io.github.chaos634.kumpel.item.SteigerWhistleItem;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
@@ -380,8 +382,10 @@ public class KumpelGameTests {
 
 		kumpel.getPockets().removeAllItems();
 		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_PICKAXE));
+		kumpel.setCanary(true);
 		kumpel.packInto(player, new ItemStack(ModItems.KUMPEL_CORE));
 		helper.assertTrue(count(player.getInventory(), Items.GOLDEN_PICKAXE) == 1, Component.literal("Packing hands the pickaxe back"));
+		helper.assertTrue(count(player.getInventory(), ModItems.CANARY_CAGE) == 1, Component.literal("Packing hands the canary cage back"));
 		helper.succeed();
 	}
 
@@ -429,6 +433,46 @@ public class KumpelGameTests {
 		helper.assertTrue(kumpel.getExperience() == 2 * diamond,
 				Component.literal("A diamond should give " + 2 * diamond + " XP on Barbaratag, got " + kumpel.getExperience()));
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 100)
+	public void canaryMakesMonstersGlow(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 2, 2);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+		kumpel.setCanary(true);
+		Monster spider = helper.spawn(EntityTypes.SPIDER, 6, 1, 6);
+		spider.setNoAi(true);
+
+		helper.succeedWhen(() -> helper.assertTrue(spider.hasEffect(MobEffects.GLOWING),
+				Component.literal("The canary should make the spider glow")));
+	}
+
+	@GameTest(maxTicks = 100)
+	public void minerHelmetLightsUpTheDark(GameTestHelper helper) {
+		// A closed stone box, so no light gets in.
+		for (int x = 0; x < 5; x++) {
+			for (int y = 0; y < 5; y++) {
+				for (int z = 0; z < 5; z++) {
+					boolean wall = x == 0 || x == 4 || y == 0 || y == 4 || z == 0 || z == 4;
+					helper.setBlock(x, y, z, wall ? Blocks.STONE : Blocks.AIR);
+				}
+			}
+		}
+
+		Player miner = helper.makeMockPlayer(GameType.SURVIVAL);
+		miner.snapTo(Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(2, 1, 2))));
+		miner.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MINER_HELMET));
+		Player tourist = helper.makeMockPlayer(GameType.SURVIVAL);
+		tourist.snapTo(Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(2, 1, 2))));
+
+		helper.succeedWhen(() -> {
+			MinerHelmetItem.updateLamp(miner);
+			MinerHelmetItem.updateLamp(tourist);
+			helper.assertTrue(miner.hasEffect(MobEffects.NIGHT_VISION), Component.literal("The helmet's lamp should light up the dark"));
+			helper.assertFalse(tourist.hasEffect(MobEffects.NIGHT_VISION), Component.literal("No helmet, no lamp"));
+		});
 	}
 
 	@GameTest

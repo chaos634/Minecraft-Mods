@@ -88,5 +88,15 @@
 	"advancements.kumpel.max_level.title": "From Copper to Netherite",
 	"advancements.kumpel.max_level.description": "Get a Kumpel to the highest level",
 	"advancements.kumpel.barbara.title": "Patron Saint",
-	"advancements.kumpel.barbara.description": "Celebrate Saint Barbara's Day with your Kumpel"
+	"advancements.kumpel.barbara.description": "Celebrate Saint Barbara's Day with your Kumpel",
+	"item.kumpel.canary_cage": "Canary Cage",
+	"item.kumpel.miner_helmet": "Miner's Helmet",
+	"item.kumpel.miner_helmet.tooltip": "With a miner's lamp: you can see in the dark",
+	"message.kumpel.canary": "%s now carries a canary on its shoulder.",
+	"message.kumpel.canary.monster": "🐤 The canary is restless: %1$s, %2$s blocks away!",
+	"message.kumpel.canary.air": "🐤 The canary is gasping: you need air!",
+	"guide.kumpel.canary_cage": "Give the canary cage to your Kumpel (right-click). The bird on its shoulder warns you about monsters nearby, makes them glow, and speaks up when you run out of air underwater. With it, your Kumpel also senses creepers from further away. Pack the Kumpel up to get the cage back.",
+	"guide.kumpel.miner_helmet": "A helmet with a miner's lamp. Wear it in the dark and you can see as if the lamp were lit.",
+	"advancements.kumpel.early_warning.title": "Early Warning",
+	"advancements.kumpel.early_warning.description": "Put a canary on your Kumpel's shoulder"
 }

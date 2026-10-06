@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "kumpel:miner_helmet"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "texture": "kumpel:miner_helmet"
+      }
+    ]
+  }
+}

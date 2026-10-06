@@ -41,6 +41,8 @@ public class KumpelJeiPlugin implements IModPlugin {
 		registration.addRecipes(ORE_SENSING, KumpelGuideData.ores());
 		registration.addIngredientInfo(ModItems.KUMPEL_CORE, Component.translatable("guide.kumpel.core"), Component.translatable("guide.kumpel.hauer"));
 		registration.addIngredientInfo(ModItems.STEIGER_WHISTLE, Component.translatable("guide.kumpel.steiger_whistle"));
+		registration.addIngredientInfo(ModItems.CANARY_CAGE, Component.translatable("guide.kumpel.canary_cage"));
+		registration.addIngredientInfo(ModItems.MINER_HELMET, Component.translatable("guide.kumpel.miner_helmet"));
 		registration.addIngredientInfo(ModItems.KUMPEL_SPAWN_EGG, Component.translatable("guide.kumpel.spawn_egg"));
 	}
 

@@ -6,6 +6,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 
+import io.github.chaos634.kumpel.util.Chunks;
+
 /**
  * Steigerlied: while a jukebox plays nearby, the Kumpel dances.
  */
@@ -28,7 +30,7 @@ public final class Steigerlied {
 		// Looking through the block entities of the nearby chunks is much cheaper than checking every block.
 		for (int chunkX = minX; chunkX <= maxX; chunkX++) {
 			for (int chunkZ = minZ; chunkZ <= maxZ; chunkZ++) {
-				if (!isChunkLoaded(level, chunkX, chunkZ)) {
+				if (!Chunks.isLoaded(level, chunkX, chunkZ)) {
 					continue;
 				}
 
@@ -47,11 +49,5 @@ public final class Steigerlied {
 		}
 
 		return nearest;
-	}
-
-	// hasChunkAt is deprecated, but still the way to check whether a chunk is loaded without loading it.
-	@SuppressWarnings("deprecation")
-	private static boolean isChunkLoaded(ServerLevel level, int chunkX, int chunkZ) {
-		return level.hasChunkAt(new BlockPos(SectionPos.sectionToBlockCoord(chunkX), 0, SectionPos.sectionToBlockCoord(chunkZ)));
 	}
 }

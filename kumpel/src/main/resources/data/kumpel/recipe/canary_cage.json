@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:iron_bars",
+    "minecraft:feather",
+    "minecraft:yellow_dye"
+  ],
+  "result": {
+    "id": "kumpel:canary_cage"
+  }
+}

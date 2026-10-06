@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:glueck_auf",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.early_warning.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.early_warning.description"
+    },
+    "icon": {
+      "id": "kumpel:canary_cage"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

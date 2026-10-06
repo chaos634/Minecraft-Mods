@@ -10,6 +10,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -55,6 +56,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -72,6 +75,7 @@ import io.github.chaos634.kumpel.entity.ai.CollectItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.MineOreGoal;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
+import io.github.chaos634.kumpel.entity.behaviour.CanaryWarning;
 import io.github.chaos634.kumpel.entity.behaviour.DangerSense;
 import io.github.chaos634.kumpel.entity.behaviour.MinerLamp;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
@@ -81,6 +85,7 @@ import io.github.chaos634.kumpel.entity.behaviour.Steigerlied;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModItems;
+import io.github.chaos634.kumpel.util.Chunks;
 
 /**
  * The Kumpel: a small mining golem that follows its owner, collects dropped items,
@@ -92,6 +97,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final EntityDataAccessor<Boolean> DATA_POINTING = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_MINING = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> DATA_CANARY = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 
 	private static final double MAX_SENSE_DISTANCE_FROM_OWNER_SQ = 24.0 * 24.0;
 	private static final double MAX_MINE_DISTANCE_FROM_OWNER_SQ = 16.0 * 16.0;
@@ -111,6 +117,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private final DangerSense dangerSense = new DangerSense();
 	private final PackedLunch packedLunch = new PackedLunch();
 	private final ShiftEnd shiftEnd = new ShiftEnd();
+	private final CanaryWarning canaryWarning = new CanaryWarning();
 	private int experience;
 	private boolean oreSensing = true;
 	private int settingsRevision = -1;
@@ -163,6 +170,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		builder.define(DATA_POINTING, false);
 		builder.define(DATA_MINING, false);
 		builder.define(DATA_DANCING, false);
+		builder.define(DATA_CANARY, false);
 	}
 
 	private static KumpelConfig.Behaviour behaviour() {
@@ -206,6 +214,19 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** A jukebox plays nearby. */
 	public boolean isDancing() {
 		return this.entityData.get(DATA_DANCING);
+	}
+
+	public void setDancing(boolean dancing) {
+		this.entityData.set(DATA_DANCING, dancing);
+	}
+
+	/** Carries a canary cage on its shoulder. */
+	public boolean hasCanary() {
+		return this.entityData.get(DATA_CANARY);
+	}
+
+	public void setCanary(boolean canary) {
+		this.entityData.set(DATA_CANARY, canary);
 	}
 
 	/** Takes over the experience and settings stored in a Kumpel Core. */
@@ -341,6 +362,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				|| packing
 				|| stack.is(Items.COMPASS)
 				|| stack.is(ItemTags.PICKAXES)
+				|| (stack.is(ModItems.CANARY_CAGE) && !hasCanary())
 				|| KumpelPockets.isTorch(stack)
 				|| settings.isRepairItem(stack)
 				|| settings.feedExperience(stack) > 0;
@@ -362,6 +384,12 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			player.setItemInHand(hand, previous);
 			playSound(SoundEvents.COPPER_GOLEM_ITEM_GET, 1.0F, 1.0F);
 			player.sendOverlayMessage(Component.translatable(canMineAtAll() ? "message.kumpel.hauer" : "message.kumpel.hauer.disabled", getDisplayName()));
+		} else if (stack.is(ModItems.CANARY_CAGE)) {
+			stack.consume(1, player);
+			setCanary(true);
+			playSound(SoundEvents.PARROT_AMBIENT, 1.0F, 1.4F);
+			player.sendOverlayMessage(Component.translatable("message.kumpel.canary", getDisplayName()));
+			KumpelAdvancements.award(player, KumpelAdvancements.EARLY_WARNING);
 		} else if (KumpelPockets.isTorch(stack)) {
 			ItemStack rest = pockets.addToPockets(stack);
 			int stored = stack.getCount() - rest.getCount();
@@ -423,6 +451,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 		giveOrDrop(serverLevel, player, getMainHandItem());
 		setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+		if (hasCanary()) {
+			giveOrDrop(serverLevel, player, new ItemStack(ModItems.CANARY_CAGE));
+			setCanary(false);
+		}
 
 		ItemStack core = createCoreStack(ModItems.KUMPEL_CORE, 1.0);
 		emptyCore.consume(1, player);
@@ -868,6 +900,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			}
 			if (tickCount % 10 == 5 && distanceSq < 32.0 * 32.0) {
 				dangerSense.tick(this, level, owner);
+				if (hasCanary()) {
+					canaryWarning.tick(this, level, owner);
+				}
 			}
 			if (tickCount % 20 == 10 && distanceSq < 16.0 * 16.0) {
 				packedLunch.tick(this, level, owner);
@@ -887,7 +922,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				&& Steigerlied.findPlayingJukebox(level, blockPosition()) != null;
 
 		if (dance != isDancing()) {
-			this.entityData.set(DATA_DANCING, dance);
+			setDancing(dance);
 			if (dance && getOwner() instanceof Player owner && distanceToSqr(owner) < 16.0 * 16.0) {
 				KumpelAdvancements.award(owner, KumpelAdvancements.STEIGERLIED);
 			}
@@ -948,47 +983,81 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	/**
 	 * Scans the sphere around the Kumpel for the most valuable ore it can sense at its level (the nearest one, if there are several).
+	 * Chunk sections whose palette holds no such ore are skipped without looking at their blocks.
 	 *
 	 * @return the ore found, or {@code null} if there is none in range
 	 */
 	public SensedOre findBestOre(ServerLevel level) {
 		KumpelSettings settings = KumpelSettings.get();
-		KumpelTier tier = getTier();
-		int radius = tier.senseRadius();
+		int maxLevel = getTier().level();
+		int radius = getTier().senseRadius();
 		int radiusSq = radius * radius;
 		BlockPos center = blockPosition();
-		BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+		Predicate<BlockState> sensable = state -> {
+			OreRule rule = settings.matchOre(state);
+			return rule != null && rule.level() <= maxLevel;
+		};
 
 		OreRule bestRule = null;
 		BlockPos bestPos = null;
 		int bestDistanceSq = Integer.MAX_VALUE;
 
-		for (int dx = -radius; dx <= radius; dx++) {
-			for (int dy = -radius; dy <= radius; dy++) {
-				for (int dz = -radius; dz <= radius; dz++) {
-					int distanceSq = dx * dx + dy * dy + dz * dz;
-					if (distanceSq > radiusSq) {
+		int minChunkX = SectionPos.blockToSectionCoord(center.getX() - radius);
+		int maxChunkX = SectionPos.blockToSectionCoord(center.getX() + radius);
+		int minChunkZ = SectionPos.blockToSectionCoord(center.getZ() - radius);
+		int maxChunkZ = SectionPos.blockToSectionCoord(center.getZ() + radius);
+
+		for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+				if (!Chunks.isLoaded(level, chunkX, chunkZ)) {
+					continue;
+				}
+
+				LevelChunk chunk = level.getChunk(chunkX, chunkZ);
+				for (int index = 0; index < level.getSectionsCount(); index++) {
+					int sectionMinY = SectionPos.sectionToBlockCoord(level.getSectionYFromSectionIndex(index));
+					if (sectionMinY + 15 < center.getY() - radius || sectionMinY > center.getY() + radius) {
 						continue;
 					}
 
-					cursor.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
-					BlockState state = level.getBlockState(cursor);
-					if (state.isAir()) {
+					LevelChunkSection section = chunk.getSection(index);
+					if (section.hasOnlyAir() || !section.maybeHas(sensable)) {
 						continue;
 					}
 
-					OreRule rule = settings.matchOre(state);
-					if (rule == null || rule.level() > tier.level()) {
-						continue;
-					}
+					int minX = Math.max(SectionPos.sectionToBlockCoord(chunkX), center.getX() - radius);
+					int maxX = Math.min(SectionPos.sectionToBlockCoord(chunkX) + 15, center.getX() + radius);
+					int minY = Math.max(sectionMinY, center.getY() - radius);
+					int maxY = Math.min(sectionMinY + 15, center.getY() + radius);
+					int minZ = Math.max(SectionPos.sectionToBlockCoord(chunkZ), center.getZ() - radius);
+					int maxZ = Math.min(SectionPos.sectionToBlockCoord(chunkZ) + 15, center.getZ() + radius);
 
-					boolean better = bestRule == null
-							|| rule.value() > bestRule.value()
-							|| (rule.value() == bestRule.value() && distanceSq < bestDistanceSq);
-					if (better) {
-						bestRule = rule;
-						bestPos = cursor.immutable();
-						bestDistanceSq = distanceSq;
+					for (int x = minX; x <= maxX; x++) {
+						for (int y = minY; y <= maxY; y++) {
+							for (int z = minZ; z <= maxZ; z++) {
+								int dx = x - center.getX();
+								int dy = y - center.getY();
+								int dz = z - center.getZ();
+								int distanceSq = dx * dx + dy * dy + dz * dz;
+								if (distanceSq > radiusSq) {
+									continue;
+								}
+
+								OreRule rule = settings.matchOre(section.getBlockState(x & 15, y & 15, z & 15));
+								if (rule == null || rule.level() > maxLevel) {
+									continue;
+								}
+
+								boolean better = bestRule == null
+										|| rule.value() > bestRule.value()
+										|| (rule.value() == bestRule.value() && distanceSq < bestDistanceSq);
+								if (better) {
+									bestRule = rule;
+									bestPos = new BlockPos(x, y, z);
+									bestDistanceSq = distanceSq;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1112,6 +1181,11 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 		}
 
+		if (hasCanary()) {
+			spawnAtLocation(level, new ItemStack(ModItems.CANARY_CAGE));
+			setCanary(false);
+		}
+
 		super.dropEquipment(level);
 		for (ItemStack stack : pockets.removeAllItems()) {
 			spawnAtLocation(level, stack);
@@ -1163,6 +1237,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			output.store("storage", GlobalPos.CODEC, storage);
 		}
 		output.putLong("last_barbara_greeting", lastBarbaraGreeting);
+		output.putBoolean("canary", hasCanary());
 		writeInventoryToTag(output);
 	}
 
@@ -1174,6 +1249,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		shiftEnd.setResting(input.getBooleanOr("resting", false));
 		storage = input.read("storage", GlobalPos.CODEC).orElse(null);
 		lastBarbaraGreeting = input.getLongOr("last_barbara_greeting", Long.MIN_VALUE);
+		setCanary(input.getBooleanOr("canary", false));
 		readInventoryFromTag(input);
 
 		healOnFirstRefresh = false;

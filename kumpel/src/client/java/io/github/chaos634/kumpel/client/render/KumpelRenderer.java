@@ -31,6 +31,7 @@ public class KumpelRenderer extends MobRenderer<KumpelEntity, KumpelRenderState,
 		state.mining = entity.isMining();
 		state.dancing = entity.isDancing();
 		state.barbaraDay = BarbaraDay.isToday();
+		state.canary = entity.hasCanary();
 	}
 
 	@Override

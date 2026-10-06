@@ -7,7 +7,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -22,6 +24,7 @@ import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.registry.ModEntities;
+import io.github.chaos634.kumpel.registry.ModItems;
 
 /**
  * Renders Kumpels in a real client and takes screenshots, to check the model, textures and ore sensing.
@@ -81,7 +84,11 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 			context.waitTicks(15);
 			context.takeScreenshot("kumpel_senses_ore");
 
-			// The Zeche: a Hauer with its pickaxe, a Kumpel dancing to a jukebox, and everyone dressed up for Barbaratag.
+			// The Zeche: a Hauer with its pickaxe and canary, a Kumpel dancing to a jukebox, a Grubenhelm on an armor stand,
+			// and everyone dressed up for Barbaratag. The Kumpel from before sits down, so it doesn't follow into the picture.
+			server.runOnServer(minecraftServer -> singleplayer.getConnection().getServerLevel()
+					.getEntities(ModEntities.KUMPEL, KumpelEntity::isTame)
+					.forEach(kumpel -> kumpel.setOrderedToSit(true)));
 			server.runCommand("execute as @p at @s run tp @s ~20 ~ ~ 0 10");
 			server.runCommand("item replace entity @p weapon.mainhand with kumpel:steiger_whistle");
 			singleplayer.getConnection().waitForChunksRender();
@@ -98,6 +105,7 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 				hauer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
 				hauer.setNoAi(true);
 				hauer.setMining(true);
+				hauer.setCanary(true);
 				level.addFreshEntity(hauer);
 
 				BlockPos jukebox = origin.offset(3, 0, 6);
@@ -110,7 +118,14 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 				KumpelEntity dancer = new KumpelEntity(ModEntities.KUMPEL, level);
 				dancer.snapTo(origin.getX() + 2.0, origin.getY(), origin.getZ() + 4.5, 160.0F, 0.0F);
 				dancer.addExperience(KumpelSettings.get().tier(3).requiredExperience());
+				dancer.setNoAi(true);
+				dancer.setDancing(true);
 				level.addFreshEntity(dancer);
+
+				ArmorStand stand = new ArmorStand(EntityTypes.ARMOR_STAND, level);
+				stand.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 7.5, 180.0F, 0.0F);
+				stand.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.MINER_HELMET));
+				level.addFreshEntity(stand);
 			});
 			context.waitTicks(40);
 			context.takeScreenshot("kumpel_zeche");

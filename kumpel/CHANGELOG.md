@@ -18,12 +18,16 @@ The first release.
 - Hauer mode: mines exposed ores with a pickaxe you give it.
 - Wünschelrute: from level 4 on, sensed ores glow through walls.
 - Dances to jukeboxes and celebrates Barbaratag on 4 December.
+- Kanarienvogel: carries a canary cage that warns about monsters and running out of air.
+- Ore sensing skips chunk sections without matching ores, so it stays cheap even with many Kumpels.
 
 ### Items
 
 - Kumpel Core: awakens a Kumpel, and packs it up again with all its experience.
 - Cracked Kumpel Core: what a Kumpel leaves behind when it dies; repair it with a copper block.
 - Steigerpfeife (Foreman's Whistle): calls your Kumpels, sends them on a break, and marks storage chests.
+- Canary Cage for your Kumpel's shoulder.
+- Grubenhelm (Miner's Helmet): lets you see in the dark.
 - Kumpel spawn egg and an own creative tab.
 
 ### For modpacks
@@ -31,5 +35,5 @@ The first release.
 - `config/kumpel.json`: levels, ores, food and all behaviour can be changed; `/kumpel reload` applies it without a restart.
 - Modded ores are found through `c:ores`, modded storage works through the Fabric Transfer API.
 - JEI and REI integration.
-- Ten advancements.
+- Eleven advancements.
 - English and German translations.

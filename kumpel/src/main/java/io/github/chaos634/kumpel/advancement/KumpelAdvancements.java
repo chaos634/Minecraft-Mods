@@ -24,10 +24,11 @@ public final class KumpelAdvancements {
 	public static final String STORAGE = "storage";
 	public static final String STEIGERLIED = "steigerlied";
 	public static final String BARBARA = "barbara";
+	public static final String EARLY_WARNING = "early_warning";
 
 	/** Every advancement the mod ships. */
 	public static final List<String> ALL = List.of(
-			"root", GLUECK_AUF, REVIVED, MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA);
+			"root", GLUECK_AUF, REVIVED, MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA, EARLY_WARNING);
 
 	private KumpelAdvancements() {
 	}

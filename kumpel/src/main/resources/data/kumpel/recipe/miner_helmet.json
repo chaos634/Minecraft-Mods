@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "T": "minecraft:torch"
+  },
+  "pattern": [
+    "CTC",
+    "C C"
+  ],
+  "result": {
+    "id": "kumpel:miner_helmet"
+  }
+}

@@ -88,5 +88,15 @@
 	"advancements.kumpel.max_level.title": "Vom Kupfer zum Netherit",
 	"advancements.kumpel.max_level.description": "Bring einen Kumpel auf die höchste Stufe",
 	"advancements.kumpel.barbara.title": "Schutzpatronin",
-	"advancements.kumpel.barbara.description": "Feier den Barbaratag mit deinem Kumpel"
+	"advancements.kumpel.barbara.description": "Feier den Barbaratag mit deinem Kumpel",
+	"item.kumpel.canary_cage": "Kanarienkäfig",
+	"item.kumpel.miner_helmet": "Grubenhelm",
+	"item.kumpel.miner_helmet.tooltip": "Mit Grubenlampe: Im Dunkeln siehst du trotzdem",
+	"message.kumpel.canary": "%s trägt jetzt einen Kanarienvogel auf der Schulter.",
+	"message.kumpel.canary.monster": "🐤 Der Kanarienvogel wird unruhig: %1$s, %2$s Blöcke entfernt!",
+	"message.kumpel.canary.air": "🐤 Der Kanarienvogel japst: Du brauchst Luft!",
+	"guide.kumpel.canary_cage": "Gib den Kanarienkäfig deinem Kumpel (Rechtsklick). Der Vogel auf seiner Schulter warnt dich vor Monstern in der Nähe, lässt sie leuchten und meldet sich, wenn dir unter Wasser die Luft ausgeht. Creeper spürt der Kumpel damit schon von weiter weg. Packst du den Kumpel ein, bekommst du den Käfig zurück.",
+	"guide.kumpel.miner_helmet": "Ein Helm mit Grubenlampe. Trägst du ihn im Dunkeln, siehst du, als wäre die Lampe an.",
+	"advancements.kumpel.early_warning.title": "Frühwarnsystem",
+	"advancements.kumpel.early_warning.description": "Setz deinem Kumpel einen Kanarienvogel auf die Schulter"
 }

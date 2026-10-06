@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "kumpel:item/steiger_whistle"
+    "layer0": "kumpel:item/miner_helmet"
   }
 }

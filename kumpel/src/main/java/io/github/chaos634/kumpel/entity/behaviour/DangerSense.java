@@ -35,7 +35,9 @@ public class DangerSense {
 		int now = kumpel.tickCount;
 
 		if (behaviour.creeperWarning) {
-			double radius = Math.min(32, behaviour.creeperWarningRadius + 2 * (kumpel.getTier().level() - 1));
+			// The canary hears them coming a little earlier.
+			int canaryBonus = kumpel.hasCanary() ? 6 : 0;
+			double radius = Math.min(32, behaviour.creeperWarningRadius + 2 * (kumpel.getTier().level() - 1) + canaryBonus);
 			List<Creeper> creepers = level.getEntitiesOfClass(Creeper.class, owner.getBoundingBox().inflate(radius), Creeper::isAlive);
 			Creeper nearest = null;
 			double nearestDistance = Double.MAX_VALUE;
