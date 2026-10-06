@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [versions, q]
+        group: [r]
     defaults:
       run:
         working-directory: kumpel
@@ -382,5 +382,14 @@ jobs:
               p net.minecraft.stats.Stats 'makeCustomStat|CUSTOM'
               p net.minecraft.world.entity.player.Player 'awardStat'
               p net.minecraft.stats.StatFormatter 'DEFAULT'
+              ;;
+            r)
+              curl -sSL https://maven.terraformersmc.com/releases/com/terraformersmc/modmenu/maven-metadata.xml | grep -o '<version>[^<]*</version>' | tail -25
+              for v in 18.0.0 19.0.0 20.0.0 21.0.0 22.0.0-alpha.1 17.0.0; do
+                echo "##### modmenu $v"
+                curl -sSL -o /tmp/mm.jar "https://maven.terraformersmc.com/releases/com/terraformersmc/modmenu/$v/modmenu-$v.jar" && unzip -p /tmp/mm.jar fabric.mod.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('version'), d.get('depends'))" || true
+              done
+              p net.minecraft.core.registries.BuiltInRegistries 'CUSTOM_STAT'
+              p net.minecraft.stats.StatType ' get\('
               ;;
           esac
