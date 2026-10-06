@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [c, e]
+        group: [f]
     defaults:
       run:
         working-directory: kumpel
@@ -170,5 +170,29 @@ jobs:
               p net.minecraft.world.entity.ai.navigation.PathNavigation 'createPath|moveTo|isDone|stop'
               p net.minecraft.server.level.ServerLevel 'getGameRules|players\(\)|getEntities\('
               p net.minecraft.world.level.gamerules.GameRules
+              ;;
+            f)
+              ls_jar '/(ArmorMaterial|ArmorMaterials|ArmorType|EquipmentAsset|EquipmentAssets|Equippable|LevelChunkSection|PalettedContainer|PalettedContainerRO|EquipmentClientInfo)\.class'
+              p net.minecraft.world.item.equipment.ArmorMaterial
+              p net.minecraft.world.item.equipment.ArmorMaterials 'COPPER|IRON|LEATHER|public static'
+              p net.minecraft.world.item.equipment.ArmorType
+              p net.minecraft.world.item.equipment.EquipmentAssets 'ROOT_ID|createId|COPPER|IRON'
+              p net.minecraft.world.item.equipment.Equippable 'builder|setAsset|setEquipSound|setSlot'
+              p 'net.minecraft.world.item.Item$Properties' 'humanoidArmor|equippable|durability|component'
+              p net.minecraft.world.level.chunk.LevelChunkSection 'hasOnlyAir|getStates|getBlockState|maybeHas'
+              p net.minecraft.world.level.chunk.PalettedContainerRO 'maybeHas|get\('
+              p net.minecraft.world.level.chunk.PalettedContainer 'maybeHas'
+              p net.minecraft.world.level.chunk.ChunkAccess 'getSection|getSections|getSectionIndex'
+              p net.minecraft.world.level.LevelHeightAccessor
+              p net.minecraft.sounds.SoundEvents 'PARROT_AMBIENT|PARROT_IMITATE_CREEPER|PARROT_FLY|ARMOR_EQUIP_IRON|ARMOR_EQUIP_GENERIC|CHAIN_PLACE'
+              p net.minecraft.world.effect.MobEffects 'NIGHT_VISION'
+              p net.minecraft.world.entity.LivingEntity 'addEffect|hasEffect|getEffect\('
+              p net.minecraft.world.effect.MobEffectInstance 'getDuration|isAmbient|MobEffectInstance\('
+              for j in $MCJARS; do
+                for f in assets/minecraft/equipment/turtle_scute.json assets/minecraft/equipment/iron.json assets/minecraft/items/turtle_helmet.json assets/minecraft/models/item/turtle_helmet.json; do
+                  if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
+                done
+                unzip -Z1 "$j" | grep -E 'textures/entity/equipment/humanoid/' | head -5
+              done
               ;;
           esac
