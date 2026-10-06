@@ -36,6 +36,8 @@ public final class ModItems {
 			new Item.Properties().stacksTo(1));
 	public static final Item CANARY_CAGE = register("canary_cage", Item::new,
 			new Item.Properties().stacksTo(1));
+	public static final Item FIELD_FORGE = register("field_forge", Item::new,
+			new Item.Properties().stacksTo(1));
 	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
 			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
@@ -58,6 +60,7 @@ public final class ModItems {
 				output.accept(CRACKED_KUMPEL_CORE);
 				output.accept(STEIGER_WHISTLE);
 				output.accept(CANARY_CAGE);
+				output.accept(FIELD_FORGE);
 				output.accept(MINER_HELMET);
 				output.accept(KUMPEL_SPAWN_EGG);
 			})

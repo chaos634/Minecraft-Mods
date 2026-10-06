@@ -42,11 +42,12 @@ public final class KumpelSettings {
 	private final Identifier repairItem;
 	private final List<Identifier> torchItems;
 	private final List<String> names;
+	private final List<TagKey<Item>> smeltTags;
 	private final KumpelConfig.Behaviour behaviour;
 	private final Map<BlockState, OreRule> oreCache = new ConcurrentHashMap<>();
 
 	private KumpelSettings(List<KumpelTier> tiers, List<OreRule> ores, OreRule unlistedOre, List<FoodRule> feeding, Identifier repairItem,
-			List<Identifier> torchItems, List<String> names, KumpelConfig.Behaviour behaviour) {
+			List<Identifier> torchItems, List<String> names, List<TagKey<Item>> smeltTags, KumpelConfig.Behaviour behaviour) {
 		this.tiers = List.copyOf(tiers);
 		this.ores = List.copyOf(ores);
 		this.unlistedOre = unlistedOre;
@@ -54,6 +55,7 @@ public final class KumpelSettings {
 		this.repairItem = repairItem;
 		this.torchItems = List.copyOf(torchItems);
 		this.names = List.copyOf(names);
+		this.smeltTags = List.copyOf(smeltTags);
 		this.behaviour = behaviour;
 	}
 
@@ -187,6 +189,17 @@ public final class KumpelSettings {
 		return behaviour;
 	}
 
+	/** Whether the field forge smelts this item. */
+	public boolean isSmeltable(ItemStack stack) {
+		for (TagKey<Item> tag : smeltTags) {
+			if (stack.is(tag)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public List<String> names() {
 		return names;
 	}
@@ -303,7 +316,17 @@ public final class KumpelSettings {
 			}
 		}
 
-		return new KumpelSettings(tiers, ores, unlistedOre, feeding, repairItem, torchItems, names, config.behaviour);
+		List<TagKey<Item>> smeltTags = new ArrayList<>();
+		if (config.behaviour.smeltTags != null) {
+			for (String tag : config.behaviour.smeltTags) {
+				Identifier id = tag == null ? null : Identifier.tryParse(stripHash(tag));
+				if (id != null) {
+					smeltTags.add(TagKey.create(Registries.ITEM, id));
+				}
+			}
+		}
+
+		return new KumpelSettings(tiers, ores, unlistedOre, feeding, repairItem, torchItems, names, smeltTags, config.behaviour);
 	}
 
 	private static OreRule oreRule(String tag, String block, int level, int value, float pitch) {

@@ -139,5 +139,11 @@
 	"subtitles.kumpel.steiger_whistle.call": "Steigerpfeife ruft",
 	"subtitles.kumpel.steiger_whistle.break": "Steigerpfeife: Pause",
 	"subtitles.kumpel.steiger_whistle.order": "Steigerpfeife gibt Auftrag",
-	"subtitles.kumpel.kumpel.cheer": "Kumpel jubelt"
+	"subtitles.kumpel.kumpel.cheer": "Kumpel jubelt",
+	"item.kumpel.field_forge": "Feldschmiede",
+	"message.kumpel.forge": "%s trägt jetzt eine Feldschmiede auf dem Rücken.",
+	"guide.kumpel.field_forge": "Gib die Feldschmiede deinem Kumpel (Rechtsklick). Er schmilzt dann Roherze aus seiner Kiepe zu Barren und verbrennt dafür Kohle aus seiner Kiepe (ein Stück reicht für 8 Erze). Solange er Kohle hat, behält er die Roherze, bis sie geschmolzen sind. Packst du den Kumpel ein, bekommst du die Schmiede zurück.",
+	"command.kumpel.list.activity.smelting": "schmilzt Erz",
+	"advancements.kumpel.huette.title": "Hüttenwerk",
+	"advancements.kumpel.huette.description": "Lass deinen Kumpel mit der Feldschmiede Erz schmelzen"
 }

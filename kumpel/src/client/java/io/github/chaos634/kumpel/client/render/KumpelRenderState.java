@@ -11,4 +11,5 @@ public class KumpelRenderState extends ArmedEntityRenderState {
 	public boolean dancing;
 	public boolean barbaraDay;
 	public boolean canary;
+	public boolean forge;
 }

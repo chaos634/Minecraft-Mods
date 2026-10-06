@@ -553,6 +553,42 @@ public class KumpelGameTests {
 		});
 	}
 
+	@GameTest(maxTicks = 400)
+	public void fieldForgeSmeltsRawOre(GameTestHelper helper) {
+		buildFloor(helper);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.setForge(true);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.RAW_IRON, 2));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.COAL));
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(count(kumpel.getPockets(), Items.IRON_INGOT) == 2, Component.literal("Both raw iron should be smelted"));
+			helper.assertTrue(count(kumpel.getPockets(), Items.RAW_IRON) == 0, Component.literal("No raw iron left"));
+			helper.assertTrue(count(kumpel.getPockets(), Items.COAL) == 0, Component.literal("The coal should be burnt"));
+		});
+	}
+
+	@GameTest
+	public void forgeKeepsRawOreUntilItIsSmelted(GameTestHelper helper) {
+		buildFloor(helper);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.setForge(true);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.RAW_GOLD, 3));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.CHARCOAL, 2));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.EMERALD));
+
+		kumpel.deliverItemsTo(player);
+		helper.assertTrue(count(player.getInventory(), Items.EMERALD) == 1, Component.literal("The emerald is loot"));
+		helper.assertTrue(count(kumpel.getPockets(), Items.RAW_GOLD) == 3, Component.literal("Raw gold waits for the forge"));
+		helper.assertTrue(count(kumpel.getPockets(), Items.CHARCOAL) == 2, Component.literal("The forge keeps its fuel"));
+
+		kumpel.setForge(false);
+		kumpel.deliverItemsTo(player);
+		helper.assertTrue(count(player.getInventory(), Items.RAW_GOLD) == 3, Component.literal("Without a forge, raw gold is loot"));
+		helper.succeed();
+	}
+
 	@GameTest
 	public void allAdvancementsAreLoaded(GameTestHelper helper) {
 		for (String name : KumpelAdvancements.ALL) {

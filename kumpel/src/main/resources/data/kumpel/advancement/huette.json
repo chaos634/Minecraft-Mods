@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:hauer",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.huette.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.huette.description"
+    },
+    "icon": {
+      "id": "kumpel:field_forge"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

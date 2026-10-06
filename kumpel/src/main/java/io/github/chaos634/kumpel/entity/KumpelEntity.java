@@ -79,6 +79,7 @@ import io.github.chaos634.kumpel.entity.ai.MineOreGoal;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.CanaryWarning;
 import io.github.chaos634.kumpel.entity.behaviour.DangerSense;
+import io.github.chaos634.kumpel.entity.behaviour.FieldForge;
 import io.github.chaos634.kumpel.entity.behaviour.MinerLamp;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.entity.behaviour.PackedLunch;
@@ -101,6 +102,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final EntityDataAccessor<Boolean> DATA_MINING = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_CANARY = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> DATA_FORGE = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 
 	private static final double MAX_SENSE_DISTANCE_FROM_OWNER_SQ = 24.0 * 24.0;
 	private static final double MAX_MINE_DISTANCE_FROM_OWNER_SQ = 16.0 * 16.0;
@@ -131,6 +133,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private final PackedLunch packedLunch = new PackedLunch();
 	private final ShiftEnd shiftEnd = new ShiftEnd();
 	private final CanaryWarning canaryWarning = new CanaryWarning();
+	private final FieldForge forge = new FieldForge();
 	private int experience;
 	private boolean oreSensing = true;
 	private int settingsRevision = -1;
@@ -188,6 +191,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		builder.define(DATA_MINING, false);
 		builder.define(DATA_DANCING, false);
 		builder.define(DATA_CANARY, false);
+		builder.define(DATA_FORGE, false);
 	}
 
 	private static KumpelConfig.Behaviour behaviour() {
@@ -244,6 +248,19 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	public void setCanary(boolean canary) {
 		this.entityData.set(DATA_CANARY, canary);
+	}
+
+	/** Carries a field forge on its back. */
+	public boolean hasForge() {
+		return this.entityData.get(DATA_FORGE);
+	}
+
+	public void setForge(boolean forge) {
+		this.entityData.set(DATA_FORGE, forge);
+	}
+
+	public FieldForge getForge() {
+		return forge;
 	}
 
 	/** Takes over the experience and settings stored in a Kumpel Core. */
@@ -370,6 +387,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		if (hasItemsToDeliver() && wantsToDeliver()) {
 			return "delivering";
 		}
+		if (hasForge() && forge.isBurning()) {
+			return "smelting";
+		}
 
 		return "following";
 	}
@@ -445,6 +465,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				|| stack.is(Items.COMPASS)
 				|| stack.is(ItemTags.PICKAXES)
 				|| (stack.is(ModItems.CANARY_CAGE) && !hasCanary())
+				|| (stack.is(ModItems.FIELD_FORGE) && !hasForge())
 				|| KumpelPockets.isTorch(stack)
 				|| settings.isRepairItem(stack)
 				|| settings.feedExperience(stack) > 0;
@@ -466,6 +487,11 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			player.setItemInHand(hand, previous);
 			playSound(SoundEvents.COPPER_GOLEM_ITEM_GET, 1.0F, 1.0F);
 			player.sendOverlayMessage(Component.translatable(canMineAtAll() ? "message.kumpel.hauer" : "message.kumpel.hauer.disabled", getDisplayName()));
+		} else if (stack.is(ModItems.FIELD_FORGE)) {
+			stack.consume(1, player);
+			setForge(true);
+			playSound(SoundEvents.COPPER_GOLEM_ITEM_GET, 1.0F, 0.8F);
+			player.sendOverlayMessage(Component.translatable("message.kumpel.forge", getDisplayName()));
 		} else if (stack.is(ModItems.CANARY_CAGE)) {
 			stack.consume(1, player);
 			setCanary(true);
@@ -536,6 +562,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		if (hasCanary()) {
 			giveOrDrop(serverLevel, player, new ItemStack(ModItems.CANARY_CAGE));
 			setCanary(false);
+		}
+		if (hasForge()) {
+			giveOrDrop(serverLevel, player, new ItemStack(ModItems.FIELD_FORGE));
+			setForge(false);
 		}
 
 		ItemStack core = createCoreStack(ModItems.KUMPEL_CORE, 1.0);
@@ -1095,6 +1125,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			updateDancing(level);
 		}
 
+		if (hasForge() && tickCount % FieldForge.INTERVAL == 3) {
+			forge.tick(this, level);
+		}
+
 		if (isTame() && oreSensing && --senseCooldown <= 0) {
 			senseCooldown = Math.max(1, behaviour().senseIntervalTicks);
 			if (getOwner() instanceof Player owner && owner.level() == level && distanceToSqr(owner) < MAX_SENSE_DISTANCE_FROM_OWNER_SQ) {
@@ -1390,6 +1424,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			spawnAtLocation(level, new ItemStack(ModItems.CANARY_CAGE));
 			setCanary(false);
 		}
+		if (hasForge()) {
+			spawnAtLocation(level, new ItemStack(ModItems.FIELD_FORGE));
+			setForge(false);
+		}
 
 		super.dropEquipment(level);
 		for (ItemStack stack : pockets.removeAllItems()) {
@@ -1443,6 +1481,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 		output.putLong("last_barbara_greeting", lastBarbaraGreeting);
 		output.putBoolean("canary", hasCanary());
+		output.putBoolean("field_forge", hasForge());
+		forge.save(output);
 		if (tunnel != null) {
 			output.store("tunnel", TunnelOrder.CODEC, tunnel);
 		}
@@ -1458,6 +1498,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		storage = input.read("storage", GlobalPos.CODEC).orElse(null);
 		lastBarbaraGreeting = input.getLongOr("last_barbara_greeting", Long.MIN_VALUE);
 		setCanary(input.getBooleanOr("canary", false));
+		setForge(input.getBooleanOr("field_forge", false));
+		forge.load(input);
 		tunnel = input.read("tunnel", TunnelOrder.CODEC).orElse(null);
 		readInventoryFromTag(input);
 

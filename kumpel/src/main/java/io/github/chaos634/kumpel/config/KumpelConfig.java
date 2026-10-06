@@ -206,6 +206,13 @@ public final class KumpelConfig {
 		public boolean tunnels = true;
 		/** How many blocks long such a tunnel is (1 to 64). */
 		public int tunnelLength = 24;
+
+		/** Feldschmiede: a Kumpel carrying a field forge smelts raw ores from its backpack with coal from its backpack. */
+		public boolean fieldForge = true;
+		/** Ticks the field forge needs per item (a furnace needs 200). */
+		public int smeltTicks = 100;
+		/** Item tags the field forge smelts. */
+		public List<String> smeltTags = new ArrayList<>(List.of("c:raw_materials", "c:ores"));
 	}
 
 	private static List<Tier> defaultTiers() {

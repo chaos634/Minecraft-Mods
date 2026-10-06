@@ -139,5 +139,11 @@
 	"subtitles.kumpel.steiger_whistle.call": "Foreman's Whistle calls",
 	"subtitles.kumpel.steiger_whistle.break": "Foreman's Whistle: break",
 	"subtitles.kumpel.steiger_whistle.order": "Foreman's Whistle gives an order",
-	"subtitles.kumpel.kumpel.cheer": "Kumpel cheers"
+	"subtitles.kumpel.kumpel.cheer": "Kumpel cheers",
+	"item.kumpel.field_forge": "Field Forge",
+	"message.kumpel.forge": "%s now carries a field forge on its back.",
+	"guide.kumpel.field_forge": "Give the field forge to your Kumpel (right-click). It then smelts raw ores from its backpack into ingots, burning coal from its backpack (one piece lasts for 8 ores). As long as it has coal, it keeps raw ores until they are smelted. Pack the Kumpel up to get the forge back.",
+	"command.kumpel.list.activity.smelting": "smelting ore",
+	"advancements.kumpel.huette.title": "Smelting Works",
+	"advancements.kumpel.huette.description": "Let your Kumpel smelt ore with the field forge"
 }

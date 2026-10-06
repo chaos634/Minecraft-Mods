@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import io.github.chaos634.kumpel.config.KumpelSettings;
+import io.github.chaos634.kumpel.entity.behaviour.FieldForge;
 
 /**
  * The Kumpel's backpack ("Kiepe"). It always has room for six rows, but the Kumpel only fills
@@ -136,9 +137,19 @@ public class KumpelPockets extends SimpleContainer {
 	private class Supplies {
 		private boolean keepFood = KumpelSettings.get().behaviour().shareFood;
 		private boolean keepPickaxe = owner.getMainHandItem().isEmpty();
+		private boolean keepFuel = owner.hasForge();
+		// Raw ores wait for the field forge, as long as it has something to burn.
+		private final boolean keepSmeltables = owner.hasForge() && owner.getForge().hasFuel(KumpelPockets.this);
 
 		boolean keeps(ItemStack stack) {
 			if (stack.isEmpty() || isTorch(stack)) {
+				return true;
+			}
+			if (keepFuel && FieldForge.isFuel(stack)) {
+				keepFuel = false;
+				return true;
+			}
+			if (keepSmeltables && KumpelSettings.get().isSmeltable(stack)) {
 				return true;
 			}
 			if (keepFood && isFood(stack)) {
