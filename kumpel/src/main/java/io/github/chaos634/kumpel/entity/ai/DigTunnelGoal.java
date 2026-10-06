@@ -21,6 +21,7 @@ import io.github.chaos634.kumpel.entity.TunnelOrder;
 public class DigTunnelGoal extends Goal {
 	private static final double REACH_SQ = 2.8 * 2.8;
 	private static final int STUCK_TICKS = 200;
+	private static final double STEP_IN_SQ = 2.0 * 2.0;
 	private static final int SEAL_INTERVAL = 4;
 	/** After sealing a leak, flowing water that is cut off needs a moment to run dry. */
 	private static final int SETTLE_TICKS = 40;
@@ -186,10 +187,16 @@ public class DigTunnelGoal extends Goal {
 	}
 
 	private void walkToSlice(TunnelOrder order) {
+		Vec3 stand = Vec3.atBottomCenterOf(order.standPosition());
+		if (kumpel.distanceToSqr(stand) < STEP_IN_SQ) {
+			// The path finder counts "next to the spot" as arrived, which can be just out of reach: step onto it.
+			kumpel.getNavigation().stop();
+			kumpel.getMoveControl().setWantedPosition(stand.x, stand.y, stand.z, speedModifier);
+			return;
+		}
 		if (--repathCooldown <= 0) {
 			repathCooldown = adjustedTickDelay(10);
-			BlockPos stand = order.standPosition();
-			kumpel.getNavigation().moveTo(stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5, speedModifier);
+			kumpel.getNavigation().moveTo(stand.x, stand.y, stand.z, speedModifier);
 		}
 	}
 

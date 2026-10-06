@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [m]
+        group: [n]
     defaults:
       run:
         working-directory: kumpel
@@ -339,5 +339,15 @@ jobs:
               p net.minecraft.core.registries.Registries 'INT_PROVIDER|FLOAT_PROVIDER|NUMBER|CONTEXT'
               for j in $MCJARS; do unzip -Z1 "$j" | grep -E '^data/minecraft/[a-z_/]*(int_provider|number_provider|context_int)' | head -30 || true; done
               for j in $MCJARS; do unzip -Z1 "$j" | grep -E 'coal' | grep -v -E 'textures|models|blockstates|items/|loot_table|recipe|advancement' | head -30 || true; done
+              ;;
+            n)
+              for j in $MCJARS; do
+                for f in data/minecraft/context_int_provider/cooking/time_coal.json data/minecraft/context_int_provider/cooking/time_coal_block.json data/minecraft/context_int_provider/cooking/time_blaze_rod.json data/minecraft/context_int_provider/cooking/normal_burn_time_reduction_factor.json; do
+                  if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
+                done
+              done
+              p net.minecraft.world.item.component.CookingFuel
+              p net.minecraft.world.entity.ai.navigation.PathNavigation 'createPath|moveTo'
+              p net.minecraft.world.entity.ai.control.MoveControl 'setWantedPosition'
               ;;
           esac
