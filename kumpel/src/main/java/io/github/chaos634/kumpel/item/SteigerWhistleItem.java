@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -27,12 +28,13 @@ import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 
 /**
- * Steigerpfeife, the foreman's whistle. Calls all your Kumpels, sends them on a break, or (sneaking, on a container)
- * marks the chest they should bring their loot to.
+ * Steigerpfeife, the foreman's whistle. Calls all your Kumpels or sends them on a break. Used sneaking on a container,
+ * it marks the chest they bring their loot to; on the side of a block, it orders a tunnel.
  */
 public class SteigerWhistleItem extends Item {
 	private static final int COOLDOWN_TICKS = 20;
 	private static final int FULL_CREW = 5;
+	private static final double TUNNEL_ORDER_RANGE = 16.0;
 
 	public SteigerWhistleItem(Properties properties) {
 		super(properties);
@@ -58,13 +60,25 @@ public class SteigerWhistleItem extends Item {
 		Level level = context.getLevel();
 		BlockPos pos = context.getClickedPos();
 
-		// Both sides must agree on whether this counts as marking a chest, so only look at things the client knows too.
-		if (player == null || !player.isSecondaryUseActive() || level.getBlockEntity(pos) == null) {
+		if (player == null || !player.isSecondaryUseActive()) {
+			return InteractionResult.PASS;
+		}
+
+		// Both sides must agree on what the click means, so only look at things the client knows too:
+		// a container becomes the storage, the side of any other block is where a tunnel starts,
+		// and everything else (like the ground) falls through to sending everyone on a break.
+		boolean container = level.getBlockEntity(pos) != null;
+		boolean wall = context.getClickedFace().getAxis().isHorizontal() && !level.getBlockState(pos).isAir();
+		if (!container && !wall) {
 			return InteractionResult.PASS;
 		}
 
 		if (level instanceof ServerLevel serverLevel) {
-			markStorage(serverLevel, player, pos);
+			if (container) {
+				markStorage(serverLevel, player, pos);
+			} else {
+				orderTunnel(serverLevel, player, pos, context.getClickedFace());
+			}
 			player.getCooldowns().addCooldown(context.getItemInHand(), COOLDOWN_TICKS);
 		}
 
@@ -143,6 +157,43 @@ public class SteigerWhistleItem extends Item {
 		}
 	}
 
+	/**
+	 * Vortrieb: the nearest Kumpel with a pickaxe digs a tunnel into the clicked wall. The tunnel starts at the height
+	 * of the player's feet if they clicked the block in front of their feet or head.
+	 */
+	public static void orderTunnel(ServerLevel level, Player player, BlockPos clicked, Direction face) {
+		KumpelEntity hauer = null;
+		double nearest = Double.MAX_VALUE;
+		for (KumpelEntity kumpel : KumpelEntity.findOwnedBy(level, player, TUNNEL_ORDER_RANGE)) {
+			double distance = kumpel.distanceToSqr(player);
+			if (kumpel.isHauer() && distance < nearest) {
+				hauer = kumpel;
+				nearest = distance;
+			}
+		}
+
+		if (hauer == null) {
+			player.sendOverlayMessage(Component.translatable("message.kumpel.tunnel.no_hauer"));
+			return;
+		}
+		if (!hauer.canDigHere()) {
+			player.sendOverlayMessage(Component.translatable("message.kumpel.tunnel.disabled"));
+			return;
+		}
+
+		int feetY = player.getBlockY();
+		int floorY = clicked.getY() == feetY + 1 ? feetY : clicked.getY();
+		BlockPos start = new BlockPos(clicked.getX(), floorY, clicked.getZ());
+		Direction direction = face.getOpposite();
+		int length = KumpelSettings.get().behaviour().tunnelLength;
+
+		hauer.startTunnel(start, direction, length);
+		whistle(level, player, 1.5F);
+		level.sendParticles(ParticleTypes.WAX_OFF, start.getX() + 0.5, start.getY() + 1.0, start.getZ() + 0.5, 12, 0.3, 0.6, 0.3, 0.0);
+		player.sendOverlayMessage(Component.translatable("message.kumpel.tunnel.started", hauer.getDisplayName(), length,
+				Component.translatable("direction.kumpel." + direction.getSerializedName())));
+	}
+
 	private static double range() {
 		return Math.max(1, KumpelSettings.get().behaviour().whistleRange);
 	}
@@ -158,5 +209,6 @@ public class SteigerWhistleItem extends Item {
 		tooltip.accept(Component.translatable("item.kumpel.steiger_whistle.call").withStyle(ChatFormatting.GRAY));
 		tooltip.accept(Component.translatable("item.kumpel.steiger_whistle.break").withStyle(ChatFormatting.GRAY));
 		tooltip.accept(Component.translatable("item.kumpel.steiger_whistle.storage").withStyle(ChatFormatting.GRAY));
+		tooltip.accept(Component.translatable("item.kumpel.steiger_whistle.tunnel").withStyle(ChatFormatting.GRAY));
 	}
 }

@@ -25,7 +25,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 public final class OreGlimmer {
 	/** Marks our displays, so ones that were saved with a chunk are cleaned up when it loads again. */
 	public static final String TAG = "kumpel_ore_glimmer";
-	private static final int GLOW_COLOR = 0x7FFFD4;
+	public static final int ORE_COLOR = 0x7FFFD4;
+	public static final int DANGER_COLOR = 0xFF4040;
 
 	private static final List<Glimmer> ACTIVE = new ArrayList<>();
 
@@ -45,13 +46,17 @@ public final class OreGlimmer {
 	}
 
 	public static void spawn(ServerLevel level, BlockPos pos, BlockState state, int ticks) {
+		spawn(level, pos, state, ticks, ORE_COLOR);
+	}
+
+	public static void spawn(ServerLevel level, BlockPos pos, BlockState state, int ticks, int color) {
 		Display.BlockDisplay display = new Display.BlockDisplay(EntityTypes.BLOCK_DISPLAY, level);
 		display.setBlockState(state);
 		display.setPos(pos.getX(), pos.getY(), pos.getZ());
 		// A hair bigger than the ore itself, so the two don't flicker against each other.
 		display.setTransformation(new Transformation(new Vector3f(-0.01F), null, new Vector3f(1.02F), null));
 		display.setBrightnessOverride(new Brightness(15, 15));
-		display.setGlowColorOverride(GLOW_COLOR);
+		display.setGlowColorOverride(color);
 		display.setGlowingTag(true);
 		display.addTag(TAG);
 

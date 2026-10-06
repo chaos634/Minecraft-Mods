@@ -11,6 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -40,17 +41,19 @@ public final class KumpelSettings {
 	private final List<FoodRule> feeding;
 	private final Identifier repairItem;
 	private final List<Identifier> torchItems;
+	private final List<String> names;
 	private final KumpelConfig.Behaviour behaviour;
 	private final Map<BlockState, OreRule> oreCache = new ConcurrentHashMap<>();
 
 	private KumpelSettings(List<KumpelTier> tiers, List<OreRule> ores, OreRule unlistedOre, List<FoodRule> feeding, Identifier repairItem,
-			List<Identifier> torchItems, KumpelConfig.Behaviour behaviour) {
+			List<Identifier> torchItems, List<String> names, KumpelConfig.Behaviour behaviour) {
 		this.tiers = List.copyOf(tiers);
 		this.ores = List.copyOf(ores);
 		this.unlistedOre = unlistedOre;
 		this.feeding = List.copyOf(feeding);
 		this.repairItem = repairItem;
 		this.torchItems = List.copyOf(torchItems);
+		this.names = List.copyOf(names);
 		this.behaviour = behaviour;
 	}
 
@@ -184,6 +187,19 @@ public final class KumpelSettings {
 		return behaviour;
 	}
 
+	public List<String> names() {
+		return names;
+	}
+
+	/** A random name for a new Kumpel, or {@code null} if names are turned off. */
+	public String randomName(RandomSource random) {
+		if (!behaviour.giveNames || names.isEmpty()) {
+			return null;
+		}
+
+		return names.get(random.nextInt(names.size()));
+	}
+
 	public record FoodRule(TagKey<Item> tag, Identifier item, int experience) {
 		public boolean matches(ItemStack stack) {
 			if (stack.isEmpty()) {
@@ -280,7 +296,14 @@ public final class KumpelSettings {
 			}
 		}
 
-		return new KumpelSettings(tiers, ores, unlistedOre, feeding, repairItem, torchItems, config.behaviour);
+		List<String> names = new ArrayList<>();
+		for (String name : config.names) {
+			if (name != null && !name.isBlank()) {
+				names.add(name.strip());
+			}
+		}
+
+		return new KumpelSettings(tiers, ores, unlistedOre, feeding, repairItem, torchItems, names, config.behaviour);
 	}
 
 	private static OreRule oreRule(String tag, String block, int level, int value, float pitch) {

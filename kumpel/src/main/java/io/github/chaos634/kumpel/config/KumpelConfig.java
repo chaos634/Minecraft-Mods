@@ -40,6 +40,8 @@ public final class KumpelConfig {
 	public UnlistedOres unlistedOres = new UnlistedOres();
 	/** Items a Kumpel can be fed for experience. */
 	public List<Food> feeding = defaultFeeding();
+	/** Names new Kumpels pick from (when {@code behaviour.give_names} is on). */
+	public List<String> names = defaultNames();
 	public Behaviour behaviour = new Behaviour();
 
 	public static class Tier {
@@ -190,6 +192,20 @@ public final class KumpelConfig {
 
 		/** Grubenhelm: wearing the miner's helmet lets you see in the dark. */
 		public boolean minerHelmetLamp = true;
+
+		/** New Kumpels get a random name from the {@code names} list. */
+		public boolean giveNames = true;
+		/** Kumpels say something now and then (in the action bar), and cheer when they find treasure. */
+		public boolean chatter = true;
+		/** On average, how many ticks pass between two idle remarks. */
+		public int chatterIntervalTicks = 6000;
+		/** Kumpels notice infested (silverfish) stone while sensing ores and mark it. */
+		public boolean silverfishWarning = true;
+
+		/** Vortrieb: a Kumpel with a pickaxe digs a 1×2 tunnel when you order it with the whistle. Also needs mobGriefing. */
+		public boolean tunnels = true;
+		/** How many blocks long such a tunnel is (1 to 64). */
+		public int tunnelLength = 24;
 	}
 
 	private static List<Tier> defaultTiers() {
@@ -215,6 +231,14 @@ public final class KumpelConfig {
 		ores.add(Ore.tag("c:ores/diamond", 4, 70, 1.6F));
 		ores.add(Ore.tag("c:ores/netherite_scrap", 5, 100, 1.9F));
 		return ores;
+	}
+
+	private static List<String> defaultNames() {
+		// Names from the Ruhrpott, including those of the many Polish, Turkish and Italian miners who worked there.
+		return new ArrayList<>(List.of(
+				"Jupp", "Kalle", "Hotte", "Manni", "Atze", "Ewald", "Willi", "Erwin", "Heinz", "Fritz", "Theo", "Paule",
+				"Günter", "Kurt", "Achim", "Trude", "Hilde", "Gerda", "Elfriede", "Anneliese", "Uschi", "Käthe",
+				"Stani", "Janusz", "Bronek", "Mehmet", "Ali", "Ayşe", "Emine", "Giuseppe", "Antonio"));
 	}
 
 	private static List<Food> defaultFeeding() {
@@ -290,6 +314,9 @@ public final class KumpelConfig {
 		}
 		if (feeding == null) {
 			feeding = defaultFeeding();
+		}
+		if (names == null) {
+			names = defaultNames();
 		}
 		if (behaviour == null) {
 			behaviour = new Behaviour();

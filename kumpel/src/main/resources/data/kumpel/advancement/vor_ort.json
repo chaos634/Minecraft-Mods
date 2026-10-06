@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:hauer",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.vor_ort.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.vor_ort.description"
+    },
+    "icon": {
+      "id": "minecraft:deepslate"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

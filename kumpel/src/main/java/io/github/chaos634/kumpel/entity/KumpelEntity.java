@@ -1,6 +1,7 @@
 package io.github.chaos634.kumpel.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +11,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.SectionPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -54,11 +55,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.InfestedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
@@ -73,6 +74,7 @@ import io.github.chaos634.kumpel.config.KumpelConfig;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.ai.CollectItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
+import io.github.chaos634.kumpel.entity.ai.DigTunnelGoal;
 import io.github.chaos634.kumpel.entity.ai.MineOreGoal;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.CanaryWarning;
@@ -85,7 +87,7 @@ import io.github.chaos634.kumpel.entity.behaviour.Steigerlied;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModItems;
-import io.github.chaos634.kumpel.util.Chunks;
+import io.github.chaos634.kumpel.util.BlockScanner;
 
 /**
  * The Kumpel: a small mining golem that follows its owner, collects dropped items,
@@ -103,6 +105,16 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final double MAX_MINE_DISTANCE_FROM_OWNER_SQ = 16.0 * 16.0;
 	private static final double CALL_TELEPORT_DISTANCE_SQ = 12.0 * 12.0;
 	private static final int STORAGE_RETRY_TICKS = 600;
+	/** Blocks harder than this (obsidian, ancient debris …) stop a tunnel. */
+	private static final float MAX_TUNNEL_HARDNESS = 25.0F;
+	private static final int SILVERFISH_RADIUS = 12;
+	private static final int SILVERFISH_WARNING_COOLDOWN = 1200;
+	private static final int SILVERFISH_GLOW_LIMIT = 16;
+	/** How many idle remarks and treasure cheers there are in the language files ({@code chatter.kumpel.idle.0} …). */
+	private static final int IDLE_LINES = 10;
+	private static final int TREASURE_LINES = 3;
+	/** Ores at least this valuable make the Kumpel cheer. */
+	private static final int TREASURE_VALUE = 60;
 	private static final int POINTING_TICKS = 50;
 	private static final String[] COMPASS_DIRECTIONS = {
 			"north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"
@@ -132,6 +144,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private GlobalPos storage;
 	private int storageBlockedTicks;
 	private long lastBarbaraGreeting = Long.MIN_VALUE;
+	private int lastSilverfishWarning = Integer.MIN_VALUE / 2;
+	private int nextChatter = -1;
+	private TunnelOrder tunnel;
 
 	public KumpelEntity(EntityType<? extends KumpelEntity> type, Level level) {
 		super(type, level);
@@ -153,12 +168,13 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		this.goalSelector.addGoal(0, new FloatGoal(this));
 		this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
 		this.goalSelector.addGoal(2, new DeliverItemsGoal(this, 1.15));
-		this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
-		this.goalSelector.addGoal(4, new CollectItemsGoal(this, 1.15));
-		this.goalSelector.addGoal(5, new MineOreGoal(this, 1.1));
-		this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8));
-		this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+		this.goalSelector.addGoal(3, new DigTunnelGoal(this, 1.0));
+		this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
+		this.goalSelector.addGoal(5, new CollectItemsGoal(this, 1.15));
+		this.goalSelector.addGoal(6, new MineOreGoal(this, 1.1));
+		this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8));
+		this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
 	}
 
 	@Override
@@ -333,6 +349,69 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	// ------------------------------------------------------------------
+	// Character
+
+	/** What the Kumpel is busy with, as a short key for messages ({@code command.kumpel.list.activity.<key>}). */
+	public String activity() {
+		if (isDancing()) {
+			return "dancing";
+		}
+		if (isOrderedToSit()) {
+			return shiftEnd.isResting() ? "resting" : "waiting";
+		}
+		if (tunnel != null) {
+			return "tunneling";
+		}
+		if (isMining()) {
+			return "mining";
+		}
+		if (hasItemsToDeliver() && wantsToDeliver()) {
+			return "delivering";
+		}
+
+		return "following";
+	}
+
+	/** Gives the Kumpel a random name from the config, unless it already has one. */
+	public void giveRandomName() {
+		if (hasCustomName()) {
+			return;
+		}
+
+		String name = KumpelSettings.get().randomName(random);
+		if (name != null) {
+			setCustomName(Component.literal(name));
+		}
+	}
+
+	/** Says one of the numbered lines {@code chatter.kumpel.<kind>.N} to the owner. */
+	private void say(Player owner, String kind, int lines, boolean inChat) {
+		if (!behaviour().chatter) {
+			return;
+		}
+
+		Component line = Component.translatable("chatter.kumpel." + kind + "." + random.nextInt(lines));
+		Component message = Component.translatable("chatter.kumpel.say", getDisplayName(), line).withStyle(ChatFormatting.GRAY);
+		if (inChat) {
+			owner.sendSystemMessage(message);
+		} else {
+			owner.sendOverlayMessage(message);
+		}
+	}
+
+	private void tickChatter(Player owner) {
+		int interval = Math.max(200, behaviour().chatterIntervalTicks);
+		if (nextChatter < 0) {
+			nextChatter = tickCount + interval / 2 + random.nextInt(interval);
+		} else if (tickCount >= nextChatter) {
+			nextChatter = tickCount + interval / 2 + random.nextInt(interval);
+			if (!isOrderedToSit() && distanceToSqr(owner) < 12.0 * 12.0) {
+				say(owner, "idle", IDLE_LINES, false);
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------
 	// Interaction
 
 	@Override
@@ -348,6 +427,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			if (!level().isClientSide()) {
 				usePlayerItem(player, hand, stack);
 				tame(player);
+				giveRandomName();
 				setOrderedToSit(false);
 				level().broadcastEntityEvent(this, (byte) 7);
 				KumpelAdvancements.award(player, KumpelAdvancements.GLUECK_AUF);
@@ -503,6 +583,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	/** Called by the whistle: stand up and come to the owner. */
 	public void answerWhistle(Player owner) {
+		tunnel = null;
 		shiftEnd.setResting(false);
 		setOrderedToSit(false);
 		setInSittingPose(false);
@@ -521,6 +602,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	/** Called by the whistle when sneaking: sit down and wait. */
 	public void takeBreak() {
+		tunnel = null;
 		shiftEnd.setResting(false);
 		setOrderedToSit(true);
 		getNavigation().stop();
@@ -748,6 +830,131 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	// ------------------------------------------------------------------
+	// Vortrieb
+
+	public TunnelOrder getTunnel() {
+		return tunnel;
+	}
+
+	/** Mining is allowed here and the config allows tunnels. */
+	public boolean canDigHere() {
+		return behaviour().tunnels && canMineAtAll();
+	}
+
+	public void startTunnel(BlockPos start, Direction direction, int length) {
+		tunnel = new TunnelOrder(start.immutable(), direction, Mth.clamp(length, 1, 64), 0);
+		shiftEnd.setResting(false);
+		setOrderedToSit(false);
+	}
+
+	public boolean canDigTunnel() {
+		return tunnel != null && !isOrderedToSit() && isHauer() && !pockets.pocketsFull() && canDigHere();
+	}
+
+	public void advanceTunnel() {
+		if (tunnel != null) {
+			tunnel = tunnel.advance();
+		}
+	}
+
+	public void finishTunnel() {
+		if (tunnel == null) {
+			return;
+		}
+
+		if (getOwner() instanceof Player owner) {
+			owner.sendSystemMessage(Component.translatable("message.kumpel.tunnel.done", getDisplayName(), tunnel.length()).withStyle(ChatFormatting.GOLD));
+			KumpelAdvancements.award(owner, KumpelAdvancements.VOR_ORT);
+		}
+		playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 1.0F, 1.5F);
+		tunnel = null;
+		setMining(false);
+	}
+
+	/** Gives up on the tunnel and tells the owner why ({@code message.kumpel.tunnel.stopped.<reason>}). */
+	public void stopTunnel(String reason, BlockPos where) {
+		if (tunnel == null) {
+			return;
+		}
+
+		if (getOwner() instanceof Player owner) {
+			Component block = level().getBlockState(where).getBlock().getName();
+			owner.sendSystemMessage(Component.translatable("message.kumpel.tunnel.stopped." + reason, getDisplayName(), block,
+					tunnel.progress()).withStyle(ChatFormatting.YELLOW));
+		}
+		tunnel = null;
+		setMining(false);
+	}
+
+	/** Can the Kumpel walk through here (air, torches, grass …) without fluids? */
+	public boolean isOpen(BlockPos pos) {
+		BlockState state = level().getBlockState(pos);
+		return state.getFluidState().isEmpty() && state.getCollisionShape(level(), pos).isEmpty();
+	}
+
+	/** A block in the way of the tunnel that the Kumpel may and can dig with its pickaxe. */
+	public boolean isDiggable(BlockPos pos) {
+		BlockState state = level().getBlockState(pos);
+		float hardness = state.getDestroySpeed(level(), pos);
+		return !state.hasBlockEntity()
+				&& hardness >= 0.0F
+				&& hardness <= MAX_TUNNEL_HARDNESS
+				&& (!state.requiresCorrectToolForDrops() || getMainHandItem().isCorrectToolForDrops(state));
+	}
+
+	/**
+	 * Checks the slice around a floor block before digging it.
+	 *
+	 * @return why the tunnel must stop here ({@code water}, {@code lava} or {@code abyss}), or {@code null} if it is safe
+	 */
+	public String tunnelProblem(ServerLevel level, BlockPos lower) {
+		BlockPos below = lower.below();
+		if (level.getBlockState(below).getCollisionShape(level, below).isEmpty()) {
+			return "abyss";
+		}
+
+		for (BlockPos cell : new BlockPos[] {lower, lower.above()}) {
+			for (Direction direction : Direction.values()) {
+				FluidState fluid = level.getFluidState(cell.relative(direction));
+				if (!fluid.isEmpty()) {
+					return fluid.is(FluidTags.LAVA) ? "lava" : "water";
+				}
+			}
+			FluidState inside = level.getFluidState(cell);
+			if (!inside.isEmpty()) {
+				return inside.is(FluidTags.LAVA) ? "lava" : "water";
+			}
+		}
+
+		return null;
+	}
+
+	/** Breaks a tunnel block with the pickaxe and puts what drops straight into the backpack. */
+	public void digBlock(ServerLevel level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+		ItemStack tool = getMainHandItem();
+		List<ItemStack> drops = Block.getDrops(state, level, pos, null, this, tool);
+
+		state.spawnAfterBreak(level, pos, tool, true);
+		level.destroyBlock(pos, false, this);
+		for (ItemStack drop : drops) {
+			ItemStack rest = pockets.addToPockets(drop);
+			if (!rest.isEmpty()) {
+				spawnAtLocation(level, rest);
+			}
+		}
+
+		// Digging counts as picking things up, so the Kumpel doesn't run off to deliver after every block.
+		ticksSinceLastPickup = 0;
+		tool.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
+
+		OreRule rule = KumpelSettings.get().matchOre(state);
+		if (rule != null) {
+			addExperience(behaviour().experiencePerOreMined + rule.level());
+		}
+	}
+
+	// ------------------------------------------------------------------
 	// Collecting & delivering items
 
 	@Override
@@ -913,6 +1120,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			if (tickCount % 100 == 50 && distanceSq < 8.0 * 8.0) {
 				celebrateBarbaraDay(level, owner);
 			}
+			if (tickCount % 20 == 5) {
+				tickChatter(owner);
+			}
 		}
 	}
 
@@ -958,6 +1168,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	private void senseOres(ServerLevel level, Player owner) {
+		if (behaviour().silverfishWarning && tickCount - lastSilverfishWarning > SILVERFISH_WARNING_COOLDOWN) {
+			warnAboutSilverfish(level, owner);
+		}
+
 		SensedOre best = findBestOre(level);
 		if (best == null) {
 			return;
@@ -975,6 +1189,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 
 		announceOre(level, owner, best);
+		if (best.rule().value() >= TREASURE_VALUE && moreValuable) {
+			say(owner, "treasure", TREASURE_LINES, true);
+		}
 		lastAnnouncedOre = best.rule();
 		lastAnnouncedPos = best.pos();
 		lastAnnounceTick = tickCount;
@@ -983,87 +1200,72 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	/**
 	 * Scans the sphere around the Kumpel for the most valuable ore it can sense at its level (the nearest one, if there are several).
-	 * Chunk sections whose palette holds no such ore are skipped without looking at their blocks.
 	 *
 	 * @return the ore found, or {@code null} if there is none in range
 	 */
 	public SensedOre findBestOre(ServerLevel level) {
 		KumpelSettings settings = KumpelSettings.get();
 		int maxLevel = getTier().level();
-		int radius = getTier().senseRadius();
-		int radiusSq = radius * radius;
-		BlockPos center = blockPosition();
-		Predicate<BlockState> sensable = state -> {
+		SensedOre[] best = new SensedOre[1];
+		int[] bestDistanceSq = {Integer.MAX_VALUE};
+
+		BlockScanner.scanSphere(level, blockPosition(), getTier().senseRadius(), state -> {
 			OreRule rule = settings.matchOre(state);
 			return rule != null && rule.level() <= maxLevel;
-		};
+		}, (pos, state, distanceSq) -> {
+			OreRule rule = settings.matchOre(state);
+			SensedOre current = best[0];
+			boolean better = current == null
+					|| rule.value() > current.rule().value()
+					|| (rule.value() == current.rule().value() && distanceSq < bestDistanceSq[0]);
+			if (better) {
+				best[0] = new SensedOre(rule, pos.immutable());
+				bestDistanceSq[0] = distanceSq;
+			}
+		});
 
-		OreRule bestRule = null;
-		BlockPos bestPos = null;
-		int bestDistanceSq = Integer.MAX_VALUE;
+		return best[0];
+	}
 
-		int minChunkX = SectionPos.blockToSectionCoord(center.getX() - radius);
-		int maxChunkX = SectionPos.blockToSectionCoord(center.getX() + radius);
-		int minChunkZ = SectionPos.blockToSectionCoord(center.getZ() - radius);
-		int maxChunkZ = SectionPos.blockToSectionCoord(center.getZ() + radius);
-
-		for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
-			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
-				if (!Chunks.isLoaded(level, chunkX, chunkZ)) {
-					continue;
+	/** Infested (silverfish) blocks around the Kumpel, nearest first, at most {@code limit}. */
+	public List<BlockPos> findInfestedBlocks(ServerLevel level, int radius, int limit) {
+		List<BlockPos> found = new ArrayList<>();
+		List<Integer> distances = new ArrayList<>();
+		BlockScanner.scanSphere(level, blockPosition(), radius, state -> state.getBlock() instanceof InfestedBlock, (pos, state, distanceSq) -> {
+			int index = 0;
+			while (index < distances.size() && distances.get(index) <= distanceSq) {
+				index++;
+			}
+			if (index < limit) {
+				found.add(index, pos.immutable());
+				distances.add(index, distanceSq);
+				if (found.size() > limit) {
+					found.removeLast();
+					distances.removeLast();
 				}
+			}
+		});
 
-				LevelChunk chunk = level.getChunk(chunkX, chunkZ);
-				for (int index = 0; index < level.getSectionsCount(); index++) {
-					int sectionMinY = SectionPos.sectionToBlockCoord(level.getSectionYFromSectionIndex(index));
-					if (sectionMinY + 15 < center.getY() - radius || sectionMinY > center.getY() + radius) {
-						continue;
-					}
+		return found;
+	}
 
-					LevelChunkSection section = chunk.getSection(index);
-					if (section.hasOnlyAir() || !section.maybeHas(sensable)) {
-						continue;
-					}
+	private void warnAboutSilverfish(ServerLevel level, Player owner) {
+		List<BlockPos> infested = findInfestedBlocks(level, Math.min(SILVERFISH_RADIUS, getTier().senseRadius()), SILVERFISH_GLOW_LIMIT);
+		if (infested.isEmpty()) {
+			return;
+		}
 
-					int minX = Math.max(SectionPos.sectionToBlockCoord(chunkX), center.getX() - radius);
-					int maxX = Math.min(SectionPos.sectionToBlockCoord(chunkX) + 15, center.getX() + radius);
-					int minY = Math.max(sectionMinY, center.getY() - radius);
-					int maxY = Math.min(sectionMinY + 15, center.getY() + radius);
-					int minZ = Math.max(SectionPos.sectionToBlockCoord(chunkZ), center.getZ() - radius);
-					int maxZ = Math.min(SectionPos.sectionToBlockCoord(chunkZ) + 15, center.getZ() + radius);
-
-					for (int x = minX; x <= maxX; x++) {
-						for (int y = minY; y <= maxY; y++) {
-							for (int z = minZ; z <= maxZ; z++) {
-								int dx = x - center.getX();
-								int dy = y - center.getY();
-								int dz = z - center.getZ();
-								int distanceSq = dx * dx + dy * dy + dz * dz;
-								if (distanceSq > radiusSq) {
-									continue;
-								}
-
-								OreRule rule = settings.matchOre(section.getBlockState(x & 15, y & 15, z & 15));
-								if (rule == null || rule.level() > maxLevel) {
-									continue;
-								}
-
-								boolean better = bestRule == null
-										|| rule.value() > bestRule.value()
-										|| (rule.value() == bestRule.value() && distanceSq < bestDistanceSq);
-								if (better) {
-									bestRule = rule;
-									bestPos = new BlockPos(x, y, z);
-									bestDistanceSq = distanceSq;
-								}
-							}
-						}
-					}
-				}
+		lastSilverfishWarning = tickCount;
+		for (BlockPos pos : infested) {
+			if (!OreGlimmer.isGlowing(level, pos)) {
+				OreGlimmer.spawn(level, pos, level.getBlockState(pos), behaviour().dowsingGlowTicks, OreGlimmer.DANGER_COLOR);
 			}
 		}
 
-		return bestRule == null ? null : new SensedOre(bestRule, bestPos);
+		pointAt(Vec3.atCenterOf(infested.getFirst()));
+		owner.sendSystemMessage(Component.translatable("message.kumpel.silverfish", getDisplayName(), infested.size())
+				.withStyle(ChatFormatting.RED));
+		level.playSound(null, owner.getX(), owner.getY(), owner.getZ(), SoundEvents.NOTE_BLOCK_BELL, SoundSource.NEUTRAL, 1.0F, 0.5F);
 	}
 
 	public record SensedOre(OreRule rule, BlockPos pos) {
@@ -1238,6 +1440,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 		output.putLong("last_barbara_greeting", lastBarbaraGreeting);
 		output.putBoolean("canary", hasCanary());
+		if (tunnel != null) {
+			output.store("tunnel", TunnelOrder.CODEC, tunnel);
+		}
 		writeInventoryToTag(output);
 	}
 
@@ -1250,6 +1455,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		storage = input.read("storage", GlobalPos.CODEC).orElse(null);
 		lastBarbaraGreeting = input.getLongOr("last_barbara_greeting", Long.MIN_VALUE);
 		setCanary(input.getBooleanOr("canary", false));
+		tunnel = input.read("tunnel", TunnelOrder.CODEC).orElse(null);
 		readInventoryFromTag(input);
 
 		healOnFirstRefresh = false;

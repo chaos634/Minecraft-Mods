@@ -68,6 +68,8 @@ public class KumpelCoreItem extends Item {
 		Component customName = stack.get(DataComponents.CUSTOM_NAME);
 		if (customName != null) {
 			kumpel.setCustomName(customName);
+		} else {
+			kumpel.giveRandomName();
 		}
 
 		level.addFreshEntity(kumpel);

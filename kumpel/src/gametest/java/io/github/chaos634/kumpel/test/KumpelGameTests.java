@@ -3,6 +3,7 @@ package io.github.chaos634.kumpel.test;
 import java.util.List;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -476,6 +477,82 @@ public class KumpelGameTests {
 	}
 
 	@GameTest
+	public void newKumpelsGetANameFromThePott(GameTestHelper helper) {
+		buildFloor(helper);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.giveRandomName();
+		helper.assertTrue(kumpel.hasCustomName() && settings().names().contains(kumpel.getCustomName().getString()),
+				Component.literal("The Kumpel should get a name from the list, got " + kumpel.getCustomName()));
+
+		KumpelEntity named = helper.spawn(ModEntities.KUMPEL, 2, 1, 1);
+		named.setCustomName(Component.literal("Glückauf-Günni"));
+		named.giveRandomName();
+		helper.assertTrue(named.getCustomName().getString().equals("Glückauf-Günni"), Component.literal("A name you gave stays"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 100)
+	public void warnsAboutSilverfishInTheRock(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 2, 2);
+		BlockPos infested = helper.absolutePos(new BlockPos(5, 0, 5));
+		helper.setBlock(5, 0, 5, Blocks.INFESTED_STONE);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+
+		helper.assertTrue(kumpel.findInfestedBlocks(helper.getLevel(), 8, 4).equals(List.of(infested)),
+				Component.literal("The infested stone should be found"));
+		helper.succeedWhen(() -> helper.assertTrue(OreGlimmer.isGlowing(helper.getLevel(), infested),
+				Component.literal("The infested stone should be marked")));
+	}
+
+	@GameTest(maxTicks = 600)
+	public void digsATunnelIntoTheWall(GameTestHelper helper) {
+		buildFloor(helper);
+		buildWall(helper);
+		Player owner = ownerAt(helper, 1, 5);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 3);
+		kumpel.tame(owner);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+		kumpel.startTunnel(helper.absolutePos(new BlockPos(3, 1, 3)), Direction.EAST, 4);
+
+		helper.succeedWhen(() -> {
+			for (int x = 3; x <= 6; x++) {
+				for (int y = 1; y <= 2; y++) {
+					helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(x, y, 3))).isAir(),
+							Component.literal("Tunnel block " + x + "," + y + " should be dug"));
+				}
+			}
+			helper.assertTrue(kumpel.getTunnel() == null, Component.literal("The tunnel order should be done"));
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(7, 1, 3))).is(Blocks.STONE),
+					Component.literal("The tunnel should be exactly 4 long"));
+			helper.assertTrue(count(kumpel.getPockets(), Items.COBBLESTONE) + count(owner.getInventory(), Items.COBBLESTONE) == 8,
+					Component.literal("The 8 dug blocks should end up as cobblestone"));
+		});
+	}
+
+	@GameTest(maxTicks = 300)
+	public void tunnelStopsBeforeWater(GameTestHelper helper) {
+		buildFloor(helper);
+		buildWall(helper);
+		// A water pocket next to the third slice.
+		helper.setBlock(5, 1, 4, Blocks.WATER);
+		Player owner = ownerAt(helper, 1, 5);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 3);
+		kumpel.tame(owner);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+		kumpel.startTunnel(helper.absolutePos(new BlockPos(3, 1, 3)), Direction.EAST, 4);
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(kumpel.getTunnel() == null, Component.literal("The Kumpel should stop the tunnel"));
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(3, 1, 3))).isAir(),
+					Component.literal("The first slice is safe to dig"));
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(5, 1, 3))).is(Blocks.STONE),
+					Component.literal("The slice next to the water stays"));
+		});
+	}
+
+	@GameTest
 	public void allAdvancementsAreLoaded(GameTestHelper helper) {
 		for (String name : KumpelAdvancements.ALL) {
 			helper.assertTrue(helper.getLevel().getServer().getAdvancements().get(Kumpel.id(name)) != null,
@@ -508,6 +585,17 @@ public class KumpelGameTests {
 		}
 
 		return ItemStack.EMPTY;
+	}
+
+	/** A stone block from x = 3 to 7, three blocks high and three deep (z = 2 to 4), standing on the floor. */
+	private static void buildWall(GameTestHelper helper) {
+		for (int x = 3; x <= 7; x++) {
+			for (int y = 1; y <= 3; y++) {
+				for (int z = 2; z <= 4; z++) {
+					helper.setBlock(x, y, z, Blocks.STONE);
+				}
+			}
+		}
 	}
 
 	private static void buildFloor(GameTestHelper helper) {
