@@ -202,5 +202,20 @@
 	"advancements.kumpel.zollverein.title": "Zollverein",
 	"advancements.kumpel.zollverein.description": "Faites transformer du charbon en coke par la forge de campagne de votre Kumpel",
 	"tag.item.kumpel.tunnel_fillers": "Remblai de galerie",
-	"tag.item.kumpel.repairs_miner_helmet": "Répare le casque de mineur"
+	"tag.item.kumpel.repairs_miner_helmet": "Répare le casque de mineur",
+	"block.kumpel.markentafel": "Tableau des jetons",
+	"guide.kumpel.markentafel": "Le tableau du contrôle des jetons : au puits, chaque mineur accrochait son jeton de laiton en descendant, pour que personne ne soit oublié au fond. Faites un clic droit sur le tableau pour voir tous vos Kumpels : ceux qui sont proches tels qu'ils sont, ceux qui sont loin là où on les a vus pour la dernière fois, et combien sont sous terre. Les Kumpels morts restent un moment sur le tableau, pour que vous sachiez où chercher leur noyau fêlé.",
+	"item.kumpel.music_disc_glueck_auf": "Disque",
+	"jukebox_song.kumpel.glueck_auf": "Kumpelkapelle - Glück auf",
+	"guide.kumpel.music_disc_glueck_auf": "La marche de la Kumpelkapelle. Vos Kumpels dansent et chantent avec, et leur bonne humeur vous donne Célérité tant que vous êtes près d'eux. On le trouve dans les puits de mine abandonnés, ou on le fabrique avec du charbon et un bloc musical.",
+	"advancements.kumpel.markenkontrolle.title": "Contrôle des jetons",
+	"advancements.kumpel.markenkontrolle.description": "Prenez des nouvelles de vos Kumpels à un tableau des jetons",
+	"advancements.kumpel.kumpelkapelle.title": "Kumpelkapelle",
+	"advancements.kumpel.kumpelkapelle.description": "Faites écouter le disque de la Kumpelkapelle à vos Kumpels",
+	"command.kumpel.list.underground": "%s sous terre",
+	"command.kumpel.list.away": "%1$s · niveau %2$s · vu il y a %7$s min en %3$s %4$s %5$s %6$s · %8$s",
+	"command.kumpel.list.lost": "%1$s · mort il y a %6$s min en %2$s %3$s %4$s %5$s, son noyau fêlé doit y être",
+	"chatter.kumpel.sing.0": "♪ Glück auf, Glück auf, der Steiger kommt! ♪",
+	"chatter.kumpel.sing.1": "♪ C'est notre chanson ! ♪",
+	"chatter.kumpel.sing.2": "♪ Tout le monde chante ! ♪"
 }

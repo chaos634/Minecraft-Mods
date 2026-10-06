@@ -57,5 +57,9 @@ public class KumpelReiClientPlugin implements REIClientPlugin {
 				.line(Component.translatable("guide.kumpel.rescue_capsule")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.COKE), Component.translatable("item.kumpel.coke"))
 				.line(Component.translatable("guide.kumpel.coke")));
+		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModBlocks.MARKENTAFEL), Component.translatable("block.kumpel.markentafel"))
+				.line(Component.translatable("guide.kumpel.markentafel")));
+		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.MUSIC_DISC_GLUECK_AUF), Component.translatable("jukebox_song.kumpel.glueck_auf"))
+				.line(Component.translatable("guide.kumpel.music_disc_glueck_auf")));
 	}
 }

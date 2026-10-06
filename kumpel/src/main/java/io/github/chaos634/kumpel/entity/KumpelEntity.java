@@ -36,6 +36,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -131,6 +133,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** How many idle remarks and treasure cheers there are in the language files ({@code chatter.kumpel.idle.0} …). */
 	private static final int IDLE_LINES = 10;
 	private static final int TREASURE_LINES = 3;
+	private static final int SING_LINES = 3;
+	private static final long SING_ALONG_COOLDOWN = 2400;
+	/** How often (in ticks) the Kumpel updates its tag at the Markenkontrolle. */
+	private static final int MARKE_INTERVAL = 100;
 	/** Ores at least this valuable make the Kumpel cheer. */
 	private static final int TREASURE_VALUE = 60;
 	private static final int GREETING_COOLDOWN = 12000;
@@ -171,6 +177,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private TunnelOrder tunnel;
 	private final ShiftLog log = new ShiftLog();
 	private final OreFinds finds = new OreFinds();
+	/** Why the last tunnel was given up, for tests and debugging. */
+	private String lastTunnelStop = "";
+	private long lastSingAlong = Long.MIN_VALUE / 2;
 	private final ExitTrail exitTrail = new ExitTrail();
 	private boolean leadingOut;
 	private Boolean wasBrightOutside;
@@ -757,6 +766,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		serverLevel.sendParticles(ParticleTypes.WAX_OFF, getX(), getY() + 0.5, getZ(), 20, 0.3, 0.5, 0.3, 0.0);
 		serverLevel.playSound(null, getX(), getY(), getZ(), SoundEvents.COPPER_GOLEM_BECOME_STATUE, SoundSource.NEUTRAL, 1.0F, 1.2F);
 		player.sendOverlayMessage(Component.translatable("message.kumpel.packed", getDisplayName()));
+		// Packed into its core, the Kumpel travels with you: its tag comes down.
+		Markenkontrolle.get(serverLevel.getServer()).takeDown(getUUID());
 		discard();
 	}
 
@@ -1055,6 +1066,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		return tunnel;
 	}
 
+	public String getLastTunnelStop() {
+		return lastTunnelStop;
+	}
+
 	/** Mining is allowed here and the config allows tunnels. */
 	public boolean canDigHere() {
 		return behaviour().tunnels && canMineAtAll();
@@ -1096,6 +1111,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		if (tunnel == null) {
 			return;
 		}
+
+		lastTunnelStop = reason + " at " + where.toShortString() + " after " + tunnel.progress();
 
 		if (getOwner() instanceof Player owner) {
 			Component block = level().getBlockState(where).getBlock().getName();
@@ -1374,6 +1391,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			forge.tick(this, level);
 		}
 
+		if (tickCount % MARKE_INTERVAL == 70) {
+			hangUpMarke(level, activity());
+		}
+
 		// Verschnaufpause: a Kumpel that sits down catches its breath.
 		if (isOrderedToSit() && tickCount % 100 == 60 && getHealth() < getMaxHealth()) {
 			heal(1.0F);
@@ -1422,9 +1443,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	private void updateDancing(ServerLevel level) {
-		boolean dance = behaviour().danceToJukebox
-				&& !isInSittingPose()
-				&& Steigerlied.findPlayingJukebox(level, blockPosition()) != null;
+		BlockPos jukebox = behaviour().danceToJukebox && !isInSittingPose() ? Steigerlied.findPlayingJukebox(level, blockPosition()) : null;
+		boolean dance = jukebox != null;
 
 		if (dance != isDancing()) {
 			setDancing(dance);
@@ -1435,6 +1455,22 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		if (dance) {
 			level.sendParticles(ParticleTypes.NOTE, getX(), getY() + 1.4, getZ(), 1, 0.2, 0.0, 0.2, 1.0);
+			if (Steigerlied.playsKumpelkapelle(level, jukebox) && getOwner() instanceof Player owner && distanceToSqr(owner) < 16.0 * 16.0) {
+				singAlong(level, owner);
+			}
+		}
+	}
+
+	/** Kumpelkapelle: to their own song, Kumpels sing along, and their good mood rubs off on you (Haste). */
+	private void singAlong(ServerLevel level, Player owner) {
+		level.sendParticles(ParticleTypes.HAPPY_VILLAGER, getX(), getY() + 1.2, getZ(), 2, 0.3, 0.3, 0.3, 0.0);
+		owner.addEffect(new MobEffectInstance(MobEffects.HASTE, 100, 0, true, true));
+		KumpelAdvancements.award(owner, KumpelAdvancements.KUMPELKAPELLE);
+
+		long now = level.getGameTime();
+		if (now - lastSingAlong > SING_ALONG_COOLDOWN) {
+			lastSingAlong = now;
+			say(owner, "sing", SING_LINES, false);
 		}
 	}
 
@@ -1679,6 +1715,26 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	@Override
 	public boolean removeWhenFarAway(double distanceSquared) {
 		return false;
+	}
+
+	@Override
+	public void die(DamageSource source) {
+		super.die(source);
+		if (level() instanceof ServerLevel level) {
+			// Its tag stays up for a while, so you know where to look for its cracked core.
+			hangUpMarke(level, "lost");
+		}
+	}
+
+	/** Markenkontrolle: hangs up (or updates) this Kumpel's tag with where it is and what it does. */
+	public void hangUpMarke(ServerLevel level, String activity) {
+		if (!isTame() || !(getOwner() instanceof Player owner)) {
+			return;
+		}
+
+		Markenkontrolle.get(level.getServer()).hangUp(new Markenkontrolle.Marke(getUUID(), owner.getUUID(), getName().getString(),
+				getTier().level(), GlobalPos.of(level.dimension(), blockPosition()), activity,
+				level.getServer().overworld().getGameTime(), !level.canSeeSky(blockPosition())));
 	}
 
 	@Override

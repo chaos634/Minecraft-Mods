@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [l]
+        group: [m]
     defaults:
       run:
         working-directory: kumpel
@@ -329,5 +329,15 @@ jobs:
               p net.minecraft.world.entity.LivingEntity ' die\('
               p net.minecraft.world.entity.TamableAnimal ' die\(|getOwnerReference'
               p net.minecraft.world.item.context.UseOnContext 'getHorizontalDirection'
+              ;;
+            m)
+              p net.minecraft.world.item.component.CookingFuel
+              p net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt
+              p net.minecraft.world.level.storage.loot.providers.number.floats.ResolvableFloat
+              p net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider
+              ls_jar 'number/ints/[A-Za-z]+\.class|number/floats/[A-Za-z]+\.class|CookingFuels|FuelValues|BurnTimes'
+              p net.minecraft.core.registries.Registries 'INT_PROVIDER|FLOAT_PROVIDER|NUMBER|CONTEXT'
+              for j in $MCJARS; do unzip -Z1 "$j" | grep -E '^data/minecraft/[a-z_/]*(int_provider|number_provider|context_int)' | head -30 || true; done
+              for j in $MCJARS; do unzip -Z1 "$j" | grep -E 'coal' | grep -v -E 'textures|models|blockstates|items/|loot_table|recipe|advancement' | head -30 || true; done
               ;;
           esac

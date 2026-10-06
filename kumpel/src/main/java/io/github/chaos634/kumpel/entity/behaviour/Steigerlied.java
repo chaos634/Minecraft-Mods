@@ -6,15 +6,21 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 
+import io.github.chaos634.kumpel.registry.ModItems;
 import io.github.chaos634.kumpel.util.Chunks;
 
 /**
- * Steigerlied: while a jukebox plays nearby, the Kumpel dances.
+ * Steigerlied: while a jukebox plays nearby, the Kumpel dances; to the Kumpelkapelle's record it also sings along.
  */
 public final class Steigerlied {
 	private static final int RANGE = 8;
 
 	private Steigerlied() {
+	}
+
+	/** Whether the jukebox there plays the Kumpelkapelle's own record. */
+	public static boolean playsKumpelkapelle(ServerLevel level, BlockPos jukebox) {
+		return level.getBlockEntity(jukebox) instanceof JukeboxBlockEntity box && box.getTheItem().is(ModItems.MUSIC_DISC_GLUECK_AUF);
 	}
 
 	/** The nearest jukebox within range that is playing a song, or {@code null}. */

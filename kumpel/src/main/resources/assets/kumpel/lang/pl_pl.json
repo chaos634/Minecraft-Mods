@@ -202,5 +202,20 @@
 	"advancements.kumpel.zollverein.title": "Zollverein",
 	"advancements.kumpel.zollverein.description": "Niech kuźnia polowa twojego Kumpla zamieni węgiel w koks",
 	"tag.item.kumpel.tunnel_fillers": "Wypełnienie sztolni",
-	"tag.item.kumpel.repairs_miner_helmet": "Naprawia kask górniczy"
+	"tag.item.kumpel.repairs_miner_helmet": "Naprawia kask górniczy",
+	"block.kumpel.markentafel": "Tablica marek",
+	"guide.kumpel.markentafel": "Tablica marek z kontroli marek: przy szybie każdy górnik zawieszał mosiężną markę, zjeżdżając na dół, żeby nikt nie został zapomniany. Kliknij tablicę prawym przyciskiem, aby zobaczyć wszystkich swoich Kumpli: tych w pobliżu takich, jacy są teraz, tych daleko tam, gdzie ostatnio ich widziano, oraz ilu jest pod ziemią. Kumple, którzy zginęli, zostają na tablicy przez jakiś czas, żebyś wiedział, gdzie szukać ich pękniętego rdzenia.",
+	"item.kumpel.music_disc_glueck_auf": "Płyta muzyczna",
+	"jukebox_song.kumpel.glueck_auf": "Kumpelkapelle - Glück auf",
+	"guide.kumpel.music_disc_glueck_auf": "Marsz orkiestry Kumpli. Twoi Kumple tańczą i śpiewają do niego, a ich dobry humor daje ci Pośpiech, dopóki jesteś przy nich. Leży w opuszczonych kopalniach albo powstaje z węgla i bloku nutowego.",
+	"advancements.kumpel.markenkontrolle.title": "Kontrola marek",
+	"advancements.kumpel.markenkontrolle.description": "Sprawdź swoich Kumpli przy tablicy marek",
+	"advancements.kumpel.kumpelkapelle.title": "Orkiestra Kumpli",
+	"advancements.kumpel.kumpelkapelle.description": "Zagraj swoim Kumplom płytę orkiestry Kumpli",
+	"command.kumpel.list.underground": "pod ziemią: %s",
+	"command.kumpel.list.away": "%1$s · poziom %2$s · ostatnio widziany %7$s min temu przy %3$s %4$s %5$s %6$s · %8$s",
+	"command.kumpel.list.lost": "%1$s · zginął %6$s min temu przy %2$s %3$s %4$s %5$s, tam leży jego pęknięty rdzeń",
+	"chatter.kumpel.sing.0": "♪ Glück auf, Glück auf, der Steiger kommt! ♪",
+	"chatter.kumpel.sing.1": "♪ To nasza piosenka! ♪",
+	"chatter.kumpel.sing.2": "♪ Wszyscy śpiewają! ♪"
 }

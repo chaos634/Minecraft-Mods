@@ -15,10 +15,13 @@ import net.minecraft.world.level.material.MapColor;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.block.FoerderkorbBlock;
+import io.github.chaos634.kumpel.block.MarkentafelBlock;
 
 public final class ModBlocks {
 	public static final Block FOERDERKORB = register("foerderkorb", FoerderkorbBlock::new,
 			BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(3.0F, 6.0F).sound(SoundType.COPPER).requiresCorrectToolForDrops());
+	public static final Block MARKENTAFEL = register("markentafel", MarkentafelBlock::new,
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD));
 
 	private ModBlocks() {
 	}

@@ -11,12 +11,18 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
 
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.config.KumpelSettings;
@@ -42,10 +48,17 @@ public final class ModItems {
 	public static final Item RESCUE_CAPSULE = register("rescue_capsule", RescueCapsuleItem::new,
 			new Item.Properties().stacksTo(4));
 	public static final Item COKE = register("coke", Item::new, new Item.Properties());
+	/** The Kumpelkapelle's record, "Glück auf" (data/kumpel/jukebox_song/glueck_auf.json). */
+	public static final ResourceKey<JukeboxSong> GLUECK_AUF_SONG = ResourceKey.create(Registries.JUKEBOX_SONG, Kumpel.id("glueck_auf"));
+	public static final Item MUSIC_DISC_GLUECK_AUF = register("music_disc_glueck_auf", Item::new,
+			new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(GLUECK_AUF_SONG));
 	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
 			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
 			new Item.Properties().spawnEgg(ModEntities.KUMPEL));
+
+	/** One in eight mineshaft chests holds the record. */
+	private static final int MINESHAFT_EMPTY_WEIGHT = 7;
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Kumpel.id("kumpel"));
 	public static final CreativeModeTab CREATIVE_TAB = FabricCreativeModeTab.builder()
@@ -68,6 +81,8 @@ public final class ModItems {
 				output.accept(ModBlocks.FOERDERKORB);
 				output.accept(RESCUE_CAPSULE);
 				output.accept(COKE);
+				output.accept(ModBlocks.MARKENTAFEL);
+				output.accept(MUSIC_DISC_GLUECK_AUF);
 				output.accept(MINER_HELMET);
 				output.accept(KUMPEL_SPAWN_EGG);
 			})
@@ -92,5 +107,15 @@ public final class ModItems {
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT).register(output -> output.accept(MINER_HELMET));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(KUMPEL_SPAWN_EGG));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS).register(output -> output.accept(COKE));
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(output -> output.accept(MUSIC_DISC_GLUECK_AUF));
+
+		// The record lies in abandoned mineshafts, now and then.
+		LootTableEvents.MODIFY.register((key, table, source, registries) -> {
+			if (source.isBuiltin() && BuiltInLootTables.ABANDONED_MINESHAFT.equals(key)) {
+				table.withPool(LootPool.lootPool()
+						.add(LootItem.lootTableItem(MUSIC_DISC_GLUECK_AUF).setWeight(1))
+						.add(EmptyLootItem.emptyItem().setWeight(MINESHAFT_EMPTY_WEIGHT)));
+			}
+		});
 	}
 }

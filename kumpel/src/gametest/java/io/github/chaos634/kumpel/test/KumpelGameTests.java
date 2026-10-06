@@ -12,6 +12,7 @@ import com.google.gson.JsonParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -47,6 +48,7 @@ import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.block.FoerderkorbBlock;
 import io.github.chaos634.kumpel.entity.ExitTrail;
+import io.github.chaos634.kumpel.entity.Markenkontrolle;
 import io.github.chaos634.kumpel.entity.OreFinds;
 import io.github.chaos634.kumpel.entity.ShiftLog;
 import io.github.chaos634.kumpel.item.KumpelSoul;
@@ -588,7 +590,10 @@ public class KumpelGameTests {
 			for (int x = 3; x <= 6; x++) {
 				for (int y = 1; y <= 2; y++) {
 					helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(x, y, 3))).isAir(),
-							Component.literal("Tunnel block " + x + "," + y + " should be dug"));
+							Component.literal("Tunnel block " + x + "," + y + " should be dug (stopped: " + kumpel.getLastTunnelStop()
+									+ ", order " + kumpel.getTunnel() + ", kumpel at " + kumpel.blockPosition() + ", sealed "
+									+ kumpel.getLog().get(ShiftLog.Entry.LEAKS_SEALED) + ", fillers " + kumpel.getPockets().count(KumpelPockets::isTunnelFiller)
+									+ ", hole " + helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(6, 0, 3))) + ")"));
 				}
 			}
 			helper.assertTrue(kumpel.getTunnel() == null, Component.literal("The tunnel order should be done"));
@@ -832,6 +837,64 @@ public class KumpelGameTests {
 		helper.setBlock(4, 1, 4, Blocks.AIR);
 		kumpel.getFinds().tidyUp(helper.getLevel());
 		helper.assertTrue(kumpel.getFinds().finds().isEmpty(), Component.literal("A mined ore is forgotten"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 200)
+	public void kumpelsSingAlongToTheirRecord(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		BlockPos jukeboxPos = helper.absolutePos(new BlockPos(5, 1, 5));
+		helper.setBlock(5, 1, 5, Blocks.JUKEBOX);
+		container(helper, jukeboxPos).setItem(0, new ItemStack(ModItems.MUSIC_DISC_GLUECK_AUF));
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 2, 1, 2);
+		kumpel.tame(owner);
+		kumpel.setOrderedToSit(false);
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(kumpel.isDancing(), Component.literal("The Kumpel should dance to its record"));
+			helper.assertTrue(owner.hasEffect(MobEffects.HASTE), Component.literal("Their good mood gives the owner Haste"));
+		});
+	}
+
+	@GameTest
+	public void theRecordIsAJukeboxSong(GameTestHelper helper) {
+		ItemStack disc = new ItemStack(ModItems.MUSIC_DISC_GLUECK_AUF);
+		helper.assertTrue(disc.has(DataComponents.JUKEBOX_PLAYABLE), Component.literal("The disc plays in a jukebox"));
+		helper.assertTrue(helper.getLevel().registryAccess().lookupOrThrow(Registries.JUKEBOX_SONG).get(ModItems.GLUECK_AUF_SONG).isPresent(),
+				Component.literal("The song kumpel:glueck_auf is loaded"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void markenkontrolleKeepsTrackOfKumpels(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 1, 3);
+		kumpel.tame(owner);
+		kumpel.setCustomName(Component.literal("Markentest"));
+		Markenkontrolle markenkontrolle = Markenkontrolle.get(helper.getLevel().getServer());
+		long now = helper.getLevel().getServer().overworld().getGameTime();
+
+		kumpel.hangUpMarke(helper.getLevel(), "mining");
+		List<Markenkontrolle.Marke> marken = markenkontrolle.ofOwner(owner.getUUID(), now);
+		helper.assertTrue(marken.size() == 1 && marken.getFirst().name().equals("Markentest") && marken.getFirst().pos().pos().equals(kumpel.blockPosition()),
+				Component.literal("The Kumpel's tag hangs at the board: " + marken));
+
+		kumpel.die(helper.getLevel().damageSources().generic());
+		marken = markenkontrolle.ofOwner(owner.getUUID(), now);
+		helper.assertTrue(marken.size() == 1 && marken.getFirst().isLost(), Component.literal("A Kumpel that died is marked as lost: " + marken));
+
+		KumpelEntity revived = helper.spawn(ModEntities.KUMPEL, 4, 1, 4);
+		revived.tame(owner);
+		revived.setCustomName(Component.literal("Markentest"));
+		revived.hangUpMarke(helper.getLevel(), "following");
+		marken = markenkontrolle.ofOwner(owner.getUUID(), now);
+		helper.assertTrue(marken.size() == 1 && !marken.getFirst().isLost() && marken.getFirst().kumpel().equals(revived.getUUID()),
+				Component.literal("Brought back, the Kumpel replaces its old tag: " + marken));
+
+		markenkontrolle.takeDown(revived.getUUID());
+		helper.assertTrue(markenkontrolle.ofOwner(owner.getUUID(), now).isEmpty(), Component.literal("Packed up, the tag comes down"));
 		helper.succeed();
 	}
 

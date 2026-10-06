@@ -34,5 +34,13 @@
     "sounds": [
       "kumpel:block/foerderkorb/down"
     ]
+  },
+  "music_disc.glueck_auf": {
+    "sounds": [
+      {
+        "name": "kumpel:records/glueck_auf",
+        "stream": true
+      }
+    ]
   }
 }

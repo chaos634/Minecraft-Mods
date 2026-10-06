@@ -202,5 +202,20 @@
 	"advancements.kumpel.zollverein.title": "Zollverein",
 	"advancements.kumpel.zollverein.description": "Kumpel'inin seyyar ocağına kömürü koka çevirt",
 	"tag.item.kumpel.tunnel_fillers": "Tünel Dolgusu",
-	"tag.item.kumpel.repairs_miner_helmet": "Madenci Kaskını Onarır"
+	"tag.item.kumpel.repairs_miner_helmet": "Madenci Kaskını Onarır",
+	"block.kumpel.markentafel": "Künye Panosu",
+	"guide.kumpel.markentafel": "Künye kontrolünün panosu: Kuyu başında her madenci inerken pirinç künyesini asardı, kimse aşağıda unutulmasın diye. Panoya sağ tıklayınca tüm Kumpel'lerini görürsün: yakındakileri şu anki halleriyle, uzaktakileri en son görüldükleri yerde ve kaçının yer altında olduğunu. Ölen Kumpel'ler bir süre panoda kalır, böylece çatlak çekirdeklerini nerede arayacağını bilirsin.",
+	"item.kumpel.music_disc_glueck_auf": "Müzik Plağı",
+	"jukebox_song.kumpel.glueck_auf": "Kumpelkapelle - Glück auf",
+	"guide.kumpel.music_disc_glueck_auf": "Kumpel bandosunun marşı. Kumpel'lerin buna dans edip eşlik eder, yanlarında olduğun sürece neşeleri sana Çabukluk verir. Terk edilmiş madenlerde bulunur ya da kömür ve nota bloğundan yapılır.",
+	"advancements.kumpel.markenkontrolle.title": "Künye Kontrolü",
+	"advancements.kumpel.markenkontrolle.description": "Bir künye panosunda Kumpel'lerine göz at",
+	"advancements.kumpel.kumpelkapelle.title": "Kumpel Bandosu",
+	"advancements.kumpel.kumpelkapelle.description": "Kumpel'lerine Kumpel bandosunun plağını çal",
+	"command.kumpel.list.underground": "%s tanesi yer altında",
+	"command.kumpel.list.away": "%1$s · seviye %2$s · en son %7$s dk önce %3$s %4$s %5$s %6$s konumunda görüldü · %8$s",
+	"command.kumpel.list.lost": "%1$s · %6$s dk önce %2$s %3$s %4$s %5$s konumunda kaza geçirdi, çatlak çekirdeği orada olmalı",
+	"chatter.kumpel.sing.0": "♪ Glück auf, Glück auf, der Steiger kommt! ♪",
+	"chatter.kumpel.sing.1": "♪ Bu bizim şarkımız! ♪",
+	"chatter.kumpel.sing.2": "♪ Hep beraber! ♪"
 }

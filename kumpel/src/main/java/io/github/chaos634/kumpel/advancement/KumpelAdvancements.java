@@ -32,11 +32,13 @@ public final class KumpelAdvancements {
 	public static final String RESCUED = "rescued";
 	public static final String AUSFAHRT = "ausfahrt";
 	public static final String ZOLLVEREIN = "zollverein";
+	public static final String MARKENKONTROLLE = "markenkontrolle";
+	public static final String KUMPELKAPELLE = "kumpelkapelle";
 
 	/** Every advancement the mod ships. */
 	public static final List<String> ALL = List.of(
 			"root", GLUECK_AUF, REVIVED, MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA, EARLY_WARNING, VOR_ORT, HUETTE, SEILFAHRT, GRUBENWEHR, RESCUED, AUSFAHRT,
-			ZOLLVEREIN);
+			ZOLLVEREIN, MARKENKONTROLLE, KUMPELKAPELLE);
 
 	private KumpelAdvancements() {
 	}

@@ -202,5 +202,20 @@
 	"advancements.kumpel.zollverein.title": "Zollverein",
 	"advancements.kumpel.zollverein.description": "Laat de veldsmidse van je Kumpel kolen tot cokes stoken",
 	"tag.item.kumpel.tunnel_fillers": "Tunnelvulling",
-	"tag.item.kumpel.repairs_miner_helmet": "Repareert de mijnwerkershelm"
+	"tag.item.kumpel.repairs_miner_helmet": "Repareert de mijnwerkershelm",
+	"block.kumpel.markentafel": "Penningbord",
+	"guide.kumpel.markentafel": "Het penningbord van de penningcontrole: bij de schacht hing elke mijnwerker een koperen penning op als hij afdaalde, zodat niemand beneden achterbleef. Rechtsklik op het bord om al je Kumpels te zien: die dichtbij zoals ze nu zijn, die ver weg waar ze het laatst gezien zijn, en hoeveel er ondergronds zijn. Kumpels die verongelukt zijn blijven een tijdje op het bord staan, zodat je weet waar hun gebarsten kern ligt.",
+	"item.kumpel.music_disc_glueck_auf": "Muziekplaat",
+	"jukebox_song.kumpel.glueck_auf": "Kumpelkapelle - Glück auf",
+	"guide.kumpel.music_disc_glueck_auf": "De mars van de Kumpelkapelle. Je Kumpels dansen en zingen mee, en hun goede humeur geeft je Haast zolang je bij ze bent. Ligt in verlaten mijnschachten of wordt gemaakt van kolen en een nootblok.",
+	"advancements.kumpel.markenkontrolle.title": "Penningcontrole",
+	"advancements.kumpel.markenkontrolle.description": "Kijk bij een penningbord hoe het met je Kumpels gaat",
+	"advancements.kumpel.kumpelkapelle.title": "Kumpelkapelle",
+	"advancements.kumpel.kumpelkapelle.description": "Speel de plaat van de Kumpelkapelle voor je Kumpels",
+	"command.kumpel.list.underground": "%s ondergronds",
+	"command.kumpel.list.away": "%1$s · niveau %2$s · %7$s min geleden het laatst gezien bij %3$s %4$s %5$s %6$s · %8$s",
+	"command.kumpel.list.lost": "%1$s · %6$s min geleden verongelukt bij %2$s %3$s %4$s %5$s, daar ligt zijn gebarsten kern",
+	"chatter.kumpel.sing.0": "♪ Glück auf, Glück auf, der Steiger kommt! ♪",
+	"chatter.kumpel.sing.1": "♪ Dat is ons lied! ♪",
+	"chatter.kumpel.sing.2": "♪ Allemaal meezingen! ♪"
 }

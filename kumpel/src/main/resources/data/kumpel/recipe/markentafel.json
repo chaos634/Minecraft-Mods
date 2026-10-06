@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "P": "#minecraft:planks",
+    "C": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    "PPP",
+    "CCC",
+    "PPP"
+  ],
+  "result": {
+    "id": "kumpel:markentafel"
+  }
+}

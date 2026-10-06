@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "kumpel:block/markentafel_front",
+    "side": "kumpel:block/markentafel_side",
+    "top": "kumpel:block/markentafel_top"
+  }
+}

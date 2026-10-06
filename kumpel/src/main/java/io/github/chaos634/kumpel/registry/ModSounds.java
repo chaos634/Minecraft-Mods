@@ -15,6 +15,7 @@ public final class ModSounds {
 	public static final SoundEvent KUMPEL_CHEER = register("entity.kumpel.cheer");
 	public static final SoundEvent FOERDERKORB_UP = register("block.foerderkorb.up");
 	public static final SoundEvent FOERDERKORB_DOWN = register("block.foerderkorb.down");
+	public static final SoundEvent MUSIC_DISC_GLUECK_AUF = register("music_disc.glueck_auf");
 
 	private ModSounds() {
 	}

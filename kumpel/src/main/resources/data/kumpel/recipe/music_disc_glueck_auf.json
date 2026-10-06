@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:coal",
+    "N": "minecraft:note_block"
+  },
+  "pattern": [
+    "CCC",
+    "CNC",
+    "CCC"
+  ],
+  "result": {
+    "id": "kumpel:music_disc_glueck_auf"
+  }
+}
