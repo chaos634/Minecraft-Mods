@@ -2,6 +2,16 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.4.0
+
+### Notfall & Ausfahrt
+
+- Rettungskapsel: use it underground, hold still for three seconds and you and your Kumpels are pulled straight up to the surface.
+- Ausfahrt: your Kumpel remembers the way you walked underground. Sneak + right-click it with a compass and it leads you back out.
+- Verschnaufpause: sitting Kumpels slowly heal.
+- A Kumpel named Barbara wears the Barbara branch all year.
+- Two more advancements: Lengede Miracle and The Way Out.
+
 ## 0.3.0
 
 ### Grubenwehr & Seilfahrt

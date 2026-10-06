@@ -30,7 +30,9 @@ public class KumpelRenderer extends MobRenderer<KumpelEntity, KumpelRenderState,
 		state.pointing = entity.isPointing();
 		state.mining = entity.isMining();
 		state.dancing = entity.isDancing();
-		state.barbaraDay = BarbaraDay.isToday();
+		// A Kumpel named Barbara wears her branch all year.
+		state.barbaraDay = BarbaraDay.isToday()
+				|| (entity.getCustomName() != null && entity.getCustomName().getString().equalsIgnoreCase("Barbara"));
 		state.canary = entity.hasCanary();
 		state.forge = entity.hasForge();
 	}

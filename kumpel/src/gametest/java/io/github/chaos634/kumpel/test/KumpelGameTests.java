@@ -45,9 +45,11 @@ import io.github.chaos634.kumpel.entity.OreRule;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.block.FoerderkorbBlock;
+import io.github.chaos634.kumpel.entity.ExitTrail;
 import io.github.chaos634.kumpel.entity.ShiftLog;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.item.MinerHelmetItem;
+import io.github.chaos634.kumpel.item.RescueCapsuleItem;
 import io.github.chaos634.kumpel.item.SteigerWhistleItem;
 import io.github.chaos634.kumpel.registry.ModBlocks;
 import io.github.chaos634.kumpel.registry.ModComponents;
@@ -680,6 +682,85 @@ public class KumpelGameTests {
 	}
 
 	@GameTest
+	public void rescueCapsulePullsTheCrewUpToTheSurface(GameTestHelper helper) {
+		buildFloor(helper);
+		buildRoof(helper, 3);
+		Player player = ownerAt(helper, 2, 2);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 1, 2);
+		kumpel.tame(player);
+		KumpelEntity sitter = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		sitter.tame(player);
+		sitter.setOrderedToSit(true);
+		BlockPos sitterPos = sitter.blockPosition();
+		int roof = helper.absolutePos(new BlockPos(2, 3, 2)).getY();
+
+		helper.assertTrue(RescueCapsuleItem.problem(helper.getLevel(), player) == null, Component.literal("Under a roof the capsule works"));
+		helper.assertTrue(RescueCapsuleItem.pullUp(helper.getLevel(), player), Component.literal("There is a way up"));
+		helper.assertTrue(player.getY() > roof, Component.literal("The player should be above the roof, is at " + player.blockPosition()));
+		helper.assertTrue(kumpel.blockPosition().equals(player.blockPosition()), Component.literal("The Kumpel comes along, is at " + kumpel.blockPosition()));
+		helper.assertTrue(sitter.blockPosition().equals(sitterPos), Component.literal("A sitting Kumpel stays where it is"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void exitTrailCutsLoopsAndNeedsTheSurface(GameTestHelper helper) {
+		ExitTrail lost = new ExitTrail();
+		lost.record(helper.getLevel(), helper.absolutePos(new BlockPos(1, 1, 1)), true);
+		lost.record(helper.getLevel(), helper.absolutePos(new BlockPos(1, 1, 7)), true);
+		helper.assertFalse(lost.knowsTheWay(), Component.literal("Without having seen the surface there is no way out"));
+
+		ExitTrail trail = new ExitTrail();
+		trail.record(helper.getLevel(), helper.absolutePos(new BlockPos(0, 5, 0)), false);
+		trail.record(helper.getLevel(), helper.absolutePos(new BlockPos(0, 1, 0)), true);
+		trail.record(helper.getLevel(), helper.absolutePos(new BlockPos(5, 1, 0)), true);
+		trail.record(helper.getLevel(), helper.absolutePos(new BlockPos(5, 1, 5)), true);
+		trail.record(helper.getLevel(), helper.absolutePos(new BlockPos(0, 1, 5)), true);
+		helper.assertTrue(trail.points().size() == 5, Component.literal("Surface plus four steps, got " + trail.points()));
+
+		// Walking back towards the start cuts off the loop.
+		trail.record(helper.getLevel(), helper.absolutePos(new BlockPos(0, 1, 1)), true);
+		helper.assertTrue(trail.points().size() == 3 && trail.knowsTheWay(), Component.literal("The loop should be cut, got " + trail.points()));
+		helper.assertTrue(trail.points().getFirst().equals(helper.absolutePos(new BlockPos(0, 5, 0))), Component.literal("The way out starts at the surface"));
+
+		trail.record(helper.getLevel(), helper.absolutePos(new BlockPos(3, 5, 3)), false);
+		helper.assertFalse(trail.knowsTheWay(), Component.literal("Back at the surface the trail starts over"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 400)
+	public void leadsTheWayBackOut(GameTestHelper helper) {
+		buildFloor(helper);
+		buildRoof(helper, 3);
+		Player owner = ownerAt(helper, 4, 4);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 6, 1, 6);
+		kumpel.tame(owner);
+		BlockPos exit = helper.absolutePos(new BlockPos(1, 1, 1));
+		kumpel.getExitTrail().record(helper.getLevel(), exit, false);
+		kumpel.getExitTrail().record(helper.getLevel(), helper.absolutePos(new BlockPos(6, 1, 1)), true);
+		kumpel.getExitTrail().record(helper.getLevel(), helper.absolutePos(new BlockPos(6, 1, 6)), true);
+		kumpel.startLeadingOut();
+
+		helper.succeedWhen(() -> {
+			helper.assertFalse(kumpel.isLeadingOut(), Component.literal("The Kumpel should finish leading, is at " + kumpel.blockPosition()));
+			helper.assertTrue(kumpel.distanceToSqr(Vec3.atBottomCenterOf(exit)) < 4.0,
+					Component.literal("The Kumpel should end up at the exit, is at " + kumpel.blockPosition()));
+		});
+	}
+
+	@GameTest(maxTicks = 200)
+	public void catchesItsBreathWhileSitting(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 1, 3);
+		kumpel.tame(owner);
+		kumpel.setOrderedToSit(true);
+		float hurt = kumpel.getMaxHealth() - 4.0F;
+		kumpel.setHealth(hurt);
+
+		helper.succeedWhen(() -> helper.assertTrue(kumpel.getHealth() > hurt, Component.literal("A sitting Kumpel should heal up a little")));
+	}
+
+	@GameTest
 	public void everyLanguageHasEveryText(GameTestHelper helper) {
 		Set<String> english = languageKeys("en_us");
 		for (String language : List.of("de_de", "pl_pl", "tr_tr", "nl_nl", "fr_fr", "es_es")) {
@@ -746,6 +827,14 @@ public class KumpelGameTests {
 				for (int z = 2; z <= 4; z++) {
 					helper.setBlock(x, y, z, Blocks.STONE);
 				}
+			}
+		}
+	}
+
+	private static void buildRoof(GameTestHelper helper, int y) {
+		for (int x = 0; x < 8; x++) {
+			for (int z = 0; z < 8; z++) {
+				helper.setBlock(x, y, z, Blocks.STONE);
 			}
 		}
 	}

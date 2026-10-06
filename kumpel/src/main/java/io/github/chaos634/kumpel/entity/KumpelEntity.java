@@ -86,6 +86,7 @@ import io.github.chaos634.kumpel.entity.ai.CollectItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DefendOwnerGoal;
 import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DigTunnelGoal;
+import io.github.chaos634.kumpel.entity.ai.LeadOutGoal;
 import io.github.chaos634.kumpel.entity.ai.MineOreGoal;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.CanaryWarning;
@@ -166,6 +167,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private int nextChatter = -1;
 	private TunnelOrder tunnel;
 	private final ShiftLog log = new ShiftLog();
+	private final ExitTrail exitTrail = new ExitTrail();
+	private boolean leadingOut;
 	private Boolean wasBrightOutside;
 	private final Map<UUID, Integer> lastGreetings = new HashMap<>();
 
@@ -191,14 +194,15 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
 		// Grubenwehr comes first: a monster going for the owner beats any job.
 		this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.25, true));
-		this.goalSelector.addGoal(3, new DeliverItemsGoal(this, 1.15));
-		this.goalSelector.addGoal(4, new DigTunnelGoal(this, 1.0));
-		this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
-		this.goalSelector.addGoal(6, new CollectItemsGoal(this, 1.15));
-		this.goalSelector.addGoal(7, new MineOreGoal(this, 1.1));
-		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8));
-		this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.goalSelector.addGoal(3, new LeadOutGoal(this, 1.0));
+		this.goalSelector.addGoal(4, new DeliverItemsGoal(this, 1.15));
+		this.goalSelector.addGoal(5, new DigTunnelGoal(this, 1.0));
+		this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
+		this.goalSelector.addGoal(7, new CollectItemsGoal(this, 1.15));
+		this.goalSelector.addGoal(8, new MineOreGoal(this, 1.1));
+		this.goalSelector.addGoal(9, new WaterAvoidingRandomStrollGoal(this, 0.8));
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(11, new RandomLookAroundGoal(this));
 
 		this.targetSelector.addGoal(1, new DefendOwnerGoal(this));
 	}
@@ -408,6 +412,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		if (isOrderedToSit()) {
 			return shiftEnd.isResting() ? "resting" : "waiting";
 		}
+		if (leadingOut) {
+			return "leading";
+		}
 		if (tunnel != null) {
 			return "tunneling";
 		}
@@ -426,6 +433,32 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	public ShiftLog getLog() {
 		return log;
+	}
+
+	public ExitTrail getExitTrail() {
+		return exitTrail;
+	}
+
+	public boolean isLeadingOut() {
+		return leadingOut;
+	}
+
+	/** Ausfahrt: lead the owner back to the surface along the recorded trail. */
+	public void startLeadingOut() {
+		leadingOut = true;
+		tunnel = null;
+		shiftEnd.setResting(false);
+		setOrderedToSit(false);
+	}
+
+	public void finishLeadingOut(boolean arrived) {
+		leadingOut = false;
+		if (arrived && getOwner() instanceof Player owner) {
+			exitTrail.clear();
+			owner.sendSystemMessage(Component.translatable("message.kumpel.ausfahrt.done", getDisplayName()).withStyle(ChatFormatting.GOLD));
+			playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
+			KumpelAdvancements.award(owner, KumpelAdvancements.AUSFAHRT);
+		}
 	}
 
 	/** Schichtbuch: a written book with the Kumpel's level and everything it has done so far. */
@@ -648,6 +681,13 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				setTarget(null);
 				player.sendOverlayMessage(Component.translatable(sit ? "message.kumpel.sitting" : "message.kumpel.following", getDisplayName()));
 			}
+		} else if (stack.is(Items.COMPASS) && player.isSecondaryUseActive()) {
+			if (exitTrail.knowsTheWay()) {
+				startLeadingOut();
+				player.sendOverlayMessage(Component.translatable("message.kumpel.ausfahrt.start", getDisplayName()));
+			} else {
+				player.sendOverlayMessage(Component.translatable("message.kumpel.ausfahrt.unknown", getDisplayName()));
+			}
 		} else if (stack.is(Items.COMPASS)) {
 			oreSensing = !oreSensing;
 			player.sendOverlayMessage(Component.translatable(oreSensing ? "message.kumpel.ore_sense_on" : "message.kumpel.ore_sense_off", getDisplayName()));
@@ -747,6 +787,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Called by the whistle: stand up and come to the owner. */
 	public void answerWhistle(Player owner) {
 		tunnel = null;
+		leadingOut = false;
 		shiftEnd.setResting(false);
 		setOrderedToSit(false);
 		setInSittingPose(false);
@@ -766,6 +807,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Called by the whistle when sneaking: sit down and wait. */
 	public void takeBreak() {
 		tunnel = null;
+		leadingOut = false;
 		shiftEnd.setResting(false);
 		setOrderedToSit(true);
 		getNavigation().stop();
@@ -1266,6 +1308,11 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			forge.tick(this, level);
 		}
 
+		// Verschnaufpause: a Kumpel that sits down catches its breath.
+		if (isOrderedToSit() && tickCount % 100 == 60 && getHealth() < getMaxHealth()) {
+			heal(1.0F);
+		}
+
 		if (isTame() && oreSensing && --senseCooldown <= 0) {
 			senseCooldown = Math.max(1, behaviour().senseIntervalTicks);
 			if (getOwner() instanceof Player owner && owner.level() == level && distanceToSqr(owner) < MAX_SENSE_DISTANCE_FROM_OWNER_SQ) {
@@ -1301,6 +1348,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			if (tickCount % 100 == 25) {
 				greetOtherKumpels(level, owner);
 				announceTime(level, owner);
+			}
+			if (tickCount % 20 == 12 && !leadingOut && distanceSq < 32.0 * 32.0) {
+				exitTrail.record(level, owner.blockPosition(), !level.canSeeSky(owner.blockPosition()));
 			}
 		}
 	}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": "minecraft:lead",
+    "I": "minecraft:iron_ingot",
+    "E": "minecraft:ender_pearl"
+  },
+  "pattern": [
+    " L ",
+    "IEI",
+    "III"
+  ],
+  "result": {
+    "id": "kumpel:rescue_capsule"
+  }
+}

@@ -39,7 +39,8 @@ public class KumpelReiClientPlugin implements REIClientPlugin {
 
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.KUMPEL_CORE), Component.translatable("item.kumpel.kumpel_core"))
 				.line(Component.translatable("guide.kumpel.core"))
-				.line(Component.translatable("guide.kumpel.hauer")));
+				.line(Component.translatable("guide.kumpel.hauer"))
+				.line(Component.translatable("guide.kumpel.ausfahrt")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.KUMPEL_SPAWN_EGG), Component.translatable("item.kumpel.kumpel_spawn_egg"))
 				.line(Component.translatable("guide.kumpel.spawn_egg")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.STEIGER_WHISTLE), Component.translatable("item.kumpel.steiger_whistle"))
@@ -52,5 +53,7 @@ public class KumpelReiClientPlugin implements REIClientPlugin {
 				.line(Component.translatable("guide.kumpel.foerderkorb")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.MINER_HELMET), Component.translatable("item.kumpel.miner_helmet"))
 				.line(Component.translatable("guide.kumpel.miner_helmet")));
+		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.RESCUE_CAPSULE), Component.translatable("item.kumpel.rescue_capsule"))
+				.line(Component.translatable("guide.kumpel.rescue_capsule")));
 	}
 }

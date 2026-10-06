@@ -25,6 +25,7 @@ import io.github.chaos634.kumpel.item.CrackedKumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.item.MinerHelmetItem;
+import io.github.chaos634.kumpel.item.RescueCapsuleItem;
 import io.github.chaos634.kumpel.item.SteigerWhistleItem;
 
 public final class ModItems {
@@ -38,6 +39,8 @@ public final class ModItems {
 			new Item.Properties().stacksTo(1));
 	public static final Item FIELD_FORGE = register("field_forge", Item::new,
 			new Item.Properties().stacksTo(1));
+	public static final Item RESCUE_CAPSULE = register("rescue_capsule", RescueCapsuleItem::new,
+			new Item.Properties().stacksTo(4));
 	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
 			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
@@ -62,6 +65,7 @@ public final class ModItems {
 				output.accept(CANARY_CAGE);
 				output.accept(FIELD_FORGE);
 				output.accept(ModBlocks.FOERDERKORB);
+				output.accept(RESCUE_CAPSULE);
 				output.accept(MINER_HELMET);
 				output.accept(KUMPEL_SPAWN_EGG);
 			})

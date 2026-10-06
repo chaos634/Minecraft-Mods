@@ -13,6 +13,7 @@ import io.github.chaos634.kumpel.command.KumpelCommand;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.item.MinerHelmetItem;
+import io.github.chaos634.kumpel.item.RescueCapsuleItem;
 import io.github.chaos634.kumpel.registry.ModBlocks;
 import io.github.chaos634.kumpel.registry.ModComponents;
 import io.github.chaos634.kumpel.registry.ModEntities;
@@ -33,6 +34,7 @@ public class Kumpel implements ModInitializer {
 		ModItems.initialize();
 		OreGlimmer.initialize();
 		MinerHelmetItem.initialize();
+		RescueCapsuleItem.initialize();
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) -> KumpelCommand.register(dispatcher));
 		// Tags may have changed, so forget which blocks were ores.

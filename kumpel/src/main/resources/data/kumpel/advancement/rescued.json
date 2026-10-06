@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:glueck_auf",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.rescued.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.rescued.description"
+    },
+    "icon": {
+      "id": "kumpel:rescue_capsule"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

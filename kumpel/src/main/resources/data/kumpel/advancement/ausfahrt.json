@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:glueck_auf",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.ausfahrt.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.ausfahrt.description"
+    },
+    "icon": {
+      "id": "minecraft:compass"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}
