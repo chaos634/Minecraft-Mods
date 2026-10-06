@@ -1021,7 +1021,8 @@ public class KumpelGameTests {
 		net.minecraft.server.level.ServerLevel nether = helper.getLevel().getServer().getLevel(net.minecraft.world.level.Level.NETHER);
 		net.minecraft.world.entity.Entity moved = kumpel.followOwnerTo(nether, new Vec3(0.5, 100.0, 0.5));
 		helper.assertTrue(moved instanceof KumpelEntity && moved.level() == nether, Component.literal("The Kumpel should arrive in the Nether"));
-		helper.assertTrue(((KumpelEntity) moved).isOwnedBy(owner), Component.literal("and still be yours"));
+		helper.assertTrue(((KumpelEntity) moved).getOwnerReference() != null
+				&& ((KumpelEntity) moved).getOwnerReference().getUUID().equals(owner.getUUID()), Component.literal("and still be yours"));
 		moved.discard();
 		helper.succeed();
 	}

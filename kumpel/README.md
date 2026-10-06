@@ -58,6 +58,8 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 
 ![On Barbaratag: a Kumpel dancing to a jukebox, the Grubenhelm on an armor stand, and a Hauer with its pickaxe and canary](../.github/media/kumpel/zeche.jpg)
 
+![Underground at midnight, lit only by the Kumpels' helmet lamps: a Hauer, a Kumpel with a canary, one with a field forge on its back, a Markentafel and a Förderkorb](../.github/media/kumpel/unter-tage.jpg)
+
 ## Controls
 
 | Action | Effect |
