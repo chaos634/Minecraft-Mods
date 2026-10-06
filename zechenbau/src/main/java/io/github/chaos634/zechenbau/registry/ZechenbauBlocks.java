@@ -70,8 +70,7 @@ public final class ZechenbauBlocks {
 		return properties.noOcclusion()
 				.isValidSpawn((state, level, pos, type) -> false)
 				.isRedstoneConductor((state, level, pos) -> false)
-				.isSuffocating((state, level, pos) -> false)
-				.isViewBlocking((state, level, pos) -> false);
+				.isSuffocating((state, level, pos) -> false);
 	}
 
 	/** Registers a block together with its item. */
