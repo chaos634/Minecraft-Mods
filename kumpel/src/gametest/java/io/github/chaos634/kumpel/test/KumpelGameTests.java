@@ -946,6 +946,71 @@ public class KumpelGameTests {
 	}
 
 	@GameTest
+	public void putsAWornOutPickaxeAwayBeforeItBreaks(GameTestHelper helper) {
+		buildFloor(helper);
+		helper.setBlock(3, 1, 3, Blocks.COAL_ORE);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		ItemStack pickaxe = new ItemStack(Items.IRON_PICKAXE);
+		pickaxe.setDamageValue(pickaxe.getMaxDamage() - 4);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, pickaxe);
+		helper.assertTrue(kumpel.isHauer(), Component.literal("Still good enough to work with"));
+
+		kumpel.mineOre(helper.getLevel(), helper.absolutePos(new BlockPos(3, 1, 3)));
+		helper.assertTrue(kumpel.getMainHandItem().isEmpty(), Component.literal("The worn-out pickaxe is put away"));
+		helper.assertTrue(count(kumpel.getPockets(), Items.IRON_PICKAXE) == 1, Component.literal("It is in the Kiepe, not broken"));
+		helper.assertFalse(KumpelPockets.isPickaxe(ItemStack.EMPTY) || kumpel.isHauer(), Component.literal("Without a usable pickaxe it is no Hauer"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void favoriteFoodHealsCompletely(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 2, 1, 2);
+		kumpel.tame(owner);
+		Item favorite = kumpel.getFavoriteFood();
+		helper.assertTrue(favorite != Items.AIR && KumpelSettings.get().behaviour().favoriteFoods.contains(
+				net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(favorite).toString()), Component.literal("Its favourite comes from the config: " + favorite));
+		helper.assertTrue(kumpel.getFavoriteFood() == favorite, Component.literal("It keeps its favourite"));
+
+		kumpel.setHealth(2.0F);
+		owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(favorite, 2));
+		kumpel.mobInteract(owner, InteractionHand.MAIN_HAND);
+		helper.assertTrue(kumpel.getHealth() == kumpel.getMaxHealth(), Component.literal("Its favourite food heals it completely"));
+		helper.assertTrue(owner.getMainHandItem().getCount() == 1, Component.literal("One portion is eaten"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void youngKumpelsLearnFromOldOnes(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity master = helper.spawn(ModEntities.KUMPEL, 2, 1, 2);
+		master.tame(owner);
+		master.addExperience(KumpelSettings.get().tiers().getLast().requiredExperience());
+		KumpelEntity apprentice = helper.spawn(ModEntities.KUMPEL, 4, 1, 4);
+		apprentice.tame(owner);
+
+		int learned = apprentice.learnFromOthers(helper.getLevel());
+		helper.assertTrue(learned > 0 && apprentice.getExperience() == learned, Component.literal("The apprentice learns from the master, got " + learned));
+		helper.assertTrue(master.learnFromOthers(helper.getLevel()) == 0, Component.literal("The master has nothing to learn from the apprentice"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void muckefuckGivesHaste(GameTestHelper helper) {
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.MINING_FATIGUE, 600));
+		ItemStack rest = new ItemStack(ModItems.MUCKEFUCK).finishUsingItem(helper.getLevel(), player);
+		helper.assertTrue(player.hasEffect(MobEffects.HASTE), Component.literal("Muckefuck gives Haste"));
+		helper.assertFalse(player.hasEffect(MobEffects.MINING_FATIGUE), Component.literal("and shakes off Mining Fatigue"));
+		helper.assertTrue(rest.is(Items.GLASS_BOTTLE) || findInInventory(player, Items.GLASS_BOTTLE).getCount() == 1,
+				Component.literal("The bottle is left over"));
+		helper.assertTrue(new ItemStack(ModItems.KNIFTE).has(DataComponents.FOOD), Component.literal("A Knifte is food"));
+		helper.succeed();
+	}
+
+	@GameTest
 	public void everyLanguageHasEveryText(GameTestHelper helper) {
 		Set<String> english = languageKeys("en_us");
 		for (String language : List.of("de_de", "pl_pl", "tr_tr", "nl_nl", "fr_fr", "es_es")) {

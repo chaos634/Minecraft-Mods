@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:bread",
+    "minecraft:cooked_porkchop"
+  ],
+  "result": {
+    "id": "kumpel:knifte",
+    "count": 2
+  }
+}

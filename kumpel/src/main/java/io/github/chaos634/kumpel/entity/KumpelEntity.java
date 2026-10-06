@@ -16,6 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -63,6 +64,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
@@ -136,6 +138,12 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final int IDLE_LINES = 10;
 	private static final int TREASURE_LINES = 3;
 	private static final int SING_LINES = 3;
+	/** Uses a pickaxe keeps back, so it never breaks in the Kumpel's hand. */
+	private static final int TOOL_RESERVE = 3;
+	private static final double APPRENTICE_RANGE = 8.0;
+	/** Experience per level of difference, each time a Kumpel learns from an older one. */
+	private static final int APPRENTICE_EXPERIENCE = 2;
+	private static final int APPRENTICE_INTERVAL = 1200;
 	private static final long SING_ALONG_COOLDOWN = 2400;
 	/** How often (in ticks) the Kumpel updates its tag at the Markenkontrolle. */
 	private static final int MARKE_INTERVAL = 100;
@@ -182,6 +190,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Why the last tunnel was given up, for tests and debugging. */
 	private String lastTunnelStop = "";
 	private long lastSingAlong = Long.MIN_VALUE / 2;
+	/** Leibgericht: chosen when first needed, from {@code favorite_foods} in the config. */
+	private Identifier favoriteFood;
 	private final ExitTrail exitTrail = new ExitTrail();
 	private boolean leadingOut;
 	private Boolean wasBrightOutside;
@@ -493,6 +503,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				.append(experienceProgress())
 				.append("\n")
 				.append(Component.translatable("book.kumpel.health", (int) Math.ceil(getHealth()), (int) getMaxHealth()))
+				.append("\n")
+				.append(Component.translatable("book.kumpel.favorite", new ItemStack(getFavoriteFood()).getHoverName()))
 				.append("\n\n")
 				.append(Component.translatable("book.kumpel.signature"));
 
@@ -579,6 +591,66 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 	}
 
+	/** Leibgericht: every Kumpel has a favourite food, picked from the config the first time it is asked for. */
+	public Item getFavoriteFood() {
+		if (favoriteFood == null || !BuiltInRegistries.ITEM.containsKey(favoriteFood)) {
+			List<Identifier> choices = new ArrayList<>();
+			for (String entry : behaviour().favoriteFoods) {
+				Identifier id = Identifier.tryParse(entry);
+				if (id != null && BuiltInRegistries.ITEM.containsKey(id)) {
+					choices.add(id);
+				}
+			}
+			if (choices.isEmpty()) {
+				return Items.AIR;
+			}
+			favoriteFood = choices.get(random.nextInt(choices.size()));
+		}
+
+		return BuiltInRegistries.ITEM.getValue(favoriteFood);
+	}
+
+	public boolean isFavoriteFood(ItemStack stack) {
+		return !stack.isEmpty() && stack.is(getFavoriteFood());
+	}
+
+	/** Its favourite food heals the Kumpel completely and makes it very happy. */
+	private void eatFavoriteFood(Player player, InteractionHand hand, ItemStack stack) {
+		Component food = stack.getHoverName();
+		usePlayerItem(player, hand, stack);
+		heal(getMaxHealth());
+		playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.2F);
+		if (level() instanceof ServerLevel serverLevel) {
+			serverLevel.sendParticles(ParticleTypes.HEART, getX(), getY() + 1.1, getZ(), 5, 0.3, 0.3, 0.3, 0.0);
+		}
+		player.sendOverlayMessage(Component.translatable("message.kumpel.favorite", getDisplayName(), food).withStyle(ChatFormatting.GOLD));
+		KumpelAdvancements.award(player, KumpelAdvancements.LEIBGERICHT);
+	}
+
+	/**
+	 * Lehrhauer: a Kumpel learns from a more experienced Kumpel of the same owner working nearby.
+	 *
+	 * @return the experience it learned (0 if there was nobody to learn from)
+	 */
+	public int learnFromOthers(ServerLevel level) {
+		if (!behaviour().apprenticeship || !isTame() || isOrderedToSit() || !(getOwner() instanceof Player owner)) {
+			return 0;
+		}
+
+		int best = getTier().level();
+		for (KumpelEntity other : level.getEntitiesOfClass(KumpelEntity.class, getBoundingBox().inflate(APPRENTICE_RANGE),
+				kumpel -> kumpel != this && kumpel.isAlive() && kumpel.isOwnedBy(owner) && !kumpel.isOrderedToSit())) {
+			best = Math.max(best, other.getTier().level());
+		}
+
+		int learned = (best - getTier().level()) * APPRENTICE_EXPERIENCE;
+		if (learned > 0) {
+			addExperience(learned);
+			level.sendParticles(ParticleTypes.ENCHANT, getX(), getY() + 1.2, getZ(), 8, 0.3, 0.3, 0.3, 0.5);
+		}
+		return learned;
+	}
+
 	/** Says one of the numbered lines {@code chatter.kumpel.<kind>.N} to the owner. */
 	private void say(Player owner, String kind, int lines, boolean inChat) {
 		if (!behaviour().chatter) {
@@ -642,7 +714,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				|| (stack.is(ModItems.FIELD_FORGE) && !hasForge())
 				|| KumpelPockets.isTorch(stack)
 				|| settings.isRepairItem(stack)
-				|| settings.feedExperience(stack) > 0;
+				|| settings.feedExperience(stack) > 0
+				|| isFavoriteFood(stack);
 
 		if (!isOwnedBy(player) || !handled) {
 			return super.mobInteract(player, hand);
@@ -714,6 +787,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			oreSensing = !oreSensing;
 			player.sendOverlayMessage(Component.translatable(oreSensing ? "message.kumpel.ore_sense_on" : "message.kumpel.ore_sense_off", getDisplayName()));
 			playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 1.0F, oreSensing ? 1.4F : 0.6F);
+		} else if (isFavoriteFood(stack)) {
+			eatFavoriteFood(player, hand, stack);
 		} else if (settings.isRepairItem(stack) && getHealth() < getMaxHealth()) {
 			usePlayerItem(player, hand, stack);
 			heal(behaviour().repairAmount);
@@ -931,7 +1006,28 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	// Hauer
 
 	public boolean isHauer() {
-		return getMainHandItem().is(ItemTags.PICKAXES);
+		ItemStack tool = getMainHandItem();
+		return tool.is(ItemTags.PICKAXES) && !isWornOut(tool);
+	}
+
+	/** Hackenschutz: a tool this close to breaking is put away instead of used up. */
+	public static boolean isWornOut(ItemStack tool) {
+		return KumpelSettings.get().behaviour().protectTools && tool.isDamageableItem()
+				&& tool.getMaxDamage() - tool.getDamageValue() <= TOOL_RESERVE;
+	}
+
+	/** After using the pickaxe: if it is about to break, the Kumpel puts it away and tells its owner. */
+	private void checkToolWear() {
+		ItemStack tool = getMainHandItem();
+		if (!isWornOut(tool)) {
+			return;
+		}
+
+		Component name = tool.getHoverName();
+		stashTool();
+		if (getOwner() instanceof Player owner) {
+			owner.sendSystemMessage(Component.translatable("message.kumpel.tool_worn", getDisplayName(), name).withStyle(ChatFormatting.YELLOW));
+		}
 	}
 
 	/** Whether mining is allowed at all here (config and game rule). */
@@ -1024,6 +1120,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		finds.forget(pos);
 		Block.dropResources(state, level, pos, blockEntity, this, tool);
 		tool.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
+		checkToolWear();
 		log.add(ShiftLog.Entry.ORES_MINED);
 
 		addExperience(behaviour().experiencePerOreMined + (rule != null ? rule.level() : 0));
@@ -1045,7 +1142,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			return;
 		}
 
-		ItemStack pickaxe = pockets.takeFirst(KumpelPockets::isPickaxe);
+		ItemStack pickaxe = pockets.takeFirst(stack -> KumpelPockets.isPickaxe(stack) && !isWornOut(stack));
 		if (!pickaxe.isEmpty()) {
 			setItemSlot(EquipmentSlot.MAINHAND, pickaxe);
 		}
@@ -1241,6 +1338,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		// Digging counts as picking things up, so the Kumpel doesn't run off to deliver after every block.
 		ticksSinceLastPickup = 0;
 		tool.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
+		checkToolWear();
 
 		OreRule rule = KumpelSettings.get().matchOre(state);
 		if (rule != null) {
@@ -1395,6 +1493,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		if (tickCount % 2 == 0) {
 			updateHelmetLamp(level);
+		}
+
+		if (tickCount % APPRENTICE_INTERVAL == 300) {
+			learnFromOthers(level);
 		}
 
 		if (tickCount % MARKE_INTERVAL == 70) {
@@ -1853,6 +1955,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 			output.store("storage", GlobalPos.CODEC, storage);
 		}
 		output.putLong("last_barbara_greeting", lastBarbaraGreeting);
+		if (favoriteFood != null) {
+			output.putString("favorite_food", favoriteFood.toString());
+		}
 		output.putBoolean("canary", hasCanary());
 		output.putBoolean("field_forge", hasForge());
 		forge.save(output);
@@ -1872,6 +1977,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		shiftEnd.setResting(input.getBooleanOr("resting", false));
 		storage = input.read("storage", GlobalPos.CODEC).orElse(null);
 		lastBarbaraGreeting = input.getLongOr("last_barbara_greeting", Long.MIN_VALUE);
+		favoriteFood = Identifier.tryParse(input.getStringOr("favorite_food", ""));
 		setCanary(input.getBooleanOr("canary", false));
 		setForge(input.getBooleanOr("field_forge", false));
 		forge.load(input);

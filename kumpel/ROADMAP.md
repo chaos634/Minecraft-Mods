@@ -126,3 +126,13 @@ Ein Kumpel bringt Licht ins Dunkel, und Neulinge lernen das Handwerk.
 - ✅ **Helmlampe**: Die Lampe am Helm leuchtet wirklich. Unter Tage erhellt der Kumpel die Höhle um sich herum, während er läuft. Ein unsichtbarer Lichtblock, der sich selbst löscht, sobald der Kumpel weitergeht, auch nach einem Absturz. Nie heller als die Fackel-Schwelle, damit die Grubenlampe weiter Fackeln setzt.
 - ✅ **Kumpelfibel**: Ein Handbuch mit allem, was der Kumpel kann, in jeder Sprache. Gibt's zum ersten Kumpel dazu.
 - ✅ **Koks im Ofen**: Koks brennt auch im Ofen (in 26.3 ist Brennstoff datengetrieben).
+
+## Phase 11: Henkelmann & Gezähe ✅
+
+Werkzeug pflegen, gut essen, voneinander lernen.
+
+- ✅ **Hackenschutz**: Kein Kumpel macht dir die Spitzhacke kaputt. Ist sie fast hinüber, steckt er sie weg und sagt Bescheid.
+- ✅ **Leibgericht**: Jeder Kumpel hat ein Lieblingsessen (steht im Schichtbuch). Damit gefüttert, ist er sofort wieder ganz heil.
+- ✅ **Lehrhauer**: Junge Kumpels lernen von erfahrenen Kumpels in der Nähe und sammeln dabei langsam EP.
+- ✅ **Knifte**: Das Butterbrot aus dem Henkelmann.
+- ✅ **Muckefuck**: Malzkaffee für die Schicht. Gibt Eile und vertreibt Abbaulähmung.

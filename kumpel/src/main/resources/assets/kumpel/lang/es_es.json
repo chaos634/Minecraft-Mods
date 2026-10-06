@@ -236,5 +236,14 @@
 	"fibel.kumpel.page.11": "§lSalida§r\n\n¿Perdido bajo tierra? Agachado + clic derecho con una brújula en tu Kumpel, y te guía por el mismo camino hacia fuera.",
 	"fibel.kumpel.page.12": "§lRegistros§r\n\nDale un libro: escribe su informe de turno con sus mejores hallazgos. Un tablero de chapas muestra a todos tus Kumpels, incluso los lejanos.",
 	"fibel.kumpel.page.13": "§lFin de turno§r\n\nCuando duermes, tus Kumpels se sientan a descansar. Bailan con los tocadiscos, y con su propio disco, Glück auf, cantan.",
-	"fibel.kumpel.page.14": "§lSanta Bárbara§r\n\nEl 4 de diciembre, día de Santa Bárbara, los Kumpels llevan una rama en flor y alimentarlos da el doble de XP.\n\n\n§o¡Glück auf, Kumpel!§r"
+	"fibel.kumpel.page.14": "§lSanta Bárbara§r\n\nEl 4 de diciembre, día de Santa Bárbara, los Kumpels llevan una rama en flor y alimentarlos da el doble de XP.\n\n\n§o¡Glück auf, Kumpel!§r",
+	"item.kumpel.knifte": "Bocadillo minero",
+	"guide.kumpel.knifte": "El bocadillo del minero: una gruesa rebanada de pan con jamón. Llena mucho y es la comida favorita de muchos Kumpels. Con pan y una chuleta o un filete cocinados.",
+	"item.kumpel.muckefuck": "Café de malta",
+	"guide.kumpel.muckefuck": "Café de cereal para el turno, de trigo y granos de cacao en un frasco. Te da Prisa durante minuto y medio y quita la Fatiga minera.",
+	"message.kumpel.favorite": "%1$s: ¡Mmm, %2$s! ¡Mi comida favorita!",
+	"message.kumpel.tool_worn": "%1$s: Mi %2$s está casi gastado, lo he guardado en la mochila antes de que se rompa. ¡Repáralo o dame otro!",
+	"book.kumpel.favorite": "Comida favorita: %s",
+	"advancements.kumpel.leibgericht.title": "Plato favorito",
+	"advancements.kumpel.leibgericht.description": "Dale a un Kumpel su comida favorita"
 }

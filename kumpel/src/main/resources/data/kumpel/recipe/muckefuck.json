@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "minecraft:wheat",
+    "minecraft:cocoa_beans"
+  ],
+  "result": {
+    "id": "kumpel:muckefuck"
+  }
+}

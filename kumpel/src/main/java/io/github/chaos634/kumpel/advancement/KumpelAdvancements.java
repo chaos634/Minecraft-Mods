@@ -34,11 +34,12 @@ public final class KumpelAdvancements {
 	public static final String ZOLLVEREIN = "zollverein";
 	public static final String MARKENKONTROLLE = "markenkontrolle";
 	public static final String KUMPELKAPELLE = "kumpelkapelle";
+	public static final String LEIBGERICHT = "leibgericht";
 
 	/** Every advancement the mod ships. */
 	public static final List<String> ALL = List.of(
 			"root", GLUECK_AUF, REVIVED, MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA, EARLY_WARNING, VOR_ORT, HUETTE, SEILFAHRT, GRUBENWEHR, RESCUED, AUSFAHRT,
-			ZOLLVEREIN, MARKENKONTROLLE, KUMPELKAPELLE);
+			ZOLLVEREIN, MARKENKONTROLLE, KUMPELKAPELLE, LEIBGERICHT);
 
 	private KumpelAdvancements() {
 	}

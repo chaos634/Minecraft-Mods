@@ -2,6 +2,16 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.8.0
+
+### Henkelmann & Gezähe
+
+- Hackenschutz: Kumpels never break your pickaxe; they put a worn-out one away and tell you.
+- Leibgericht: every Kumpel has a favourite food that heals it completely.
+- Lehrhauer: young Kumpels learn from your more experienced ones.
+- Knifte (the miner's sandwich) and Muckefuck (grain coffee with Haste).
+- One more advancement: Favourite Dish.
+
 ## 0.7.0
 
 ### Licht & Lehre

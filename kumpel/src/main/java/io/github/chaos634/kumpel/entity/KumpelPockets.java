@@ -174,7 +174,7 @@ public class KumpelPockets extends SimpleContainer {
 				keepFiller = false;
 				return true;
 			}
-			if (keepPickaxe && isPickaxe(stack)) {
+			if (keepPickaxe && isPickaxe(stack) && !KumpelEntity.isWornOut(stack)) {
 				keepPickaxe = false;
 				return true;
 			}

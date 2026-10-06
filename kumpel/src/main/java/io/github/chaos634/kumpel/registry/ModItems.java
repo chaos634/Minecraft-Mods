@@ -8,13 +8,20 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
+import net.minecraft.world.item.consume_effects.RemoveStatusEffectsConsumeEffect;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -59,6 +66,16 @@ public final class ModItems {
 			new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(GLUECK_AUF_SONG));
 	public static final Item KUMPELFIBEL = register("kumpelfibel", KumpelFibel::new,
 			new Item.Properties().stacksTo(1).component(DataComponents.WRITTEN_BOOK_CONTENT, KumpelFibel.content()));
+	/** Knifte: the miner's sandwich from the Henkelmann. */
+	public static final Item KNIFTE = register("knifte", Item::new,
+			new Item.Properties().food(new FoodProperties.Builder().nutrition(7).saturationModifier(0.8F).build()));
+	/** Muckefuck: grain coffee for the shift. Gives Haste and shakes off Mining Fatigue. */
+	public static final Item MUCKEFUCK = register("muckefuck", Item::new, new Item.Properties().stacksTo(16)
+			.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.2F).alwaysEdible().build(), Consumables.defaultDrink()
+					.onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.HASTE, 90 * 20, 0)))
+					.onConsume(new RemoveStatusEffectsConsumeEffect(MobEffects.MINING_FATIGUE))
+					.build())
+			.usingConvertsTo(Items.GLASS_BOTTLE));
 	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
 			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
@@ -89,6 +106,8 @@ public final class ModItems {
 				output.accept(ModBlocks.FOERDERKORB);
 				output.accept(RESCUE_CAPSULE);
 				output.accept(COKE);
+				output.accept(KNIFTE);
+				output.accept(MUCKEFUCK);
 				output.accept(ModBlocks.MARKENTAFEL);
 				output.accept(MUSIC_DISC_GLUECK_AUF);
 				output.accept(MINER_HELMET);
@@ -115,6 +134,10 @@ public final class ModItems {
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT).register(output -> output.accept(MINER_HELMET));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(KUMPEL_SPAWN_EGG));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS).register(output -> output.accept(COKE));
+		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FOOD_AND_DRINKS).register(output -> {
+			output.accept(KNIFTE);
+			output.accept(MUCKEFUCK);
+		});
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(output -> output.accept(MUSIC_DISC_GLUECK_AUF));
 
 		// The record lies in abandoned mineshafts, now and then.

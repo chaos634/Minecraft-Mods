@@ -236,5 +236,14 @@
 	"fibel.kumpel.page.11": "§lWyjazd§r\n\nZgubiłeś się pod ziemią? Skradanie + prawy przycisk kompasem na Kumpla, a wyprowadzi cię tą samą drogą.",
 	"fibel.kumpel.page.12": "§lZapiski§r\n\nDaj mu książkę: zapisze raport ze zmiany ze swoimi najlepszymi znaleziskami. Tablica marek pokazuje wszystkich twoich Kumpli, także tych daleko.",
 	"fibel.kumpel.page.13": "§lFajrant§r\n\nGdy śpisz, twoi Kumple siadają i odpoczywają. Tańczą przy szafach grających, a przy własnej płycie, Glück auf, śpiewają.",
-	"fibel.kumpel.page.14": "§lBarbórka§r\n\n4 grudnia, w dzień świętej Barbary, Kumple noszą kwitnącą gałązkę, a karmienie daje podwójne PD.\n\n\n§oGlück auf, Kumplu!§r"
+	"fibel.kumpel.page.14": "§lBarbórka§r\n\n4 grudnia, w dzień świętej Barbary, Kumple noszą kwitnącą gałązkę, a karmienie daje podwójne PD.\n\n\n§oGlück auf, Kumplu!§r",
+	"item.kumpel.knifte": "Kanapka górnicza",
+	"guide.kumpel.knifte": "Kanapka górnika z menażki: gruba kromka chleba z szynką. Syci i jest ulubionym jedzeniem wielu Kumpli. Z chleba i pieczonego schabu albo steku.",
+	"item.kumpel.muckefuck": "Kawa zbożowa",
+	"guide.kumpel.muckefuck": "Kawa zbożowa na zmianę, z pszenicy i ziaren kakaowca w szklanej butelce. Daje ci Pośpiech na półtorej minuty i zdejmuje Zmęczenie.",
+	"message.kumpel.favorite": "%1$s: Mmm, %2$s! Moje ulubione!",
+	"message.kumpel.tool_worn": "%1$s: Mój %2$s jest prawie zużyty, schowałem go do plecaka, zanim się zepsuje. Napraw go albo daj mi inny!",
+	"book.kumpel.favorite": "Ulubione jedzenie: %s",
+	"advancements.kumpel.leibgericht.title": "Ulubione danie",
+	"advancements.kumpel.leibgericht.description": "Nakarm Kumpla jego ulubionym jedzeniem"
 }

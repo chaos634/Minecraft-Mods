@@ -236,5 +236,14 @@
 	"fibel.kumpel.page.11": "§lÇıkış§r\n\nYer altında mı kayboldun? Pusulayla eğilip Kumpel'ine sağ tıkla, seni geldiğin yoldan dışarı çıkarır.",
 	"fibel.kumpel.page.12": "§lKayıtlar§r\n\nOna bir kitap ver: en iyi maden bulgularıyla vardiya raporunu yazar. Künye panosu tüm Kumpel'lerini, uzaktakileri bile gösterir.",
 	"fibel.kumpel.page.13": "§lPaydos§r\n\nSen uyurken Kumpel'lerin oturup dinlenir. Müzik kutularıyla dans ederler, kendi plakları Glück auf çalınca da eşlik ederler.",
-	"fibel.kumpel.page.14": "§lBarbara Günü§r\n\n4 Aralık'ta, Azize Barbara gününde Kumpel'ler çiçekli bir dal takar ve beslemek iki kat TP verir.\n\n\n§oGlück auf, Kumpel!§r"
+	"fibel.kumpel.page.14": "§lBarbara Günü§r\n\n4 Aralık'ta, Azize Barbara gününde Kumpel'ler çiçekli bir dal takar ve beslemek iki kat TP verir.\n\n\n§oGlück auf, Kumpel!§r",
+	"item.kumpel.knifte": "Madenci Sandviçi",
+	"guide.kumpel.knifte": "Sefertasından madenci sandviçi: jambonlu kalın bir dilim ekmek. Doyurucudur ve birçok Kumpel'in en sevdiği yemektir. Ekmek ve pişmiş domuz pirzolası ya da biftekten yapılır.",
+	"item.kumpel.muckefuck": "Arpa Kahvesi",
+	"guide.kumpel.muckefuck": "Vardiya için tahıl kahvesi; cam şişede buğday ve kakao çekirdeğinden yapılır. Sana bir buçuk dakika Çabukluk verir ve Kazı Yorgunluğunu giderir.",
+	"message.kumpel.favorite": "%1$s: Mmm, %2$s! En sevdiğim!",
+	"message.kumpel.tool_worn": "%1$s: %2$s neredeyse bitti, kırılmadan çantama koydum. Onar ya da bana yenisini ver!",
+	"book.kumpel.favorite": "En sevdiği yemek: %s",
+	"advancements.kumpel.leibgericht.title": "En Sevdiği Yemek",
+	"advancements.kumpel.leibgericht.description": "Bir Kumpel'e en sevdiği yemeği ver"
 }

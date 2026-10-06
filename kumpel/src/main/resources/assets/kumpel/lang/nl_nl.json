@@ -236,5 +236,14 @@
 	"fibel.kumpel.page.11": "§lUitweg§r\n\nVerdwaald ondergronds? Sluipen + rechtsklik met een kompas op je Kumpel, en hij leidt je via dezelfde weg naar buiten.",
 	"fibel.kumpel.page.12": "§lAdministratie§r\n\nGeef hem een boek: hij schrijft zijn dienstrapport met zijn beste ertsvondsten. Een penningbord toont al je Kumpels, ook die ver weg.",
 	"fibel.kumpel.page.13": "§lSchaft§r\n\nAls je slaapt, gaan je Kumpels zitten en rusten. Ze dansen bij jukeboxen, en bij hun eigen plaat, Glück auf, zingen ze mee.",
-	"fibel.kumpel.page.14": "§lBarbaradag§r\n\nOp 4 december, de dag van de heilige Barbara, dragen Kumpels een bloeiende tak en geeft voeren dubbele XP.\n\n\n§oGlück auf, Kumpel!§r"
+	"fibel.kumpel.page.14": "§lBarbaradag§r\n\nOp 4 december, de dag van de heilige Barbara, dragen Kumpels een bloeiende tak en geeft voeren dubbele XP.\n\n\n§oGlück auf, Kumpel!§r",
+	"item.kumpel.knifte": "Knifte",
+	"guide.kumpel.knifte": "De boterham van de mijnwerker uit de Henkelmann: een dikke snee brood met ham. Vult goed en is het lievelingseten van veel Kumpels. Van brood en een gebraden karbonade of biefstuk.",
+	"item.kumpel.muckefuck": "Muckefuck",
+	"guide.kumpel.muckefuck": "Graankoffie voor de dienst, van tarwe en cacaobonen in een glazen fles. Geeft je anderhalve minuut Haast en verdrijft Mijnmoeheid.",
+	"message.kumpel.favorite": "%1$s: Mmm, %2$s! Mijn lievelingseten!",
+	"message.kumpel.tool_worn": "%1$s: Mijn %2$s is bijna versleten, ik heb hem in mijn rugzak gestopt voordat hij breekt. Repareer hem of geef me een andere!",
+	"book.kumpel.favorite": "Lievelingseten: %s",
+	"advancements.kumpel.leibgericht.title": "Lievelingseten",
+	"advancements.kumpel.leibgericht.description": "Geef een Kumpel zijn lievelingseten"
 }

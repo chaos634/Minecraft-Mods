@@ -35,6 +35,7 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | **Henkelmann** | It keeps one stack of food from its loot and hands you a bite when you are getting hungry. |
 | **Feierabend** | When you go to bed, your Kumpels sit down; in the morning they get back to work. A Kumpel that sits catches its breath and slowly heals. |
 | **Hauer** | Give it a pickaxe (right-click) and it mines exposed ores near you. The pickaxe's tier and enchantments count (Fortune, Silk Touch) and it wears down. Open its backpack to take the pickaxe back. |
+| **Hackenschutz** | A Kumpel never breaks your pickaxe: when it is about to wear out, it puts it into its backpack (which brings it back to you) and tells you to repair it. |
 | **Wünschelrute** | From level 4 (diamond) on, a sensed ore glows through the rock for a few seconds. |
 | **Steigerlied** | It dances while a jukebox is playing nearby. To the Kumpelkapelle's own record it also sings along, and its good mood gives you Haste. |
 | **Barbaratag** | On 4 December, Saint Barbara's Day, Kumpels wear a flowering branch and feeding them gives double XP. A Kumpel you name Barbara wears the branch all year. |
@@ -45,6 +46,8 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 | **Feldschmiede** | Give it a **field forge** and it smelts raw ores from its backpack into ingots, burning coal from its backpack. |
 | **Kokerei** | With nothing to smelt, the field forge turns spare coal into **coke**, like the coking plant of Zeche Zollverein. Coke burns half as long again as coal, in the field forge and in any furnace. |
 | **Silverfish warning** | While sensing ores it also notices infested stone, marks it red and tells you. |
+| **Leibgericht** | Every Kumpel has a favourite food (it's in its shift report). Feed it that and it heals completely. |
+| **Lehrhauer** | Young Kumpels learn from your more experienced ones working nearby and slowly gain XP. |
 | **Character** | Every new Kumpel gets a name from the Pott (Jupp, Kalle, Trude, Stani, Mehmet …), says something now and then, cheers when it finds treasure and greets your other Kumpels with a "Glück auf!". Underground, it tells you when the sun rises or sets. |
 | **Ausfahrt** | It remembers the way you walked underground, starting from the last place with open sky, and forgets detours you doubled back on. Sneak + right-click it with a compass and it leads you back out the same way, with glowing marks on the next stretch. If you fall behind, it waits. |
 | **Kanarienvogel** | Give it a **canary cage** and it carries a canary on its shoulder, like miners did. The canary makes monsters near you glow, warns you about them and about running out of air underwater, and lets your Kumpel notice creepers from further away. |
@@ -91,6 +94,8 @@ If the storage chest is full or out of reach, the Kumpel brings its loot to you 
 | Item | Recipe | |
 |---|---|---|
 | **Kumpelfibel** | Book + Copper Ingot (shapeless); you also get one with your very first Kumpel | A little handbook about everything your Kumpel can do, in your language. |
+| **Knifte** | Bread + Cooked Porkchop or Steak (shapeless), makes 2 | The miner's sandwich: good food, and many Kumpels' favourite. |
+| **Muckefuck** | Glass Bottle + Wheat + Cocoa Beans (shapeless) | Grain coffee for the shift: Haste for 90 seconds, and it shakes off Mining Fatigue. |
 | **Canary Cage** | Iron Bars + Feather + Yellow Dye (shapeless) | For your Kumpel's shoulder, see above. Packing the Kumpel gives the cage back. |
 | **Field Forge** | `S . S` / `C F C` (S = String, C = Copper Ingot, F = Furnace) | For your Kumpel's back, see above. Packing the Kumpel gives it back. |
 | **Förderkorb** (Mine Cage) | `C I C` / `I . I` / `C I C` (C = Copper Ingot, I = Iron Bars), makes 2 | A lift for your shaft: right-click rides up to the next cage above, sneak + right-click with an empty hand rides down. Your Kumpels nearby ride along, and a shaft bell rings. |
@@ -169,6 +174,9 @@ Which items give how much XP, by `item` or by item `tag`.
 | `whistle_range` | 64 | How far your Kumpels hear the whistle |
 | `storage_chests`, `max_storage_distance` | on, 48 | Lagerkiste |
 | `mine_ores`, `mine_radius`, `experience_per_ore_mined` | on, 6, 2 | Hauer mode (also needs the `mobGriefing` game rule) |
+| `protect_tools` | on | Hackenschutz: put pickaxes away before they break |
+| `apprenticeship` | on | Lehrhauer: young Kumpels learn from older ones |
+| `favorite_foods` | Knifte, bread, baked potato, cooked porkchop and beef, pumpkin pie, cookie, mushroom stew | What a Kumpel's favourite food can be |
 | `dowsing_level`, `dowsing_glow_ticks` | 4, 100 | Wünschelrute (`0` turns it off) |
 | `dance_to_jukebox` | on | Steigerlied |
 | `barbara_day` | on | Barbaratag |
@@ -194,14 +202,14 @@ Which items give how much XP, by `item` or by item `tag`.
 
 ## Compatibility
 
-- **JEI** and **REI**: info pages for the core, the whistle, the canary cage, the field forge, the Förderkorb, the Grubenhelm, the rescue capsule, coke, the Markentafel, the music disc and the Kumpelfibel, plus two categories: *Feeding a Kumpel* (item → XP) and *Ore sensing* (ore → level). Both are built from the config, so they show your modpack's setup.
+- **JEI** and **REI**: info pages for the core, the whistle, the canary cage, the field forge, the Förderkorb, the Grubenhelm, the rescue capsule, coke, the Markentafel, the music disc, the Kumpelfibel, the Knifte and Muckefuck, plus two categories: *Feeding a Kumpel* (item → XP) and *Ore sensing* (ore → level). Both are built from the config, so they show your modpack's setup.
 - **Modded ores** are found through the `c:ores` tags, **modded storage** through the Fabric Transfer API.
 - **Modded stone** can be used for Abdämmen by adding it to the item tag `#kumpel:tunnel_fillers`.
 - **Languages**: English, German, Polish, Turkish, Dutch, French and Spanish.
 
 ## Advancements
 
-Glück auf! · Back Again · A Place for Everything · Hewer · At the Coal Face · Smelting Works · Shaft Ride · Mine Rescue · Lengede Miracle · The Way Out · Zollverein · Markenkontrolle · Kumpelkapelle · End of Shift · Here Comes the Foreman · Early Warning · Full Crew · From Copper to Netherite · and a hidden one for 4 December.
+Glück auf! · Back Again · A Place for Everything · Hewer · At the Coal Face · Smelting Works · Shaft Ride · Mine Rescue · Lengede Miracle · The Way Out · Zollverein · Markenkontrolle · Kumpelkapelle · Favourite Dish · End of Shift · Here Comes the Foreman · Early Warning · Full Crew · From Copper to Netherite · and a hidden one for 4 December.
 
 ## Building
 
@@ -214,7 +222,7 @@ The jar ends up in `kumpel/build/libs/`. Every push also builds the mod on GitHu
 
 ### Tests
 
-- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (sealing water, bridging holes and stopping when there is no stone), the field forge and coking, coke as fuel, the ore finds, the Markenkontrolle, singing along to the record, the helmet lamp, the Kumpelfibel, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, fighting monsters (but not creepers), the Förderkorb, the shift log, the rescue capsule, the exit trail and being led out, resting, that every language has every text and that all advancements load.
+- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (sealing water, bridging holes and stopping when there is no stone), the field forge and coking, coke as fuel, the ore finds, the Markenkontrolle, singing along to the record, the helmet lamp, the Kumpelfibel, tool protection, favourite food, apprenticeship, Muckefuck, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, fighting monsters (but not creepers), the Förderkorb, the shift log, the rescue capsule, the exit trail and being led out, resting, that every language has every text and that all advancements load.
 - **Client game test** (`./gradlew runClientGameTest`) starts a real client with JEI and takes screenshots of every level, the sitting pose, a Kumpel sensing buried diamond ore, and the Zeche: a Hauer with pickaxe and canary, a dancing Kumpel and the Grubenhelm, all on Barbaratag. On CI the screenshots are uploaded as an artifact.
 
 ## License

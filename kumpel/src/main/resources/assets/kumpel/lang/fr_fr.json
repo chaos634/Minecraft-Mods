@@ -236,5 +236,14 @@
 	"fibel.kumpel.page.11": "§lRemontée§r\n\nPerdu sous terre ? Accroupi + clic droit avec une boussole sur votre Kumpel, et il vous ramène par le même chemin.",
 	"fibel.kumpel.page.12": "§lRegistres§r\n\nDonnez-lui un livre : il écrit son rapport de poste avec ses meilleures trouvailles. Un tableau des jetons montre tous vos Kumpels, même les plus lointains.",
 	"fibel.kumpel.page.13": "§lFin de poste§r\n\nQuand vous dormez, vos Kumpels s'assoient et se reposent. Ils dansent près des juke-box, et sur leur propre disque, Glück auf, ils chantent.",
-	"fibel.kumpel.page.14": "§lSainte-Barbe§r\n\nLe 4 décembre, jour de la Sainte-Barbe, les Kumpels portent une branche fleurie et les nourrir donne le double d'XP.\n\n\n§oGlück auf, Kumpel !§r"
+	"fibel.kumpel.page.14": "§lSainte-Barbe§r\n\nLe 4 décembre, jour de la Sainte-Barbe, les Kumpels portent une branche fleurie et les nourrir donne le double d'XP.\n\n\n§oGlück auf, Kumpel !§r",
+	"item.kumpel.knifte": "Casse-croûte",
+	"guide.kumpel.knifte": "Le casse-croûte du mineur : une épaisse tranche de pain avec du jambon. Nourrissant, et le plat préféré de bien des Kumpels. Avec du pain et une côtelette ou un steak cuits.",
+	"item.kumpel.muckefuck": "Café d'orge",
+	"guide.kumpel.muckefuck": "Le café de céréales du poste, fait de blé et de fèves de cacao dans une fiole. Donne Célérité pendant une minute et demie et chasse la Fatigue.",
+	"message.kumpel.favorite": "%1$s : Mmh, %2$s ! Mon plat préféré !",
+	"message.kumpel.tool_worn": "%1$s : Ma %2$s est presque usée, je l'ai rangée dans ma hotte avant qu'elle casse. Réparez-la ou donnez-m'en une autre !",
+	"book.kumpel.favorite": "Plat préféré : %s",
+	"advancements.kumpel.leibgericht.title": "Plat préféré",
+	"advancements.kumpel.leibgericht.description": "Donnez à un Kumpel son plat préféré"
 }

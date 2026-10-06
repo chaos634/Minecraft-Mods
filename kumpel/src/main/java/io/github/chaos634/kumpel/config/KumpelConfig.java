@@ -179,6 +179,13 @@ public final class KumpelConfig {
 
 		/** Hauer: a Kumpel holding a pickaxe mines exposed ores near you. Also needs the mobGriefing game rule. */
 		public boolean mineOres = true;
+		/** Lehrhauer: Kumpels learn (gain experience) from more experienced Kumpels of yours working nearby. */
+		public boolean apprenticeship = true;
+		/** Leibgericht: every Kumpel picks its favourite food from this list; feeding it heals the Kumpel completely. */
+		public List<String> favoriteFoods = new ArrayList<>(List.of("kumpel:knifte", "minecraft:bread", "minecraft:baked_potato",
+				"minecraft:cooked_porkchop", "minecraft:cooked_beef", "minecraft:pumpkin_pie", "minecraft:cookie", "minecraft:mushroom_stew"));
+		/** Hackenschutz: the Kumpel puts a pickaxe away (and tells you) before it breaks, instead of using it up. */
+		public boolean protectTools = true;
 		/** How far from the Kumpel it looks for ores to mine. */
 		public int mineRadius = 6;
 		/** Experience the Kumpel gets for each ore it mines (plus the ore's level). */

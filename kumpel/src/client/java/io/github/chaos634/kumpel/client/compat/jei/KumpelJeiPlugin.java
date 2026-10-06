@@ -52,6 +52,8 @@ public class KumpelJeiPlugin implements IModPlugin {
 		registration.addIngredientInfo(ModBlocks.MARKENTAFEL, Component.translatable("guide.kumpel.markentafel"));
 		registration.addIngredientInfo(ModItems.MUSIC_DISC_GLUECK_AUF, Component.translatable("guide.kumpel.music_disc_glueck_auf"));
 		registration.addIngredientInfo(ModItems.KUMPELFIBEL, Component.translatable("guide.kumpel.kumpelfibel"));
+		registration.addIngredientInfo(ModItems.KNIFTE, Component.translatable("guide.kumpel.knifte"));
+		registration.addIngredientInfo(ModItems.MUCKEFUCK, Component.translatable("guide.kumpel.muckefuck"));
 		registration.addIngredientInfo(ModItems.KUMPEL_SPAWN_EGG, Component.translatable("guide.kumpel.spawn_egg"));
 	}
 

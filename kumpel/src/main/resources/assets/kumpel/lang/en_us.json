@@ -236,5 +236,14 @@
 	"fibel.kumpel.page.11": "§lAusfahrt§r\n\nLost underground? Sneak + right-click your Kumpel with a compass, and it leads you out the way you came.",
 	"fibel.kumpel.page.12": "§lRecords§r\n\nHand it a book: it writes its shift report with its best ore finds. A Markentafel shows all your Kumpels, even far away ones.",
 	"fibel.kumpel.page.13": "§lFeierabend§r\n\nWhen you sleep, your Kumpels sit down and rest. They dance to jukeboxes, and to their own record, Glück auf, they sing along.",
-	"fibel.kumpel.page.14": "§lBarbaratag§r\n\nOn 4 December, Saint Barbara's Day, Kumpels wear a blossoming branch and feeding them gives double XP.\n\n\n§oGlück auf, Kumpel!§r"
+	"fibel.kumpel.page.14": "§lBarbaratag§r\n\nOn 4 December, Saint Barbara's Day, Kumpels wear a blossoming branch and feeding them gives double XP.\n\n\n§oGlück auf, Kumpel!§r",
+	"item.kumpel.knifte": "Knifte",
+	"guide.kumpel.knifte": "The miner's sandwich from the Henkelmann: a thick slice of bread with ham. Filling, and many Kumpels' favourite food. Made from bread and a cooked porkchop or steak.",
+	"item.kumpel.muckefuck": "Muckefuck",
+	"guide.kumpel.muckefuck": "Grain coffee for the shift, made from wheat and cocoa beans in a glass bottle. It gives you Haste for a minute and a half and shakes off Mining Fatigue.",
+	"message.kumpel.favorite": "%1$s: Mmh, %2$s! My favourite!",
+	"message.kumpel.tool_worn": "%1$s: My %2$s is nearly worn out, so I've put it in my Kiepe before it breaks. Repair it or give me another one!",
+	"book.kumpel.favorite": "Favourite food: %s",
+	"advancements.kumpel.leibgericht.title": "Favourite Dish",
+	"advancements.kumpel.leibgericht.description": "Feed a Kumpel its favourite food"
 }

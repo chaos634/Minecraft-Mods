@@ -236,5 +236,14 @@
 	"fibel.kumpel.page.11": "§lAusfahrt§r\n\nVerlaufen unter Tage? Schleichen + Rechtsklick mit einem Kompass auf deinen Kumpel, und er führt dich auf demselben Weg hinaus.",
 	"fibel.kumpel.page.12": "§lBuchführung§r\n\nGib ihm ein Buch: Er schreibt seinen Schichtbericht mit seinen besten Erzfunden. Eine Markentafel zeigt alle deine Kumpels, auch die weit weg.",
 	"fibel.kumpel.page.13": "§lFeierabend§r\n\nWenn du schläfst, setzen sich deine Kumpels und ruhen sich aus. Sie tanzen zu Jukeboxen, und zu ihrer eigenen Platte, Glück auf, singen sie mit.",
-	"fibel.kumpel.page.14": "§lBarbaratag§r\n\nAm 4. Dezember, dem Tag der heiligen Barbara, tragen Kumpels einen blühenden Zweig, und Füttern gibt doppelte EP.\n\n\n§oGlück auf, Kumpel!§r"
+	"fibel.kumpel.page.14": "§lBarbaratag§r\n\nAm 4. Dezember, dem Tag der heiligen Barbara, tragen Kumpels einen blühenden Zweig, und Füttern gibt doppelte EP.\n\n\n§oGlück auf, Kumpel!§r",
+	"item.kumpel.knifte": "Knifte",
+	"guide.kumpel.knifte": "Das Butterbrot aus dem Henkelmann: eine dicke Scheibe Brot mit Schinken. Macht satt und ist das Leibgericht vieler Kumpels. Aus Brot und einem gebratenen Kotelett oder Steak.",
+	"item.kumpel.muckefuck": "Muckefuck",
+	"guide.kumpel.muckefuck": "Malzkaffee für die Schicht, aus Weizen und Kakaobohnen in einer Glasflasche. Gibt dir anderthalb Minuten Eile und vertreibt Abbaulähmung.",
+	"message.kumpel.favorite": "%1$s: Mmh, %2$s! Mein Leibgericht!",
+	"message.kumpel.tool_worn": "%1$s: Meine %2$s ist fast hinüber, ich hab sie in die Kiepe gesteckt, bevor sie kaputtgeht. Reparier sie oder gib mir eine andere!",
+	"book.kumpel.favorite": "Leibgericht: %s",
+	"advancements.kumpel.leibgericht.title": "Leibgericht",
+	"advancements.kumpel.leibgericht.description": "Gib einem Kumpel sein Leibgericht"
 }
