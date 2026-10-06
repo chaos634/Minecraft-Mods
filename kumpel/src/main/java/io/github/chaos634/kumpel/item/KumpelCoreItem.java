@@ -65,6 +65,8 @@ public class KumpelCoreItem extends Item {
 		return InteractionResult.SUCCESS;
 	}
 
+	// Deprecated in 26.x but still the documented way to add a plain tooltip line.
+	@SuppressWarnings("deprecation")
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
 		tooltip.accept(Component.translatable("item.kumpel.kumpel_core.tooltip").withStyle(ChatFormatting.GRAY));

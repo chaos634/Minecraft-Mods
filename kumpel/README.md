@@ -5,6 +5,8 @@ Your Kumpel follows you, picks up loot, senses ores around you and grows stronge
 
 **Minecraft 26.3 · Fabric Loader ≥ 0.19.5 · Fabric API · Java 25**
 
+![All five Kumpel levels: netherite, diamond, gold, iron and copper](docs/tiers.jpg)
+
 ## Getting started
 
 Craft a **Kumpel Core** and use it on a block, and your own Kumpel appears.
@@ -26,13 +28,15 @@ A Kumpel spawned another way (e.g. `/summon kumpel:kumpel`) can be tamed with a 
 | **Senses ores** | Every few seconds it scans the area around it. When it finds ore it points at it, rings a chime and tells you what it found, how far away it is and in which direction. |
 | **Levels up** | Collecting items, finding ores and being fed earns XP. |
 
+![A Kumpel pointing at buried diamond ore](docs/ore-sensing.jpg)
+
 ## Controls
 
 | Action | Effect |
 |---|---|
 | Right-click (empty hand) | Sit / follow |
 | Sneak + right-click (empty hand) | Show status; it also hands over what it carries |
-| Right-click with a copper ingot | Repair 5 ❤ (at full health it is eaten for XP) |
+| Right-click with a copper ingot | Repair 5 health (at full health it is eaten for XP) |
 | Right-click with ores, metals or gems | Feed it for XP (coal 1 … diamond 40, netherite ingot 300) |
 | Right-click with a compass | Turn ore sensing on/off |
 
@@ -56,3 +60,8 @@ cd kumpel
 ```
 
 The jar ends up in `kumpel/build/libs/`. Every push also builds the mod on GitHub Actions. You can download the jar from the run's **Artifacts**.
+
+### Tests
+
+- **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover picking up items, ore sensing per level, levelling up and handing items to the owner.
+- **Client game test** (`./gradlew runClientGameTest`) starts a real client and takes screenshots of every level, the sitting pose and a Kumpel sensing buried diamond ore. On CI the screenshots are uploaded as an artifact.

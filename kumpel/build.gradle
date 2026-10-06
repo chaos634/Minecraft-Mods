@@ -28,7 +28,7 @@ fabricApi {
 	}
 }
 
-// CI starts its own virtual display (with GLX and 24-bit colour) around the whole Gradle run.
+// CI runs Gradle inside its own virtual display (see .github/workflows/kumpel.yml), so Loom must not start another.
 tasks.withType(net.fabricmc.loom.task.AbstractRunTask).configureEach {
 	useXvfb = false
 }
