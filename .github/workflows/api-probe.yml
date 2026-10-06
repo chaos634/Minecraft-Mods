@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [p]
+        group: [versions, q]
     defaults:
       run:
         working-directory: kumpel
@@ -35,7 +35,8 @@ jobs:
             https://maven.shedaniel.me/me/shedaniel/RoughlyEnoughItems-api-fabric/maven-metadata.xml \
             https://maven.shedaniel.me/me/shedaniel/RoughlyEnoughItems-default-plugin-fabric/maven-metadata.xml \
             https://maven.architectury.dev/dev/architectury/architectury-fabric/maven-metadata.xml \
-            https://maven.shedaniel.me/me/shedaniel/cloth/cloth-config-fabric/maven-metadata.xml ; do
+            https://maven.shedaniel.me/me/shedaniel/cloth/cloth-config-fabric/maven-metadata.xml \
+            https://maven.terraformersmc.com/releases/com/terraformersmc/modmenu/maven-metadata.xml ; do
             echo "##### $u"
             curl -sSL --max-time 30 "$u" | grep -o '<version>[^<]*</version>' | grep -E '26\.|31\.9|22\.|alpha' | tail -12 || true
           done
@@ -373,5 +374,13 @@ jobs:
               p 'net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents$AfterPlayerChange'
               p 'net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents$AfterEntityChange'
               p net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents 'JOIN|DISCONNECT'
+              ;;
+            q)
+              for jar in $(tr ':' '\n' < /tmp/cp.txt | grep -i cloth); do echo "##### $jar"; unzip -Z1 "$jar" | grep -E 'api/(ConfigBuilder|ConfigEntryBuilder|ConfigCategory)\.class' || true; done
+              p me.shedaniel.clothconfig2.api.ConfigBuilder 'create|setTitle|getOrCreateCategory|entryBuilder|setSavingRunnable|build|setParentScreen'
+              p me.shedaniel.clothconfig2.api.ConfigEntryBuilder 'startBooleanToggle|startIntField|startIntSlider|startDoubleField|startStrList|create'
+              p net.minecraft.stats.Stats 'makeCustomStat|CUSTOM'
+              p net.minecraft.world.entity.player.Player 'awardStat'
+              p net.minecraft.stats.StatFormatter 'DEFAULT'
               ;;
           esac
