@@ -815,6 +815,14 @@ public class KumpelGameTests {
 	}
 
 	@GameTest
+	public void cokeIsFurnaceFuel(GameTestHelper helper) {
+		helper.assertTrue(new ItemStack(ModItems.COKE).has(DataComponents.COOKING_FUEL), Component.literal("Coke burns in a furnace"));
+		helper.assertTrue(helper.getLevel().registryAccess().lookupOrThrow(Registries.CONTEXT_INT_PROVIDER).get(ModItems.COKE_BURN_TIME).isPresent(),
+				Component.literal("Its burn time kumpel:cooking/time_coke is loaded"));
+		helper.succeed();
+	}
+
+	@GameTest
 	public void remembersItsBestFindsForTheShiftReport(GameTestHelper helper) {
 		buildFloor(helper);
 		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);

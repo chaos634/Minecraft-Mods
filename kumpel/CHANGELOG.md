@@ -2,6 +2,15 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.6.0
+
+### Zechenleben
+
+- Markenkontrolle: every Kumpel keeps a tag with where it was last seen. The new Markentafel block and `/kumpel list` show all your Kumpels, even in unloaded chunks, how many are underground, and where lost ones died.
+- Music Disc "Glück auf": the Kumpelkapelle's own brass-band march. Found in abandoned mineshafts or made from coal and a note block. Kumpels sing along and give you Haste.
+- Tunnelling Kumpels no longer get stuck one step short of their spot.
+- Two more advancements: Markenkontrolle and Kumpelkapelle.
+
 ## 0.5.0
 
 ### Tiefbau

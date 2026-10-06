@@ -110,3 +110,11 @@ Der Vortrieb wird erwachsen, und die Feldschmiede bekommt eine Kokerei.
 - ✅ **Erzfunde**: Der Kumpel merkt sich die wertvollsten Erze, die er gespürt hat. Im Schichtbericht stehen sie mit Koordinaten, abgebaute fliegen raus.
 - ✅ **Kokerei** (nach der Kokerei Zollverein): Hat die Feldschmiede nichts zu schmelzen, verkokt sie Kohle aus der Kiepe. **Koks** brennt anderthalbmal so lange wie Kohle, im Ofen wie in der Feldschmiede.
 - ✅ **Fortschritt** „Zollverein“ für den ersten Koks.
+
+## Phase 9: Zechenleben ✅
+
+Rund um die Zeche: keiner wird vergessen, und die Kapelle spielt.
+
+- ✅ **Markenkontrolle**: Jeder Kumpel hängt seine Marke auf, mit Ort, Tätigkeit und Zeit. So findest du auch Kumpels in entladenen Chunks wieder, und von verunglückten weißt du, wo ihr Kern liegt.
+- ✅ **Markentafel**: Ein Block, der die Markenkontrolle zeigt, inklusive „wie viele sind unter Tage?“.
+- ✅ **Kumpelkapelle**: Eine eigene Schallplatte „Glück auf“, ein selbst komponierter und synthetisierter Blasmusik-Marsch. Liegt in verlassenen Minen. Die Kumpels singen mit, und ihre gute Laune macht dich flinker (Eile).

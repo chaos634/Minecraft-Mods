@@ -19,6 +19,7 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
 
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
@@ -47,7 +48,9 @@ public final class ModItems {
 			new Item.Properties().stacksTo(1));
 	public static final Item RESCUE_CAPSULE = register("rescue_capsule", RescueCapsuleItem::new,
 			new Item.Properties().stacksTo(4));
-	public static final Item COKE = register("coke", Item::new, new Item.Properties());
+	/** Kokerei: coke burns half as long again as coal (data/kumpel/context_int_provider/cooking/time_coke.json). */
+	public static final ResourceKey<ContextIntProvider> COKE_BURN_TIME = ResourceKey.create(Registries.CONTEXT_INT_PROVIDER, Kumpel.id("cooking/time_coke"));
+	public static final Item COKE = register("coke", Item::new, new Item.Properties().cookingFuel(COKE_BURN_TIME));
 	/** The Kumpelkapelle's record, "Glück auf" (data/kumpel/jukebox_song/glueck_auf.json). */
 	public static final ResourceKey<JukeboxSong> GLUECK_AUF_SONG = ResourceKey.create(Registries.JUKEBOX_SONG, Kumpel.id("glueck_auf"));
 	public static final Item MUSIC_DISC_GLUECK_AUF = register("music_disc_glueck_auf", Item::new,
