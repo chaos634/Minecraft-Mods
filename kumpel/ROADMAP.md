@@ -156,3 +156,11 @@ Feinschliff für Spieler und Modpack-Bauer.
 Eine zweite Mod in der Sammlung, damit die Kumpels auch eine Zeche zum Heimkommen haben.
 
 - ✅ **[Zechenbau](../zechenbau/)**: Bausteine der Ruhrgebiets-Zechen. Zechenziegel mit Treppe, Stufe und Mauer, Stahlfachwerk wie auf Zollverein, Fachwerkfenster, Stahlträger, Fördergerüst-Gitter, Grubenlampe und eine Schlägel-und-Eisen-Fliese für über das Tor. Läuft auch ohne Kumpel.
+
+## Phase 15: Streckenausbau ✅
+
+Ein richtiger Stollen braucht Ausbau, und Licht.
+
+- ✅ **Türstöcke**: Alle 4 Blöcke setzt der Hauer im Stollen einen Türstock aus Holzstämmen, oder aus Stahlträgern von Zechenbau. Was er dafür herausbricht, kommt in die Kiepe.
+- ✅ **Stollenlampen**: Laternen und Grubenlampen (Zechenbau) aus der Kiepe kommen auf einen der Stempel, abwechselnd links und rechts.
+- ✅ **Gezähe bereithalten**: Ein Hauer behält einen Stapel Stämme und einen Stapel Lampen in der Kiepe.

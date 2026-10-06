@@ -607,6 +607,61 @@ public class KumpelGameTests {
 		});
 	}
 
+	@GameTest(maxTicks = 800)
+	public void setsSupportFramesWithALampInTheTunnel(GameTestHelper helper) {
+		buildFloor(helper);
+		buildWall(helper);
+		Player owner = ownerAt(helper, 1, 5);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 3);
+		kumpel.tame(owner);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.OAK_LOG, 8));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.LANTERN, 2));
+		kumpel.startTunnel(helper.absolutePos(new BlockPos(3, 1, 3)), Direction.EAST, 4);
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(kumpel.getTunnel() == null, Component.literal("The tunnel order should be done (stopped: " + kumpel.getLastTunnelStop() + ")"));
+			// With a frame every 4 blocks, the one frame stands at the fourth slice (x = 6): posts at z = 2 and 4, the cap on top.
+			// It is the first frame, so its lamp goes on the left (north) post.
+			assertLog(helper, 6, 1, 2, Direction.Axis.Y, "left foot");
+			assertLog(helper, 6, 1, 4, Direction.Axis.Y, "right foot");
+			assertLog(helper, 6, 2, 4, Direction.Axis.Y, "right shoulder");
+			assertLog(helper, 6, 3, 3, Direction.Axis.Z, "cap");
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(6, 2, 2))).is(Blocks.LANTERN),
+					Component.literal("The left post should carry a lantern"));
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(5, 1, 2))).is(Blocks.STONE),
+					Component.literal("Only every fourth slice gets a frame"));
+			helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.SUPPORTS_SET) == 1, Component.literal("One frame goes into the shift log"));
+			helper.assertTrue(count(kumpel.getPockets(), Items.OAK_LOG) == 4 && count(kumpel.getPockets(), Items.LANTERN) == 1,
+					Component.literal("The frame takes 4 logs and a lantern, the rest stays in the Kiepe"));
+		});
+	}
+
+	private static void assertLog(GameTestHelper helper, int x, int y, int z, Direction.Axis axis, String part) {
+		net.minecraft.world.level.block.state.BlockState state = helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(x, y, z)));
+		helper.assertTrue(state.is(Blocks.OAK_LOG) && state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS) == axis,
+				Component.literal("The frame's " + part + " should be an oak log along " + axis + ", got " + state));
+	}
+
+	@GameTest
+	public void hauerKeepsPitPropsAndLamps(GameTestHelper helper) {
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		KumpelPockets pockets = kumpel.getPockets();
+		pockets.addToPockets(new ItemStack(Items.OAK_LOG, 16));
+		pockets.addToPockets(new ItemStack(Items.SPRUCE_LOG, 16));
+		pockets.addToPockets(new ItemStack(Items.LANTERN, 4));
+		helper.assertTrue(pockets.takeLoot().size() == 3, Component.literal("Without a pickaxe, logs and lanterns are loot"));
+
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+		pockets.addToPockets(new ItemStack(Items.OAK_LOG, 16));
+		pockets.addToPockets(new ItemStack(Items.SPRUCE_LOG, 16));
+		pockets.addToPockets(new ItemStack(Items.LANTERN, 4));
+		List<ItemStack> loot = pockets.takeLoot();
+		helper.assertTrue(loot.size() == 1 && loot.getFirst().is(Items.SPRUCE_LOG),
+				Component.literal("A Hauer keeps one stack of logs and one of lamps, got " + loot));
+		helper.succeed();
+	}
+
 	@GameTest(maxTicks = 400)
 	public void fieldForgeSmeltsRawOre(GameTestHelper helper) {
 		buildFloor(helper);

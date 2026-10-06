@@ -236,7 +236,8 @@
 	"fibel.kumpel.page.11": "§lUitweg§r\n\nVerdwaald ondergronds? Sluipen + rechtsklik met een kompas op je Kumpel, en hij leidt je via dezelfde weg naar buiten.",
 	"fibel.kumpel.page.12": "§lAdministratie§r\n\nGeef hem een boek: hij schrijft zijn dienstrapport met zijn beste ertsvondsten. Een penningbord toont al je Kumpels, ook die ver weg.",
 	"fibel.kumpel.page.13": "§lSchaft§r\n\nAls je slaapt, gaan je Kumpels zitten en rusten. Ze dansen bij jukeboxen, en bij hun eigen plaat, Glück auf, zingen ze mee.",
-	"fibel.kumpel.page.14": "§lBarbaradag§r\n\nOp 4 december, de dag van de heilige Barbara, dragen Kumpels een bloeiende tak en geeft voeren dubbele XP.\n\n\n§oGlück auf, Kumpel!§r",
+	"fibel.kumpel.page.14": "§lStreckenausbau§r\n\nGeef een houwer stammen of stalen balken: om de 4 blokken tunnel zet hij een stutraam. Met lantaarns of mijnlampen in zijn rugzak krijgt het raam ook licht.",
+	"fibel.kumpel.page.15": "§lBarbaradag§r\n\nOp 4 december, de dag van de heilige Barbara, dragen Kumpels een bloeiende tak en geeft voeren dubbele XP.\n\n\n§oGlück auf, Kumpel!§r",
 	"item.kumpel.knifte": "Knifte",
 	"guide.kumpel.knifte": "De boterham van de mijnwerker uit de Henkelmann: een dikke snee brood met ham. Vult goed en is het lievelingseten van veel Kumpels. Van brood en een gebraden karbonade of biefstuk.",
 	"item.kumpel.muckefuck": "Muckefuck",
@@ -308,5 +309,13 @@
 	"config.kumpel.coking": "Cokesfabriek",
 	"config.kumpel.defend_owner": "Mijnredding: jou verdedigen",
 	"config.kumpel.attack_damage": "Aanvalsschade op niveau 1",
-	"config.kumpel.time_announcements": "Zonsopgang en -ondergang ondergronds"
+	"config.kumpel.time_announcements": "Zonsopgang en -ondergang ondergronds",
+	"tag.item.kumpel.tunnel_supports": "Tunnelstutten",
+	"tag.item.kumpel.tunnel_lamps": "Tunnellampen",
+	"book.kumpel.log.supports_set": "Stutramen geplaatst: %s",
+	"stat.kumpel.supports_set": "Stutramen geplaatst door Kumpels",
+	"config.kumpel.tunnel_supports": "Gangondersteuning: stutramen in tunnels",
+	"config.kumpel.support_interval": "Blokken tussen twee stutramen",
+	"advancements.kumpel.streckenausbau.title": "Gangondersteuning",
+	"advancements.kumpel.streckenausbau.description": "Laat een Kumpel een stutraam in zijn tunnel zetten"
 }

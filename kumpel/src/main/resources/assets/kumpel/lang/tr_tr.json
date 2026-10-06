@@ -236,7 +236,8 @@
 	"fibel.kumpel.page.11": "§lÇıkış§r\n\nYer altında mı kayboldun? Pusulayla eğilip Kumpel'ine sağ tıkla, seni geldiğin yoldan dışarı çıkarır.",
 	"fibel.kumpel.page.12": "§lKayıtlar§r\n\nOna bir kitap ver: en iyi maden bulgularıyla vardiya raporunu yazar. Künye panosu tüm Kumpel'lerini, uzaktakileri bile gösterir.",
 	"fibel.kumpel.page.13": "§lPaydos§r\n\nSen uyurken Kumpel'lerin oturup dinlenir. Müzik kutularıyla dans ederler, kendi plakları Glück auf çalınca da eşlik ederler.",
-	"fibel.kumpel.page.14": "§lBarbara Günü§r\n\n4 Aralık'ta, Azize Barbara gününde Kumpel'ler çiçekli bir dal takar ve beslemek iki kat TP verir.\n\n\n§oGlück auf, Kumpel!§r",
+	"fibel.kumpel.page.14": "§lTahkimat§r\n\nKazıcıya kütük ya da çelik kiriş ver: tünelin her 4 bloğunda bir destek çerçevesi kurar. Çantasında fener ya da madenci lambası varsa çerçeveye ışık da koyar.",
+	"fibel.kumpel.page.15": "§lBarbara Günü§r\n\n4 Aralık'ta, Azize Barbara gününde Kumpel'ler çiçekli bir dal takar ve beslemek iki kat TP verir.\n\n\n§oGlück auf, Kumpel!§r",
 	"item.kumpel.knifte": "Madenci Sandviçi",
 	"guide.kumpel.knifte": "Sefertasından madenci sandviçi: jambonlu kalın bir dilim ekmek. Doyurucudur ve birçok Kumpel'in en sevdiği yemektir. Ekmek ve pişmiş domuz pirzolası ya da biftekten yapılır.",
 	"item.kumpel.muckefuck": "Arpa Kahvesi",
@@ -308,5 +309,13 @@
 	"config.kumpel.coking": "Kok yapımı",
 	"config.kumpel.defend_owner": "Maden kurtarma: seni koru",
 	"config.kumpel.attack_damage": "1. seviyede saldırı hasarı",
-	"config.kumpel.time_announcements": "Yer altında gün doğumu ve batımı"
+	"config.kumpel.time_announcements": "Yer altında gün doğumu ve batımı",
+	"tag.item.kumpel.tunnel_supports": "Tünel Destekleri",
+	"tag.item.kumpel.tunnel_lamps": "Tünel Lambaları",
+	"book.kumpel.log.supports_set": "Kurulan destek çerçeveleri: %s",
+	"stat.kumpel.supports_set": "Kumpel'lerin kurduğu destek çerçeveleri",
+	"config.kumpel.tunnel_supports": "Tahkimat: tünellerde destek çerçeveleri",
+	"config.kumpel.support_interval": "Destek çerçeveleri arasındaki blok sayısı",
+	"advancements.kumpel.streckenausbau.title": "Tünel Tahkimatı",
+	"advancements.kumpel.streckenausbau.description": "Bir Kumpel'e tüneline destek çerçevesi kurdur"
 }

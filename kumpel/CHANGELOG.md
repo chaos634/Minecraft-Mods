@@ -2,6 +2,15 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.11.0
+
+### Streckenausbau
+
+- Every 4 blocks of tunnel, a Hauer sets a support frame of logs from its backpack, or of steel girders from Zechenbau.
+- Lanterns and Zechenbau's Grubenlampen in its backpack go into the frames, so the tunnel is lit as well.
+- A Hauer keeps one stack of logs and one of lamps for this; modpacks can add their own through `#kumpel:tunnel_supports` and `#kumpel:tunnel_lamps`.
+- Support frames count in the shift log and the statistics; one more advancement (Timbering) and a new page in the Kumpelfibel.
+
 ## 0.10.0
 
 ### Werkstatt

@@ -24,7 +24,7 @@ import net.minecraft.world.item.component.WrittenBookContent;
  * ({@code fibel.kumpel.page.<n>}), so everyone reads it in their own language.
  */
 public class KumpelFibel extends Item {
-	public static final int PAGES = 15;
+	public static final int PAGES = 16;
 
 	public KumpelFibel(Properties properties) {
 		super(properties);

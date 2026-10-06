@@ -23,7 +23,8 @@ public class ShiftLog {
 		TORCHES_PLACED("torches_placed"),
 		MONSTERS_DEFEATED("monsters_defeated"),
 		LEAKS_SEALED("leaks_sealed"),
-		COKE_MADE("coke_made");
+		COKE_MADE("coke_made"),
+		SUPPORTS_SET("supports_set");
 
 		private final String key;
 

@@ -226,6 +226,13 @@ public final class KumpelConfig {
 		 * with stone from its backpack ({@code #kumpel:tunnel_fillers}) instead of stopping.
 		 */
 		public boolean sealTunnels = true;
+		/**
+		 * Streckenausbau: every few blocks, the tunnel digger sets a support frame (Türstock) of logs or steel girders
+		 * ({@code #kumpel:tunnel_supports}) from its backpack, with a lamp ({@code #kumpel:tunnel_lamps}) in it if it has one.
+		 */
+		public boolean tunnelSupports = true;
+		/** A support frame every this many blocks of tunnel. */
+		public int supportInterval = 4;
 
 		/** Feldschmiede: a Kumpel carrying a field forge smelts raw ores from its backpack with coal from its backpack. */
 		public boolean fieldForge = true;

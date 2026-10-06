@@ -12,19 +12,24 @@ import net.minecraft.world.phys.Vec3;
 
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.TunnelOrder;
+import io.github.chaos634.kumpel.entity.behaviour.TunnelSupports;
 
 /**
  * Vortrieb: digs the Kumpel's tunnel order slice by slice, upper block first. Water, lava and holes in the floor
  * are closed with stone from the backpack (Abdämmen); without stone it stops in front of them, and it also stops
- * when it meets a block its pickaxe can't handle.
+ * when it meets a block its pickaxe can't handle. Every few slices it sets a support frame (Streckenausbau).
  */
 public class DigTunnelGoal extends Goal {
 	private static final double REACH_SQ = 2.8 * 2.8;
+	/** A frame's cap is a block above the tunnel, so it may be a little further away. */
+	private static final double FRAME_REACH_SQ = 3.2 * 3.2;
 	private static final int STUCK_TICKS = 200;
 	private static final double STEP_IN_SQ = 2.0 * 2.0;
 	private static final int SEAL_INTERVAL = 4;
 	/** After sealing a leak, flowing water that is cut off needs a moment to run dry. */
 	private static final int SETTLE_TICKS = 40;
+	/** Ticks between two parts of a support frame. */
+	private static final int FRAME_INTERVAL = 8;
 
 	private final KumpelEntity kumpel;
 	private final double speedModifier;
@@ -36,6 +41,7 @@ public class DigTunnelGoal extends Goal {
 	private int repathCooldown;
 	private int sealCooldown;
 	private int settleTicks;
+	private int frameCooldown;
 
 	public DigTunnelGoal(KumpelEntity kumpel, double speedModifier) {
 		this.kumpel = kumpel;
@@ -60,6 +66,7 @@ public class DigTunnelGoal extends Goal {
 		repathCooldown = 0;
 		sealCooldown = 0;
 		settleTicks = 0;
+		frameCooldown = 0;
 	}
 
 	@Override
@@ -104,6 +111,11 @@ public class DigTunnelGoal extends Goal {
 
 		BlockPos next = !kumpel.isOpen(upper) ? upper : (!kumpel.isOpen(lower) ? lower : null);
 		if (next == null) {
+			BlockPos piece = TunnelSupports.nextPiece(kumpel, level, order);
+			if (piece != null) {
+				buildFrame(level, order, piece);
+				return;
+			}
 			clearTarget();
 			kumpel.advanceTunnel();
 			ticksWithoutProgress = 0;
@@ -183,6 +195,36 @@ public class DigTunnelGoal extends Goal {
 		if (kumpel.sealLeak(level, leak)) {
 			ticksWithoutProgress = 0;
 			settleTicks = SETTLE_TICKS;
+		}
+	}
+
+	/** Streckenausbau: sets the next part of the support frame at the slice just dug. */
+	private void buildFrame(ServerLevel level, TunnelOrder order, BlockPos piece) {
+		clearTarget();
+		Vec3 center = Vec3.atCenterOf(piece);
+		kumpel.getLookControl().setLookAt(center.x, center.y, center.z);
+
+		if (kumpel.distanceToSqr(center) > FRAME_REACH_SQ) {
+			kumpel.setMining(false);
+			if (++ticksWithoutProgress > STUCK_TICKS) {
+				kumpel.stopTunnel("stuck", piece);
+				return;
+			}
+			walkToSlice(order);
+			return;
+		}
+
+		kumpel.getNavigation().stop();
+		kumpel.setMining(true);
+		if (--frameCooldown > 0) {
+			return;
+		}
+
+		frameCooldown = FRAME_INTERVAL;
+		if (TunnelSupports.setPiece(kumpel, level, order, piece)) {
+			ticksWithoutProgress = 0;
+		} else if (++ticksWithoutProgress > STUCK_TICKS) {
+			kumpel.stopTunnel("stuck", piece);
 		}
 	}
 

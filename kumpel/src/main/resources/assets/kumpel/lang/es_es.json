@@ -236,7 +236,8 @@
 	"fibel.kumpel.page.11": "§lSalida§r\n\n¿Perdido bajo tierra? Agachado + clic derecho con una brújula en tu Kumpel, y te guía por el mismo camino hacia fuera.",
 	"fibel.kumpel.page.12": "§lRegistros§r\n\nDale un libro: escribe su informe de turno con sus mejores hallazgos. Un tablero de chapas muestra a todos tus Kumpels, incluso los lejanos.",
 	"fibel.kumpel.page.13": "§lFin de turno§r\n\nCuando duermes, tus Kumpels se sientan a descansar. Bailan con los tocadiscos, y con su propio disco, Glück auf, cantan.",
-	"fibel.kumpel.page.14": "§lSanta Bárbara§r\n\nEl 4 de diciembre, día de Santa Bárbara, los Kumpels llevan una rama en flor y alimentarlos da el doble de XP.\n\n\n§o¡Glück auf, Kumpel!§r",
+	"fibel.kumpel.page.14": "§lEntibado§r\n\nDale a un picador troncos o vigas de acero: cada 4 bloques de túnel pone un cuadro. Con faroles o lámparas de minero en su mochila, el cuadro también lleva luz.",
+	"fibel.kumpel.page.15": "§lSanta Bárbara§r\n\nEl 4 de diciembre, día de Santa Bárbara, los Kumpels llevan una rama en flor y alimentarlos da el doble de XP.\n\n\n§o¡Glück auf, Kumpel!§r",
 	"item.kumpel.knifte": "Bocadillo minero",
 	"guide.kumpel.knifte": "El bocadillo del minero: una gruesa rebanada de pan con jamón. Llena mucho y es la comida favorita de muchos Kumpels. Con pan y una chuleta o un filete cocinados.",
 	"item.kumpel.muckefuck": "Café de malta",
@@ -308,5 +309,13 @@
 	"config.kumpel.coking": "Coquería",
 	"config.kumpel.defend_owner": "Salvamento: defenderte",
 	"config.kumpel.attack_damage": "Daño en el nivel 1",
-	"config.kumpel.time_announcements": "Amanecer y anochecer bajo tierra"
+	"config.kumpel.time_announcements": "Amanecer y anochecer bajo tierra",
+	"tag.item.kumpel.tunnel_supports": "Entibos de galería",
+	"tag.item.kumpel.tunnel_lamps": "Lámparas de galería",
+	"book.kumpel.log.supports_set": "Cuadros de entibado puestos: %s",
+	"stat.kumpel.supports_set": "Cuadros de entibado puestos por Kumpels",
+	"config.kumpel.tunnel_supports": "Entibado: cuadros en los túneles",
+	"config.kumpel.support_interval": "Bloques entre dos cuadros",
+	"advancements.kumpel.streckenausbau.title": "Entibado",
+	"advancements.kumpel.streckenausbau.description": "Haz que un Kumpel ponga un cuadro de entibado en su túnel"
 }
