@@ -34,5 +34,12 @@
 	"itemGroup.kumpel": "Kumpel",
 	"command.kumpel.reloaded": "Kumpel-Config neu geladen: %1$s Stufen, %2$s Erze, %3$s Futtersorten (aus %4$s)",
 	"command.kumpel.level": "Stufe %1$s: %2$s · ab %3$s EP · ❤ %4$s · spürt %5$s Blöcke weit · %6$s Kiepenplätze",
-	"command.kumpel.ore": "%1$s · ab Stufe %2$s · Wert %3$s"
+	"command.kumpel.ore": "%1$s · ab Stufe %2$s · Wert %3$s",
+	"guide.kumpel.feeding": "Kumpel füttern",
+	"guide.kumpel.feeding.experience": "+%s EP",
+	"guide.kumpel.ore_sensing": "Erzsuche des Kumpels",
+	"guide.kumpel.ore_sensing.level": "Ab Stufe %1$s (%2$s)",
+	"guide.kumpel.ore_sensing.value": "Wert: %s",
+	"guide.kumpel.core": "Setz den Kumpel-Kern auf einen Block, um deinen eigenen Kumpel zu erwecken: einen kleinen Bergbau-Golem, der dir folgt, Items einsammelt, Erze spürt und aufsteigt. Rechtsklick lässt ihn sitzen oder folgen, Schleichen + Rechtsklick öffnet seine Kiepe. Füttere ihn mit Erzen und Edelsteinen für Erfahrung und repariere ihn mit Kupferbarren.",
+	"guide.kumpel.spawn_egg": "Erzeugt einen wilden Kumpel. Zähme ihn mit einem Kupferbarren."
 }

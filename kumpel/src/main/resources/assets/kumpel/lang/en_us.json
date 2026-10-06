@@ -34,5 +34,12 @@
 	"itemGroup.kumpel": "Kumpel",
 	"command.kumpel.reloaded": "Kumpel config reloaded: %1$s levels, %2$s ores, %3$s foods (from %4$s)",
 	"command.kumpel.level": "Level %1$s: %2$s · from %3$s XP · ❤ %4$s · senses %5$s blocks · %6$s backpack slots",
-	"command.kumpel.ore": "%1$s · from level %2$s · value %3$s"
+	"command.kumpel.ore": "%1$s · from level %2$s · value %3$s",
+	"guide.kumpel.feeding": "Feeding a Kumpel",
+	"guide.kumpel.feeding.experience": "+%s XP",
+	"guide.kumpel.ore_sensing": "Kumpel ore sensing",
+	"guide.kumpel.ore_sensing.level": "From level %1$s (%2$s)",
+	"guide.kumpel.ore_sensing.value": "Value: %s",
+	"guide.kumpel.core": "Use the Kumpel Core on a block to awaken your own Kumpel: a small mining golem that follows you, collects dropped items, senses ores and levels up. Right-click it to let it sit or follow, sneak + right-click to open its backpack, feed it ores and gems for experience and repair it with copper ingots.",
+	"guide.kumpel.spawn_egg": "Spawns a wild Kumpel. Tame it with a copper ingot."
 }

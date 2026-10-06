@@ -21,6 +21,15 @@
 		],
 		"client": [
 			"io.github.chaos634.kumpel.client.KumpelClient"
+		],
+		"jei_mod_plugin": [
+			"io.github.chaos634.kumpel.client.compat.jei.KumpelJeiPlugin"
+		],
+		"rei_common": [
+			"io.github.chaos634.kumpel.compat.rei.KumpelReiCommonPlugin"
+		],
+		"rei_client": [
+			"io.github.chaos634.kumpel.client.compat.rei.KumpelReiClientPlugin"
 		]
 	},
 	"depends": {

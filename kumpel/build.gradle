@@ -33,11 +33,42 @@ tasks.withType(net.fabricmc.loom.task.AbstractRunTask).configureEach {
 	useXvfb = false
 }
 
+repositories {
+	maven {
+		name = "BlameJared (JEI)"
+		url = "https://maven.blamejared.com/"
+		content { includeGroup "mezz.jei" }
+	}
+	maven {
+		name = "shedaniel (REI)"
+		url = "https://maven.shedaniel.me/"
+		content { includeGroupByRegex "me\\.shedaniel.*" }
+	}
+	maven {
+		name = "Architectury"
+		url = "https://maven.architectury.dev/"
+		content { includeGroup "dev.architectury" }
+	}
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// JEI and REI integration: only their APIs are needed to compile; JEI also runs in dev so the plugin gets exercised.
+	compileOnly "mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}"
+	compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}"
+	runtimeOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
+	compileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}") {
+		exclude group: "net.fabricmc"
+		exclude group: "net.fabricmc.fabric-api"
+	}
+	compileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}") {
+		exclude group: "net.fabricmc"
+		exclude group: "net.fabricmc.fabric-api"
+	}
 }
 
 processResources {
