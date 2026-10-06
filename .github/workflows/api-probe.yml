@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [r]
+        group: [s]
     defaults:
       run:
         working-directory: kumpel
@@ -391,5 +391,22 @@ jobs:
               done
               p net.minecraft.core.registries.BuiltInRegistries 'CUSTOM_STAT'
               p net.minecraft.stats.StatType ' get\('
+              ;;
+            s)
+              for jar in $(tr ':' '\n' < /tmp/cp.txt | grep -i fabric); do unzip -Z1 "$jar" 2>/dev/null | grep -E 'BlockRenderLayerMap|ChunkSectionLayer' | sed "s|^|$(basename $jar): |" || true; done
+              ls_jar '/(ChunkSectionLayer|ItemBlockRenderTypes|RenderType|LanternBlock|RotatedPillarBlock|StairBlock|SlabBlock|WallBlock|IronBarsBlock|TransparentBlock)\.class'
+              p net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap
+              p net.minecraft.client.renderer.chunk.ChunkSectionLayer
+              p net.minecraft.world.level.block.StairBlock 'StairBlock\('
+              p net.minecraft.world.level.block.LanternBlock 'LanternBlock\('
+              p net.minecraft.world.level.block.IronBarsBlock 'IronBarsBlock\('
+              p net.minecraft.world.level.block.TransparentBlock 'TransparentBlock\('
+              p net.minecraft.world.level.block.RotatedPillarBlock 'RotatedPillarBlock\('
+              p 'net.minecraft.world.level.block.state.BlockBehaviour$Properties' 'ofFullCopy|ofLegacyCopy|forceSolidOn|isViewBlocking|isSuffocating|isValidSpawn|instrument'
+              for j in $MCJARS; do
+                for f in assets/minecraft/blockstates/brick_stairs.json assets/minecraft/blockstates/brick_slab.json assets/minecraft/blockstates/brick_wall.json assets/minecraft/models/block/brick_wall_post.json assets/minecraft/items/brick_wall.json data/minecraft/loot_table/blocks/brick_slab.json assets/minecraft/blockstates/lantern.json assets/minecraft/models/block/lantern.json assets/minecraft/models/block/lantern_hanging.json assets/minecraft/items/lantern.json assets/minecraft/blockstates/iron_bars.json data/minecraft/recipe/brick_stairs_from_bricks_stonecutting.json assets/minecraft/blockstates/glass_pane.json assets/minecraft/models/block/glass.json; do
+                  if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
+                done
+              done
               ;;
           esac
