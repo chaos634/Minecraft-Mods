@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [t]
+        group: [u]
     defaults:
       run:
         working-directory: kumpel
@@ -420,5 +420,12 @@ jobs:
               p net.minecraft.client.renderer.rendertype.RenderTypes 'entityCutout|entityTranslucent|eyes|entityDecal|entityCutoutNoCull'
               p net.minecraft.client.renderer.RenderTypes 'entityCutout|entityTranslucent|eyes|entityDecal|entityCutoutNoCull'
               p net.minecraft.client.renderer.entity.LivingEntityRenderer 'addLayer|getModel|layers'
+              ;;
+            u)
+              for j in $MCJARS; do
+                for f in data/minecraft/loot_table/blocks/bricks.json data/minecraft/loot_table/blocks/lantern.json data/minecraft/loot_table/blocks/glass.json data/minecraft/loot_table/blocks/oak_log.json data/minecraft/loot_table/blocks/coal_ore.json data/minecraft/loot_table/chests/abandoned_mineshaft.json data/minecraft/advancement/recipes/building_blocks/brick_slab.json; do
+                  if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f" | head -80; echo; fi
+                done
+              done
               ;;
           esac
