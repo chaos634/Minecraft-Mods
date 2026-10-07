@@ -238,7 +238,8 @@
 	"fibel.kumpel.page.13": "§lFin de turno§r\n\nCuando duermes, tus Kumpels se sientan a descansar. Bailan con los tocadiscos, y con su propio disco, Glück auf, cantan.",
 	"fibel.kumpel.page.14": "§lEntibado§r\n\nDale a un picador troncos o vigas de acero: cada 4 bloques de túnel pone un cuadro. Con faroles o lámparas de minero en su mochila, el cuadro también lleva luz.",
 	"fibel.kumpel.page.15": "§lPolvo de carbón§r\n\nAl cavar, tu Kumpel se llena de polvo, sobre todo de carbón. El agua y la lluvia lo lavan, un cubo de agua de una vez, y un Kumpel sucio se lava en un caldero con agua cercano: las duchas.",
-	"fibel.kumpel.page.16": "§lSanta Bárbara§r\n\nEl 4 de diciembre, día de Santa Bárbara, los Kumpels llevan una rama en flor y alimentarlos da el doble de XP.\n\n\n§o¡Glück auf, Kumpel!§r",
+	"fibel.kumpel.page.16": "§lDesfile§r\n\nSujeta el hacha de capataz y tus Kumpels se pondrán en fila india detrás de ti, los más experimentados delante, y te seguirán a donde vayas.",
+	"fibel.kumpel.page.17": "§lSanta Bárbara§r\n\nEl 4 de diciembre, día de Santa Bárbara, los Kumpels llevan una rama en flor y alimentarlos da el doble de XP.\n\n\n§o¡Glück auf, Kumpel!§r",
 	"item.kumpel.knifte": "Bocadillo minero",
 	"guide.kumpel.knifte": "El bocadillo del minero: una gruesa rebanada de pan con jamón. Llena mucho y es la comida favorita de muchos Kumpels. Con pan y una chuleta o un filete cocinados.",
 	"item.kumpel.muckefuck": "Café de malta",
@@ -323,5 +324,12 @@
 	"message.kumpel.washed": "%s se ha lavado el polvo de carbón. ¡Ahh, qué fresco!",
 	"config.kumpel.coal_dust": "Polvo de carbón: ensuciarse y lavarse",
 	"advancements.kumpel.waschkaue.title": "Duchas de la mina",
-	"advancements.kumpel.waschkaue.description": "Haz que un Kumpel se lave el polvo de carbón"
+	"advancements.kumpel.waschkaue.description": "Haz que un Kumpel se lave el polvo de carbón",
+	"item.kumpel.steigerhaeckel": "Hacha de capataz",
+	"item.kumpel.steigerhaeckel.tooltip": "Sujétala y tus Kumpels desfilarán detrás de ti",
+	"guide.kumpel.steigerhaeckel": "El hacha ceremonial que lleva el capataz en el desfile minero. Sujétala en cualquier mano y tus Kumpels se pondrán en fila india detrás de ti, los más experimentados delante, y te seguirán a donde vayas. Con un lingote de oro, un lingote de hierro y dos palos.",
+	"message.kumpel.parade": "¡Desfile minero! %s Kumpels desfilan detrás de ti. ¡Glück auf!",
+	"config.kumpel.bergparade": "Desfile: marchar tras el hacha de capataz",
+	"advancements.kumpel.bergparade.title": "Desfile minero",
+	"advancements.kumpel.bergparade.description": "Encabeza un desfile de tres Kumpels con el hacha de capataz"
 }

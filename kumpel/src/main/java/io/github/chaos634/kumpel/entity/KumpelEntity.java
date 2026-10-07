@@ -99,8 +99,10 @@ import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DigTunnelGoal;
 import io.github.chaos634.kumpel.entity.ai.LeadOutGoal;
 import io.github.chaos634.kumpel.entity.ai.MineOreGoal;
+import io.github.chaos634.kumpel.entity.ai.ParadeGoal;
 import io.github.chaos634.kumpel.entity.ai.WashGoal;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
+import io.github.chaos634.kumpel.entity.behaviour.Bergparade;
 import io.github.chaos634.kumpel.entity.behaviour.CanaryWarning;
 import io.github.chaos634.kumpel.entity.behaviour.CoalDust;
 import io.github.chaos634.kumpel.entity.behaviour.DangerSense;
@@ -140,6 +142,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final int STORAGE_RETRY_TICKS = 600;
 	/** Blocks harder than this (obsidian, ancient debris …) stop a tunnel. */
 	private static final float MAX_TUNNEL_HARDNESS = 25.0F;
+	/** A parade that paused longer than this starts afresh. */
+	private static final int PARADE_RESTART_TICKS = 100;
 	/** Health a good wash brings back. */
 	private static final float WASH_HEAL = 4.0F;
 	private static final int SILVERFISH_RADIUS = 12;
@@ -206,6 +210,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Leibgericht: chosen when first needed, from {@code favorite_foods} in the config. */
 	private Identifier favoriteFood;
 	private int dust;
+	/** When this Kumpel last marched at the head of a Bergparade (game time). */
+	private long paradeHeadedAt = Long.MIN_VALUE;
 	/** Whether the owner was close by at the last check, in this dimension. */
 	private boolean nearOwnerBefore;
 	private final ExitTrail exitTrail = new ExitTrail();
@@ -236,6 +242,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		// Grubenwehr comes first: a monster going for the owner beats any job.
 		this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.25, true));
 		this.goalSelector.addGoal(3, new LeadOutGoal(this, 1.0));
+		this.goalSelector.addGoal(4, new ParadeGoal(this, 1.15));
 		this.goalSelector.addGoal(4, new DeliverItemsGoal(this, 1.15));
 		this.goalSelector.addGoal(5, new DigTunnelGoal(this, 1.0));
 		this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
@@ -369,6 +376,22 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Washes some dust off. */
 	public void wash(int amount) {
 		setDust(dust - amount);
+	}
+
+	// ------------------------------------------------------------------
+	// Bergparade
+
+	/** Called while this Kumpel marches right behind its owner: it starts the parade with a cheer. */
+	public void headParade(Player owner, int marchers) {
+		long now = level().getGameTime();
+		if (now - paradeHeadedAt > PARADE_RESTART_TICKS) {
+			playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
+			owner.sendOverlayMessage(Component.translatable("message.kumpel.parade", marchers));
+		}
+		paradeHeadedAt = now;
+		if (marchers >= Bergparade.PROPER_PARADE) {
+			KumpelAdvancements.award(owner, KumpelAdvancements.BERGPARADE);
+		}
 	}
 
 	/** Waschkaue: washes in a water cauldron, which loses a level of water, and feels better for it. */

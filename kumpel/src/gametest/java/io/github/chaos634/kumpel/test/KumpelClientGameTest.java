@@ -202,14 +202,14 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 				ServerLevel level = singleplayer.getConnection().getServerLevel();
 				ServerPlayer player = singleplayer.getConnection().getServerPlayer();
 				BlockPos origin = player.blockPosition();
-				for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-4, -1, -2), origin.offset(4, 4, 16))) {
+				for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-4, -1, -2), origin.offset(4, 4, 18))) {
 					boolean gallery = Math.abs(pos.getX() - origin.getX()) <= 1 && pos.getY() >= origin.getY() && pos.getY() <= origin.getY() + 2
-							&& pos.getZ() - origin.getZ() < 15;
+							&& pos.getZ() - origin.getZ() < 17;
 					level.setBlockAndUpdate(pos, gallery ? Blocks.AIR.defaultBlockState() : Blocks.STONE.defaultBlockState());
 				}
 				BlockState post = Blocks.OAK_LOG.defaultBlockState();
 				BlockState cap = post.setValue(RotatedPillarBlock.AXIS, Direction.Axis.X);
-				for (int z = 2, frame = 0; z <= 14; z += 4, frame++) {
+				for (int z = 4, frame = 0; z <= 16; z += 4, frame++) {
 					for (int y = 0; y <= 2; y++) {
 						level.setBlockAndUpdate(origin.offset(-2, y, z), post);
 						level.setBlockAndUpdate(origin.offset(2, y, z), post);
@@ -219,25 +219,27 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 					}
 					level.setBlockAndUpdate(origin.offset(frame % 2 == 0 ? 2 : -2, 2, z), Blocks.LANTERN.defaultBlockState());
 				}
-				for (BlockPos coal : List.of(origin.offset(-2, 1, 4), origin.offset(2, 0, 8), origin.offset(-2, 2, 9), origin.offset(2, 1, 12),
-						origin.offset(-1, 1, 15), origin.offset(0, 2, 15), origin.offset(1, 0, 15), origin.offset(0, 0, 15))) {
+				for (BlockPos coal : List.of(origin.offset(2, 1, 6), origin.offset(2, 0, 10), origin.offset(-2, 2, 11), origin.offset(2, 1, 14),
+						origin.offset(-1, 1, 17), origin.offset(0, 2, 17), origin.offset(1, 0, 17), origin.offset(0, 0, 17))) {
 					level.setBlockAndUpdate(coal, Blocks.COAL_ORE.defaultBlockState());
 				}
-				level.setBlockAndUpdate(origin.offset(-1, 0, 3), Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3));
+				// The cauldron stands in a niche in the wall.
+				level.setBlockAndUpdate(origin.offset(-2, 0, 6), Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3));
+				level.setBlockAndUpdate(origin.offset(-2, 1, 6), Blocks.AIR.defaultBlockState());
 
 				// Dust first, then the owner, so nobody calls out for the Kaue during the picture.
 				KumpelEntity hauer = new KumpelEntity(ModEntities.KUMPEL, level);
-				hauer.snapTo(origin.getX() - 0.3, origin.getY(), origin.getZ() + 5.5, 165.0F, 0.0F);
+				hauer.snapTo(origin.getX() - 0.3, origin.getY(), origin.getZ() + 7.5, 165.0F, 0.0F);
 				hauer.addExperience(KumpelSettings.get().tier(3).requiredExperience());
 				hauer.addDust(CoalDust.MAX);
 				hauer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
 				hauer.setNoAi(true);
 				level.addFreshEntity(hauer);
 
-				sittingKumpel(level, player, origin.getX() + 1.5, origin.getY(), origin.getZ() + 7.5, 200.0F, 2, CoalDust.WASH_AT);
+				sittingKumpel(level, player, origin.getX() + 1.5, origin.getY(), origin.getZ() + 9.5, 200.0F, 2, CoalDust.WASH_AT);
 
 				KumpelEntity smith = new KumpelEntity(ModEntities.KUMPEL, level);
-				smith.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 10.5, 180.0F, 0.0F);
+				smith.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 12.5, 180.0F, 0.0F);
 				smith.addExperience(KumpelSettings.get().tier(4).requiredExperience());
 				smith.addDust(CoalDust.WASH_AT / 2);
 				smith.setForge(true);

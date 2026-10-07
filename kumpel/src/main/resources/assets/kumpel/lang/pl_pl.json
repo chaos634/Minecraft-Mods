@@ -238,7 +238,8 @@
 	"fibel.kumpel.page.13": "§lFajrant§r\n\nGdy śpisz, twoi Kumple siadają i odpoczywają. Tańczą przy szafach grających, a przy własnej płycie, Glück auf, śpiewają.",
 	"fibel.kumpel.page.14": "§lObudowa§r\n\nDaj rębaczowi pnie albo stalowe dźwigary: co 4 bloki sztolni stawia odrzwia. Z latarniami lub lampami górniczymi w plecaku odrzwia dostają też światło.",
 	"fibel.kumpel.page.15": "§lPył węglowy§r\n\nPrzy kopaniu Kumpel brudzi się pyłem, najbardziej od węgla. Woda i deszcz go zmywają, wiadro wody od razu, a brudny Kumpel myje się przy kotle z wodą w pobliżu: w łaźni.",
-	"fibel.kumpel.page.16": "§lBarbórka§r\n\n4 grudnia, w dzień świętej Barbary, Kumple noszą kwitnącą gałązkę, a karmienie daje podwójne PD.\n\n\n§oGlück auf, Kumplu!§r",
+	"fibel.kumpel.page.16": "§lParada§r\n\nTrzymaj czekan sztygara, a Kumple ustawią się za tobą gęsiego, najbardziej doświadczeni z przodu, i pomaszerują, dokąd idziesz.",
+	"fibel.kumpel.page.17": "§lBarbórka§r\n\n4 grudnia, w dzień świętej Barbary, Kumple noszą kwitnącą gałązkę, a karmienie daje podwójne PD.\n\n\n§oGlück auf, Kumplu!§r",
 	"item.kumpel.knifte": "Kanapka górnicza",
 	"guide.kumpel.knifte": "Kanapka górnika z menażki: gruba kromka chleba z szynką. Syci i jest ulubionym jedzeniem wielu Kumpli. Z chleba i pieczonego schabu albo steku.",
 	"item.kumpel.muckefuck": "Kawa zbożowa",
@@ -323,5 +324,12 @@
 	"message.kumpel.washed": "%s zmył z siebie pył węglowy. Ach, świeżo!",
 	"config.kumpel.coal_dust": "Pył węglowy: brudzić się, myć w łaźni",
 	"advancements.kumpel.waschkaue.title": "Łaźnia górnicza",
-	"advancements.kumpel.waschkaue.description": "Doprowadź do tego, by Kumpel zmył pył węglowy"
+	"advancements.kumpel.waschkaue.description": "Doprowadź do tego, by Kumpel zmył pył węglowy",
+	"item.kumpel.steigerhaeckel": "Czekan sztygara",
+	"item.kumpel.steigerhaeckel.tooltip": "Trzymaj go, a Kumple pomaszerują za tobą",
+	"guide.kumpel.steigerhaeckel": "Paradny czekan, który sztygar nosi podczas górniczej parady. Gdy trzymasz go w ręce, Kumple ustawiają się za tobą gęsiego, najbardziej doświadczeni z przodu, i maszerują wszędzie, dokąd idziesz. Ze sztabki złota, sztabki żelaza i dwóch patyków.",
+	"message.kumpel.parade": "Parada górnicza! %s Kumpli maszeruje za tobą. Glück auf!",
+	"config.kumpel.bergparade": "Parada: maszerowanie za czekanem",
+	"advancements.kumpel.bergparade.title": "Parada górnicza",
+	"advancements.kumpel.bergparade.description": "Poprowadź trzech Kumpli w paradzie z czekanem sztygara"
 }

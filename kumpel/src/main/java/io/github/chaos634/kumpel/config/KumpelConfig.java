@@ -247,6 +247,8 @@ public final class KumpelConfig {
 		 * Kumpel goes to wash in a water cauldron nearby.
 		 */
 		public boolean coalDust = true;
+		/** Bergparade: while you hold the Steigerhäckel, your Kumpels march behind you in single file. */
+		public boolean bergparade = true;
 
 		/** Grubenwehr: Kumpels fight monsters that attack you or that you attack. Creepers are left alone. */
 		public boolean defendOwner = true;

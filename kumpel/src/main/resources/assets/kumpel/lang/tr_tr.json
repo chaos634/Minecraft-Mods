@@ -238,7 +238,8 @@
 	"fibel.kumpel.page.13": "§lPaydos§r\n\nSen uyurken Kumpel'lerin oturup dinlenir. Müzik kutularıyla dans ederler, kendi plakları Glück auf çalınca da eşlik ederler.",
 	"fibel.kumpel.page.14": "§lTahkimat§r\n\nKazıcıya kütük ya da çelik kiriş ver: tünelin her 4 bloğunda bir destek çerçevesi kurar. Çantasında fener ya da madenci lambası varsa çerçeveye ışık da koyar.",
 	"fibel.kumpel.page.15": "§lKömür Tozu§r\n\nKazarken Kumpel'in toz olur, en çok da kömürden. Su ve yağmur onu yıkar, bir kova su bir anda; tozlu bir Kumpel yakındaki su kazanında yıkanır: hamamda.",
-	"fibel.kumpel.page.16": "§lBarbara Günü§r\n\n4 Aralık'ta, Azize Barbara gününde Kumpel'ler çiçekli bir dal takar ve beslemek iki kat TP verir.\n\n\n§oGlück auf, Kumpel!§r",
+	"fibel.kumpel.page.16": "§lGeçit§r\n\nUstabaşı Baltasını tut, Kumpel'lerin arkana tek sıra dizilir, en tecrübelisi önde, ve nereye gidersen seninle yürür.",
+	"fibel.kumpel.page.17": "§lBarbara Günü§r\n\n4 Aralık'ta, Azize Barbara gününde Kumpel'ler çiçekli bir dal takar ve beslemek iki kat TP verir.\n\n\n§oGlück auf, Kumpel!§r",
 	"item.kumpel.knifte": "Madenci Sandviçi",
 	"guide.kumpel.knifte": "Sefertasından madenci sandviçi: jambonlu kalın bir dilim ekmek. Doyurucudur ve birçok Kumpel'in en sevdiği yemektir. Ekmek ve pişmiş domuz pirzolası ya da biftekten yapılır.",
 	"item.kumpel.muckefuck": "Arpa Kahvesi",
@@ -323,5 +324,12 @@
 	"message.kumpel.washed": "%s kömür tozunu yıkadı. Oh, tertemiz!",
 	"config.kumpel.coal_dust": "Kömür tozu: kirlen, hamamda yıkan",
 	"advancements.kumpel.waschkaue.title": "Maden Hamamı",
-	"advancements.kumpel.waschkaue.description": "Bir Kumpel'in kömür tozunu yıkamasını sağla"
+	"advancements.kumpel.waschkaue.description": "Bir Kumpel'in kömür tozunu yıkamasını sağla",
+	"item.kumpel.steigerhaeckel": "Ustabaşı Baltası",
+	"item.kumpel.steigerhaeckel.tooltip": "Elinde tut, Kumpel'lerin arkandan yürüsün",
+	"guide.kumpel.steigerhaeckel": "Bir ustabaşının madenci geçidinde taşıdığı tören baltası. Herhangi bir elinde tuttuğunda Kumpel'lerin arkana tek sıra dizilir, en tecrübelisi önde, ve nereye gidersen seninle yürür. Bir altın külçe, bir demir külçe ve iki çubuktan yapılır.",
+	"message.kumpel.parade": "Madenci geçidi! %s Kumpel arkandan yürüyor. Glück auf!",
+	"config.kumpel.bergparade": "Geçit: ustabaşı baltasının ardından yürü",
+	"advancements.kumpel.bergparade.title": "Madenci Geçidi",
+	"advancements.kumpel.bergparade.description": "Ustabaşı Baltasıyla üç Kumpel'e geçitte öncülük et"
 }

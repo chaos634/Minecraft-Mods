@@ -37,11 +37,12 @@ public final class KumpelAdvancements {
 	public static final String LEIBGERICHT = "leibgericht";
 	public static final String STRECKENAUSBAU = "streckenausbau";
 	public static final String WASCHKAUE = "waschkaue";
+	public static final String BERGPARADE = "bergparade";
 
 	/** Every advancement the mod ships. */
 	public static final List<String> ALL = List.of(
 			"root", GLUECK_AUF, REVIVED, MAX_LEVEL, FULL_CREW, SHIFT_END, HAUER, STORAGE, STEIGERLIED, BARBARA, EARLY_WARNING, VOR_ORT, HUETTE, SEILFAHRT, GRUBENWEHR, RESCUED, AUSFAHRT,
-			ZOLLVEREIN, MARKENKONTROLLE, KUMPELKAPELLE, LEIBGERICHT, STRECKENAUSBAU, WASCHKAUE);
+			ZOLLVEREIN, MARKENKONTROLLE, KUMPELKAPELLE, LEIBGERICHT, STRECKENAUSBAU, WASCHKAUE, BERGPARADE);
 
 	private KumpelAdvancements() {
 	}

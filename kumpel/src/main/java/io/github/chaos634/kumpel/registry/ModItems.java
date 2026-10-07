@@ -43,6 +43,7 @@ import io.github.chaos634.kumpel.item.KumpelSoul;
 import io.github.chaos634.kumpel.item.MinerHelmetItem;
 import io.github.chaos634.kumpel.item.RescueCapsuleItem;
 import io.github.chaos634.kumpel.item.SteigerWhistleItem;
+import io.github.chaos634.kumpel.item.SteigerhaeckelItem;
 
 public final class ModItems {
 	public static final Item KUMPEL_CORE = register("kumpel_core", KumpelCoreItem::new,
@@ -76,6 +77,9 @@ public final class ModItems {
 					.onConsume(new RemoveStatusEffectsConsumeEffect(MobEffects.MINING_FATIGUE))
 					.build())
 			.usingConvertsTo(Items.GLASS_BOTTLE));
+	/** The Steiger's ceremonial hatchet: hold it and your Kumpels march behind you. */
+	public static final Item STEIGERHAECKEL = register("steigerhaeckel", SteigerhaeckelItem::new,
+			new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
 	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
 			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
@@ -101,6 +105,7 @@ public final class ModItems {
 				}
 				output.accept(CRACKED_KUMPEL_CORE);
 				output.accept(STEIGER_WHISTLE);
+				output.accept(STEIGERHAECKEL);
 				output.accept(CANARY_CAGE);
 				output.accept(FIELD_FORGE);
 				output.accept(ModBlocks.FOERDERKORB);
@@ -130,6 +135,7 @@ public final class ModItems {
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(output -> {
 			output.accept(KUMPEL_CORE);
 			output.accept(STEIGER_WHISTLE);
+			output.accept(STEIGERHAECKEL);
 		});
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT).register(output -> output.accept(MINER_HELMET));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(output -> output.accept(KUMPEL_SPAWN_EGG));

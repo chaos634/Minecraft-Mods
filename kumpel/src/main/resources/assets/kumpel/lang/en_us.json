@@ -238,7 +238,8 @@
 	"fibel.kumpel.page.13": "§lFeierabend§r\n\nWhen you sleep, your Kumpels sit down and rest. They dance to jukeboxes, and to their own record, Glück auf, they sing along.",
 	"fibel.kumpel.page.14": "§lStreckenausbau§r\n\nGive a Hauer logs or steel girders: every 4 blocks of tunnel, it sets a support frame. With lanterns or Grubenlampen in its Kiepe, the frames get a lamp, too.",
 	"fibel.kumpel.page.15": "§lKohlenstaub§r\n\nDigging covers your Kumpel in dust, coal most of all. Water and rain wash it off, a bucket of water does it at once, and a dusty Kumpel washes in a water cauldron nearby: the Kaue.",
-	"fibel.kumpel.page.16": "§lBarbaratag§r\n\nOn 4 December, Saint Barbara's Day, Kumpels wear a blossoming branch and feeding them gives double XP.\n\n\n§oGlück auf, Kumpel!§r",
+	"fibel.kumpel.page.16": "§lBergparade§r\n\nHold the Steigerhäckel and your Kumpels line up behind you in single file, the most experienced first, and march wherever you go.",
+	"fibel.kumpel.page.17": "§lBarbaratag§r\n\nOn 4 December, Saint Barbara's Day, Kumpels wear a blossoming branch and feeding them gives double XP.\n\n\n§oGlück auf, Kumpel!§r",
 	"item.kumpel.knifte": "Knifte",
 	"guide.kumpel.knifte": "The miner's sandwich from the Henkelmann: a thick slice of bread with ham. Filling, and many Kumpels' favourite food. Made from bread and a cooked porkchop or steak.",
 	"item.kumpel.muckefuck": "Muckefuck",
@@ -323,5 +324,12 @@
 	"message.kumpel.washed": "%s has washed off the coal dust. Ahh, fresh!",
 	"config.kumpel.coal_dust": "Kohlenstaub: get dusty, wash in the Kaue",
 	"advancements.kumpel.waschkaue.title": "Pithead Baths",
-	"advancements.kumpel.waschkaue.description": "Get a Kumpel washed clean of coal dust"
+	"advancements.kumpel.waschkaue.description": "Get a Kumpel washed clean of coal dust",
+	"item.kumpel.steigerhaeckel": "Steigerhäckel",
+	"item.kumpel.steigerhaeckel.tooltip": "Hold it, and your Kumpels march behind you",
+	"guide.kumpel.steigerhaeckel": "The ceremonial hatchet a Steiger carries at the Bergparade, the miners' parade. Hold it in either hand and your Kumpels line up behind you in single file, the most experienced first, and march wherever you go. Made from a gold ingot, an iron ingot and two sticks.",
+	"message.kumpel.parade": "Bergparade! %s Kumpels march behind you. Glück auf!",
+	"config.kumpel.bergparade": "Bergparade: march behind the Steigerhäckel",
+	"advancements.kumpel.bergparade.title": "Bergparade",
+	"advancements.kumpel.bergparade.description": "Lead three Kumpels in a parade with the Steigerhäckel"
 }

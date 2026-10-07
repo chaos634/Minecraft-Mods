@@ -20,6 +20,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
@@ -45,6 +46,7 @@ import io.github.chaos634.kumpel.entity.KumpelPockets;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.entity.OreRule;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
+import io.github.chaos634.kumpel.entity.behaviour.Bergparade;
 import io.github.chaos634.kumpel.entity.behaviour.CoalDust;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.block.FoerderkorbBlock;
@@ -701,6 +703,57 @@ public class KumpelGameTests {
 		helper.assertTrue(kumpel.getDust() == 0 && kumpel.getDustStage() == 0, Component.literal("The bucket should wash it clean"));
 		helper.assertTrue(owner.getItemInHand(InteractionHand.MAIN_HAND).is(Items.BUCKET), Component.literal("The bucket is empty afterwards"));
 		helper.succeed();
+	}
+
+	@GameTest
+	public void paradeColumnPutsTheMostExperiencedFirst(GameTestHelper helper) {
+		Player owner = ownerAt(helper, 1, 1);
+		owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.STEIGERHAECKEL));
+		KumpelEntity rookie = helper.spawn(ModEntities.KUMPEL, 3, 1, 3);
+		KumpelEntity veteran = helper.spawn(ModEntities.KUMPEL, 4, 1, 3);
+		KumpelEntity hauer = helper.spawn(ModEntities.KUMPEL, 5, 1, 3);
+		for (KumpelEntity kumpel : List.of(rookie, veteran, hauer)) {
+			kumpel.tame(owner);
+		}
+		veteran.addExperience(settings().tier(4).requiredExperience());
+		hauer.addExperience(settings().tier(2).requiredExperience());
+
+		helper.assertTrue(Bergparade.isLeading(owner), Component.literal("Holding the Steigerhäckel leads a parade"));
+		List<KumpelEntity> column = Bergparade.column(helper.getLevel(), owner);
+		helper.assertTrue(column.equals(List.of(veteran, hauer, rookie)), Component.literal("Most experienced first, got " + column));
+		helper.assertTrue(Bergparade.leaderOf(veteran, column, owner) == owner && Bergparade.leaderOf(hauer, column, owner) == veteran
+				&& Bergparade.leaderOf(rookie, column, owner) == hauer, Component.literal("Each one follows the one in front"));
+
+		rookie.setOrderedToSit(true);
+		helper.assertTrue(Bergparade.column(helper.getLevel(), owner).size() == 2, Component.literal("A sitting Kumpel stays behind"));
+		owner.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+		helper.assertFalse(Bergparade.isLeading(owner), Component.literal("No Häckel, no parade"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 400)
+	public void kumpelsMarchInSingleFile(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 2, 1);
+		// The owner looks north, so the column forms to the south, on the floor.
+		owner.setYRot(180.0F);
+		owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.STEIGERHAECKEL));
+		List<KumpelEntity> kumpels = List.of(helper.spawn(ModEntities.KUMPEL, 6, 1, 6), helper.spawn(ModEntities.KUMPEL, 6, 1, 2),
+				helper.spawn(ModEntities.KUMPEL, 1, 1, 6));
+		for (KumpelEntity kumpel : kumpels) {
+			kumpel.tame(owner);
+		}
+
+		helper.succeedWhen(() -> {
+			List<KumpelEntity> column = Bergparade.column(helper.getLevel(), owner);
+			helper.assertTrue(column.size() == 3, Component.literal("All three should march"));
+			for (KumpelEntity kumpel : column) {
+				LivingEntity leader = Bergparade.leaderOf(kumpel, column, owner);
+				double distance = kumpel.distanceTo(leader);
+				helper.assertTrue(distance < 2.6 && kumpel.getZ() > leader.getZ(),
+						Component.literal(kumpel.getDisplayName().getString() + " should march right behind its leader, " + distance + " away"));
+			}
+		});
 	}
 
 	@GameTest(maxTicks = 400)

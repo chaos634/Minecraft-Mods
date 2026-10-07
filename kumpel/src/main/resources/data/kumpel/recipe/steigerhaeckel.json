@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "I": "minecraft:iron_ingot",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "GI",
+    " S",
+    " S"
+  ],
+  "result": {
+    "id": "kumpel:steigerhaeckel"
+  }
+}

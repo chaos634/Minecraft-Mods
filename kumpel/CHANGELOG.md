@@ -2,6 +2,14 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.13.0
+
+### Bergparade
+
+- The Steigerhäckel: hold it, and your Kumpels march behind you in single file, the most experienced first.
+- One more advancement (Bergparade) and a new page in the Kumpelfibel.
+- A new screenshot: a gallery with support frames, lanterns and Kumpels black with coal dust.
+
 ## 0.12.0
 
 ### Kohlenstaub & Waschkaue

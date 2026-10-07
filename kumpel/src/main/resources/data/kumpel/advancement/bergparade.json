@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:full_crew",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.bergparade.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.bergparade.description"
+    },
+    "icon": {
+      "id": "kumpel:steigerhaeckel"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

@@ -172,3 +172,9 @@ Nach der Schicht geht's in die Kaue.
 - ✅ **Kohlenstaub**: Beim Graben wird der Kumpel staubig, von Kohle am meisten, sichtbar in drei Stufen bis schwarz wie Kohle.
 - ✅ **Waschkaue**: Wasser und Regen waschen ihn, ein Eimer Wasser auf einmal. Ein staubiger Kumpel geht von selbst zu einem Wasserkessel in der Nähe und wäscht sich dort.
 - ✅ **Leuchtende Helmlampe**: Die Lampe am Helm (und das Feuer der Feldschmiede) leuchtet im Dunkeln.
+
+## Phase 18: Bergparade ✅
+
+Glück auf, der Steiger kommt!
+
+- ✅ **Steigerhäckel**: Das Paradebeil des Steigers. Wer es hält, führt die Bergparade an: Die Kumpels marschieren im Gänsemarsch hinterher, die erfahrensten vorne, und die Reihe bleibt eine Reihe, auch um Kurven.
