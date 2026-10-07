@@ -63,6 +63,8 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 
 ![Underground at midnight, lit only by the Kumpels' helmet lamps: a Hauer, a Kumpel with a canary, one with a field forge on its back, a Markentafel and a Förderkorb](../.github/media/kumpel/unter-tage.jpg)
 
+![A gallery with support frames and lanterns: Kumpels black with coal dust, a field forge glowing, coal in the walls](../.github/media/kumpel/strecke.jpg)
+
 ## Controls
 
 | Action | Effect |
@@ -239,7 +241,7 @@ The jar ends up in `kumpel/build/libs/`. Every push also builds the mod on GitHu
 ### Tests
 
 - **Server game tests** (`src/gametest`) run as part of `./gradlew build`. They cover the config defaults, collecting, ore sensing per level, levelling up, the backpack, delivering, packing and dying, torches, creeper warnings, food sharing, the whistle, storage chests, mining, tunnels (sealing water, bridging holes, stopping when there is no stone, and support frames with lamps), coal dust and washing (in water, with a bucket and in the Kaue), the Bergparade (order and marching in single file), the field forge and coking, coke as fuel, the ore finds, the Markenkontrolle, singing along to the record, the helmet lamp, the Kumpelfibel, tool protection, favourite food, apprenticeship, Muckefuck, following through portals, statistics, labels for every config option, names, the silverfish warning, dancing, the Wünschelrute, Barbaratag, the canary, the Grubenhelm, fighting monsters (but not creepers), the Förderkorb, the shift log, the rescue capsule, the exit trail and being led out, resting, that every language has every text and that all advancements load.
-- **Client game test** (`./gradlew runClientGameTest`) starts a real client with JEI and takes screenshots of every level, the sitting pose, a Kumpel sensing buried diamond ore, and the Zeche: a Hauer with pickaxe and canary, a dancing Kumpel and the Grubenhelm, all on Barbaratag. On CI the screenshots are uploaded as an artifact.
+- **Client game test** (`./gradlew runClientGameTest`) starts a real client with JEI and takes screenshots of every level, the sitting pose, a Kumpel sensing buried diamond ore, the Zeche: a Hauer with pickaxe and canary, a dancing Kumpel and the Grubenhelm, all on Barbaratag; a chamber underground lit only by helmet lamps; and a gallery with support frames and dusty Kumpels. On CI the screenshots are uploaded as an artifact.
 
 ## License
 
