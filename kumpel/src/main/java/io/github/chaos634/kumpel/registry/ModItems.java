@@ -1,5 +1,6 @@
 package io.github.chaos634.kumpel.registry;
 
+import java.util.Comparator;
 import java.util.function.Function;
 
 import net.minecraft.core.Registry;
@@ -34,8 +35,10 @@ import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 
 import io.github.chaos634.kumpel.Kumpel;
+import io.github.chaos634.kumpel.build.Bauplan;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelTier;
+import io.github.chaos634.kumpel.item.BauplanItem;
 import io.github.chaos634.kumpel.item.CrackedKumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelCoreItem;
 import io.github.chaos634.kumpel.item.KumpelFibel;
@@ -80,6 +83,8 @@ public final class ModItems {
 	/** The Steiger's ceremonial hatchet: hold it and your Kumpels march behind you. */
 	public static final Item STEIGERHAECKEL = register("steigerhaeckel", SteigerhaeckelItem::new,
 			new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+	/** Bauplan: choose a building and your Kumpel builds it. */
+	public static final Item BAUPLAN = register("bauplan", BauplanItem::new, new Item.Properties().stacksTo(1));
 	public static final Item MINER_HELMET = register("miner_helmet", MinerHelmetItem::new,
 			new Item.Properties().humanoidArmor(MinerHelmetItem.MATERIAL, ArmorType.HELMET));
 	public static final Item KUMPEL_SPAWN_EGG = register("kumpel_spawn_egg", SpawnEggItem::new,
@@ -106,6 +111,15 @@ public final class ModItems {
 				output.accept(CRACKED_KUMPEL_CORE);
 				output.accept(STEIGER_WHISTLE);
 				output.accept(STEIGERHAECKEL);
+				output.accept(BAUPLAN);
+				// One Bauplan for every building the data packs know.
+				parameters.holders().lookup(Bauplan.REGISTRY).ifPresent(plans -> plans.listElementIds()
+						.sorted(Comparator.comparing(key -> key.identifier().toString()))
+						.forEach(key -> {
+							ItemStack plan = new ItemStack(BAUPLAN);
+							plan.set(ModComponents.BAUPLAN, key);
+							output.accept(plan);
+						}));
 				output.accept(CANARY_CAGE);
 				output.accept(FIELD_FORGE);
 				output.accept(ModBlocks.FOERDERKORB);

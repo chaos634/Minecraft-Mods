@@ -2,6 +2,14 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.14.0
+
+### Baumeister
+
+- The Bauplan: choose a building, use it on the ground, and your Kumpel builds it with the blocks from its Kiepe, clearing the site and asking for what it lacks.
+- Two buildings come with the mod (Unterstand and Zechenhaus); Baupläne are data, so data packs and other mods can add more. Zechenbau brings a headframe and a machine house.
+- Builders keep their building blocks; blocks built count in the shift log and the statistics. One more advancement (Master Builder) and a new Kumpelfibel page.
+
 ## 0.13.0
 
 ### Bergparade

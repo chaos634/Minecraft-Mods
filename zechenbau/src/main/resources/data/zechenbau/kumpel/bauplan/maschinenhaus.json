@@ -1,0 +1,48 @@
+{
+  "palette": {
+    "T": "zechenbau:stahltraeger[axis=y]",
+    "Z": "zechenbau:zechenziegel",
+    "F": "zechenbau:fachwerk_fenster",
+    "E": "zechenbau:schlaegel_und_eisen",
+    "H": "zechenbau:stahlfachwerk",
+    "S": "zechenbau:zechenziegel_slab[type=bottom]",
+    "L": "zechenbau:grubenlampe[hanging=true]"
+  },
+  "layers": [
+    [
+      "TZZ ZZT",
+      "Z     Z",
+      "Z     Z",
+      "Z     Z",
+      "TZZZZZT"
+    ],
+    [
+      "TFZ ZFT",
+      "F     F",
+      "Z     Z",
+      "F     F",
+      "TFZZZFT"
+    ],
+    [
+      "TFZEZFT",
+      "F     F",
+      "Z     Z",
+      "F     F",
+      "TFZZZFT"
+    ],
+    [
+      "THHHHHT",
+      "H     H",
+      "H  L  H",
+      "H     H",
+      "THHHHHT"
+    ],
+    [
+      "SSSSSSS",
+      "SSSSSSS",
+      "SSSSSSS",
+      "SSSSSSS",
+      "SSSSSSS"
+    ]
+  ]
+}

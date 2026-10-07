@@ -14,5 +14,7 @@
 	"block.zechenbau.bemooste_zechenziegel": "Bemoste mijnbakstenen",
 	"block.zechenbau.hunt": "Mijnwagen",
 	"block.zechenbau.seilscheibe": "Kabelschijf",
-	"block.zechenbau.kauenhaken": "Badzaalhaak"
+	"block.zechenbau.kauenhaken": "Badzaalhaak",
+	"bauplan.zechenbau.foerdergeruest": "Schachtbok",
+	"bauplan.zechenbau.maschinenhaus": "Machinehuis"
 }

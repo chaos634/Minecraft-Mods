@@ -2,6 +2,10 @@
 
 All notable changes to Zechenbau are listed here.
 
+## 0.3.0
+
+- Baupläne for Kumpel: a headframe and a machine house, built by your Kumpels from Zechenbau blocks.
+
 ## 0.2.0
 
 ### Industriekultur

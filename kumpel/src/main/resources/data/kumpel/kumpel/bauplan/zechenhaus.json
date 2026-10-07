@@ -1,0 +1,58 @@
+{
+  "palette": {
+    "B": "minecraft:bricks",
+    "L": "minecraft:oak_log",
+    "G": "minecraft:glass_pane",
+    "D": "minecraft:oak_door[half=lower,facing=south]",
+    "d": "minecraft:oak_door[half=upper,facing=south]",
+    "P": "minecraft:oak_planks",
+    "R": "minecraft:brick_stairs[facing=south]",
+    "r": "minecraft:brick_stairs[facing=north]",
+    "S": "minecraft:brick_slab[type=bottom]",
+    "T": "minecraft:lantern[hanging=true]"
+  },
+  "layers": [
+    [
+      "LBDBL",
+      "B   B",
+      "B   B",
+      "B   B",
+      "LBBBL"
+    ],
+    [
+      "LGdGL",
+      "G   G",
+      "B   B",
+      "G   G",
+      "LGBGL"
+    ],
+    [
+      "LBBBL",
+      "B   B",
+      "B T B",
+      "B   B",
+      "LBBBL"
+    ],
+    [
+      "RRRRR",
+      "PPPPP",
+      "PPPPP",
+      "PPPPP",
+      "rrrrr"
+    ],
+    [
+      "     ",
+      "RRRRR",
+      "PPPPP",
+      "rrrrr",
+      "     "
+    ],
+    [
+      "     ",
+      "     ",
+      "SSSSS",
+      "     ",
+      "     "
+    ]
+  ]
+}

@@ -24,7 +24,8 @@ public class ShiftLog {
 		MONSTERS_DEFEATED("monsters_defeated"),
 		LEAKS_SEALED("leaks_sealed"),
 		COKE_MADE("coke_made"),
-		SUPPORTS_SET("supports_set");
+		SUPPORTS_SET("supports_set"),
+		BLOCKS_BUILT("blocks_built");
 
 		private final String key;
 

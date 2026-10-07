@@ -176,6 +176,9 @@ public class KumpelPockets extends SimpleContainer {
 			if (stack.isEmpty() || isTorch(stack)) {
 				return true;
 			}
+			if (owner.isBuildingMaterial(stack)) {
+				return true;
+			}
 			if (keepFuel && FieldForge.isFuel(stack)) {
 				keepFuel = false;
 				return true;

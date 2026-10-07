@@ -5,8 +5,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import net.minecraft.core.BlockPos;
@@ -15,6 +18,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
@@ -131,6 +135,27 @@ public class ZechenbauGameTests {
 		for (String name : RECIPES) {
 			helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(ResourceKey.create(Registries.RECIPE, Zechenbau.id(name))).isPresent(),
 					Component.literal("Recipe zechenbau:" + name + " is missing or broken"));
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void bauplaeneForKumpelsUseRealBlocks(GameTestHelper helper) {
+		Set<String> english = languageKeys("en_us");
+		for (String plan : List.of("foerdergeruest", "maschinenhaus")) {
+			String path = "/data/zechenbau/kumpel/bauplan/" + plan + ".json";
+			try (InputStream stream = Zechenbau.class.getResourceAsStream(path)) {
+				helper.assertTrue(stream != null, Component.literal("Missing " + path));
+				JsonObject json = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+				for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject("palette").entrySet()) {
+					String block = entry.getValue().getAsString().split("\\[")[0];
+					helper.assertTrue(BuiltInRegistries.BLOCK.containsKey(Identifier.parse(block)), Component.literal(plan + " uses unknown block " + block));
+				}
+				helper.assertTrue(json.getAsJsonArray("layers").size() > 0, Component.literal(plan + " has no layers"));
+			} catch (IOException e) {
+				throw new IllegalStateException("Could not read " + path, e);
+			}
+			helper.assertTrue(english.contains("bauplan.zechenbau." + plan), Component.literal("The Bauplan " + plan + " has no name"));
 		}
 		helper.succeed();
 	}

@@ -14,5 +14,7 @@
 	"block.zechenbau.bemooste_zechenziegel": "Bemooste Zechenziegel",
 	"block.zechenbau.hunt": "Hunt",
 	"block.zechenbau.seilscheibe": "Seilscheibe",
-	"block.zechenbau.kauenhaken": "Kauenhaken"
+	"block.zechenbau.kauenhaken": "Kauenhaken",
+	"bauplan.zechenbau.foerdergeruest": "Fördergerüst",
+	"bauplan.zechenbau.maschinenhaus": "Maschinenhaus"
 }

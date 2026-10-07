@@ -15,6 +15,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -32,6 +33,7 @@ import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -40,6 +42,8 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
+import io.github.chaos634.kumpel.build.Bauplan;
+import io.github.chaos634.kumpel.build.BuildOrder;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelPockets;
@@ -703,6 +707,75 @@ public class KumpelGameTests {
 		helper.assertTrue(kumpel.getDust() == 0 && kumpel.getDustStage() == 0, Component.literal("The bucket should wash it clean"));
 		helper.assertTrue(owner.getItemInHand(InteractionHand.MAIN_HAND).is(Items.BUCKET), Component.literal("The bucket is empty afterwards"));
 		helper.succeed();
+	}
+
+	private static final ResourceKey<Bauplan> UNTERSTAND = ResourceKey.create(Bauplan.REGISTRY, Kumpel.id("unterstand"));
+	private static final ResourceKey<Bauplan> ZECHENHAUS = ResourceKey.create(Bauplan.REGISTRY, Kumpel.id("zechenhaus"));
+
+	@GameTest
+	public void bauplaeneAreLoaded(GameTestHelper helper) {
+		Bauplan unterstand = helper.getLevel().registryAccess().lookupOrThrow(Bauplan.REGISTRY).getValue(UNTERSTAND);
+		Bauplan zechenhaus = helper.getLevel().registryAccess().lookupOrThrow(Bauplan.REGISTRY).getValue(ZECHENHAUS);
+		helper.assertTrue(unterstand != null && zechenhaus != null, Component.literal("Both built-in Baupläne should load"));
+		helper.assertTrue(unterstand.pieces().size() == 22, Component.literal("The Unterstand has 22 blocks, got " + unterstand.pieces().size()));
+		helper.assertTrue(zechenhaus.pieces().stream().anyMatch(piece -> piece.state().is(Blocks.OAK_DOOR)), Component.literal("The Zechenhaus has a door"));
+		helper.assertTrue(unterstand.width() == 3 && zechenhaus.width() == 5, Component.literal("Plan widths"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void bauplanCyclesThroughTheBuildings(GameTestHelper helper) {
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		ItemStack bauplan = new ItemStack(ModItems.BAUPLAN);
+		player.setItemInHand(InteractionHand.MAIN_HAND, bauplan);
+		List<ResourceKey<Bauplan>> chosen = new java.util.ArrayList<>();
+		for (int i = 0; i < 3; i++) {
+			ModItems.BAUPLAN.use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+			chosen.add(player.getItemInHand(InteractionHand.MAIN_HAND).get(ModComponents.BAUPLAN));
+		}
+		helper.assertTrue(chosen.equals(List.of(UNTERSTAND, ZECHENHAUS, UNTERSTAND)), Component.literal("Right-clicking goes through the plans, got " + chosen));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void builderKeepsItsBuildingBlocks(GameTestHelper helper) {
+		Player owner = ownerAt(helper, 1, 1);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 2, 1, 2);
+		kumpel.tame(owner);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.OAK_FENCE, 12));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.DIRT, 5));
+		kumpel.startBuilding(new BuildOrder(UNTERSTAND, helper.absolutePos(new BlockPos(4, 1, 4)), Rotation.NONE, 0));
+		helper.assertTrue(kumpel.isBuildingMaterial(new ItemStack(Items.OAK_SLAB)) && !kumpel.isBuildingMaterial(new ItemStack(Items.DIRT)),
+				Component.literal("Slabs are for the Unterstand, dirt isn't"));
+		List<ItemStack> loot = kumpel.getPockets().takeLoot();
+		helper.assertTrue(loot.size() == 1 && loot.getFirst().is(Items.DIRT), Component.literal("Only the dirt is loot while building, got " + loot));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 1200)
+	public void kumpelBuildsTheUnterstand(GameTestHelper helper) {
+		buildFloor(helper);
+		Player owner = ownerAt(helper, 1, 6);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+		kumpel.getPockets().addToPockets(new ItemStack(Items.OAK_FENCE, 12));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.OAK_SLAB, 9));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.LANTERN, 1));
+		BlockPos origin = helper.absolutePos(new BlockPos(4, 1, 2));
+		kumpel.startBuilding(new BuildOrder(UNTERSTAND, origin, Rotation.NONE, 0));
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(kumpel.getBuild() == null, Component.literal("The building should be finished, progress "
+					+ (kumpel.getBuild() == null ? "-" : kumpel.getBuild().progress())));
+			// Looking south, the plan's left is east (+x): its corners are one block either side of the origin.
+			for (BlockPos post : List.of(origin.offset(1, 0, 0), origin.offset(-1, 0, 0), origin.offset(1, 2, 2), origin.offset(-1, 2, 2))) {
+				helper.assertTrue(helper.getLevel().getBlockState(post).is(Blocks.OAK_FENCE), Component.literal("A post is missing at " + post));
+			}
+			helper.assertTrue(helper.getLevel().getBlockState(origin.offset(0, 3, 1)).is(Blocks.OAK_SLAB), Component.literal("The roof is missing"));
+			helper.assertTrue(helper.getLevel().getBlockState(origin.offset(0, 2, 1)).is(Blocks.LANTERN), Component.literal("The lantern is missing"));
+			helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.BLOCKS_BUILT) == 22, Component.literal("22 blocks built, got "
+					+ kumpel.getLog().get(ShiftLog.Entry.BLOCKS_BUILT)));
+		});
 	}
 
 	@GameTest

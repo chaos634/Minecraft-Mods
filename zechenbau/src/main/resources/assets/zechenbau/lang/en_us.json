@@ -14,5 +14,7 @@
 	"block.zechenbau.bemooste_zechenziegel": "Mossy Colliery Bricks",
 	"block.zechenbau.hunt": "Coal Tub",
 	"block.zechenbau.seilscheibe": "Sheave Wheel",
-	"block.zechenbau.kauenhaken": "Pithead Bath Hanger"
+	"block.zechenbau.kauenhaken": "Pithead Bath Hanger",
+	"bauplan.zechenbau.foerdergeruest": "Headframe",
+	"bauplan.zechenbau.maschinenhaus": "Machine House"
 }

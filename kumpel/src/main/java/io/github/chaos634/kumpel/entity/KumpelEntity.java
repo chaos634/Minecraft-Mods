@@ -23,6 +23,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.Filterable;
@@ -93,6 +94,9 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelConfig;
 import io.github.chaos634.kumpel.config.KumpelSettings;
+import io.github.chaos634.kumpel.build.Bauplan;
+import io.github.chaos634.kumpel.build.BuildOrder;
+import io.github.chaos634.kumpel.entity.ai.BuildGoal;
 import io.github.chaos634.kumpel.entity.ai.CollectItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DefendOwnerGoal;
 import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
@@ -142,6 +146,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final int STORAGE_RETRY_TICKS = 600;
 	/** Blocks harder than this (obsidian, ancient debris …) stop a tunnel. */
 	private static final float MAX_TUNNEL_HARDNESS = 25.0F;
+	/** How long the Kumpel waits before asking again for the same missing block. */
+	private static final int ASK_AGAIN_TICKS = 1200;
 	/** A parade that paused longer than this starts afresh. */
 	private static final int PARADE_RESTART_TICKS = 100;
 	/** Health a good wash brings back. */
@@ -210,6 +216,12 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Leibgericht: chosen when first needed, from {@code favorite_foods} in the config. */
 	private Identifier favoriteFood;
 	private int dust;
+	private BuildOrder build;
+	/** The blocks of the plan being built, so they stay in the Kiepe. */
+	private Set<Item> buildMaterials = Set.of();
+	private ResourceKey<Bauplan> buildMaterialsFor;
+	private Item lastAskedFor;
+	private long lastAskedAt = Long.MIN_VALUE;
 	/** When this Kumpel last marched at the head of a Bergparade (game time). */
 	private long paradeHeadedAt = Long.MIN_VALUE;
 	/** Whether the owner was close by at the last check, in this dimension. */
@@ -245,6 +257,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		this.goalSelector.addGoal(4, new ParadeGoal(this, 1.15));
 		this.goalSelector.addGoal(4, new DeliverItemsGoal(this, 1.15));
 		this.goalSelector.addGoal(5, new DigTunnelGoal(this, 1.0));
+		this.goalSelector.addGoal(5, new BuildGoal(this, 1.0));
 		this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
 		this.goalSelector.addGoal(6, new WashGoal(this, 1.0));
 		this.goalSelector.addGoal(7, new CollectItemsGoal(this, 1.15));
@@ -376,6 +389,109 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Washes some dust off. */
 	public void wash(int amount) {
 		setDust(dust - amount);
+	}
+
+	// ------------------------------------------------------------------
+	// Baumeister
+
+	public BuildOrder getBuild() {
+		return build;
+	}
+
+	/** Can be given a building to build. */
+	public boolean canTakeBuildOrder() {
+		return isAlive() && isTame() && !isOrderedToSit() && behaviour().building;
+	}
+
+	public boolean canBuild() {
+		return build != null && canTakeBuildOrder();
+	}
+
+	public void startBuilding(BuildOrder order) {
+		tunnel = null;
+		build = order;
+		lastAskedFor = null;
+		shiftEnd.setResting(false);
+		setOrderedToSit(false);
+	}
+
+	public void setBuildProgress(int progress) {
+		if (build != null) {
+			build = build.withProgress(progress);
+		}
+	}
+
+	public void stopBuilding() {
+		build = null;
+		setMining(false);
+	}
+
+	public void finishBuilding(Bauplan bauplan) {
+		if (build == null) {
+			return;
+		}
+		if (getOwner() instanceof Player owner) {
+			owner.sendSystemMessage(Component.translatable("message.kumpel.build.done", getDisplayName(),
+					Component.translatable(Bauplan.translationKey(build.plan()))).withStyle(ChatFormatting.GOLD));
+			KumpelAdvancements.award(owner, KumpelAdvancements.BAUMEISTER);
+		}
+		playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
+		stopBuilding();
+	}
+
+	/** Tells the owner which block is missing, but not over and over again. */
+	public void askForBuildingBlocks(Bauplan bauplan, BuildOrder order, Item item, int count) {
+		long now = level().getGameTime();
+		if (item == lastAskedFor && now - lastAskedAt < ASK_AGAIN_TICKS) {
+			return;
+		}
+		lastAskedFor = item;
+		lastAskedAt = now;
+		if (getOwner() instanceof Player owner) {
+			owner.sendSystemMessage(Component.translatable("message.kumpel.build.needs", getDisplayName(), count,
+					item.getName(item.getDefaultInstance()), Component.translatable(Bauplan.translationKey(order.plan()))).withStyle(ChatFormatting.YELLOW));
+		}
+	}
+
+	/** Takes the block from the Kiepe (unless {@code item} is {@code null}) and puts it in place, clearing whatever is there first. */
+	public boolean placeBuildingBlock(ServerLevel level, BlockPos pos, BlockState target, Item item) {
+		if (!level.getBlockState(pos).canBeReplaced()) {
+			if (!isDiggable(pos)) {
+				return false;
+			}
+			digBlock(level, pos);
+		}
+		if (item != null && pockets.takeOne(stack -> stack.is(item)).isEmpty()) {
+			return false;
+		}
+
+		// Fences, panes and walls join up with what is already there; a door half on its own would vanish, so it stays as it is.
+		BlockState shaped = Block.updateFromNeighbourShapes(target, level, pos);
+		BlockState state = shaped.isAir() ? target : shaped;
+		level.setBlockAndUpdate(pos, state);
+		SoundType sound = state.getSoundType();
+		level.playSound(null, pos, sound.getPlaceSound(), SoundSource.NEUTRAL, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
+		record(ShiftLog.Entry.BLOCKS_BUILT);
+		return true;
+	}
+
+	/** While it has a building to build, it keeps every block the plan uses. */
+	public boolean isBuildingMaterial(ItemStack stack) {
+		if (build == null || stack.isEmpty()) {
+			return false;
+		}
+		if (!build.plan().equals(buildMaterialsFor)) {
+			buildMaterialsFor = build.plan();
+			Bauplan bauplan = level().registryAccess().lookupOrThrow(Bauplan.REGISTRY).getValue(build.plan());
+			Set<Item> materials = new HashSet<>();
+			if (bauplan != null) {
+				for (Bauplan.Piece piece : bauplan.pieces()) {
+					materials.add(piece.state().getBlock().asItem());
+				}
+			}
+			buildMaterials = materials;
+		}
+		return buildMaterials.contains(stack.getItem());
 	}
 
 	// ------------------------------------------------------------------
@@ -1004,6 +1120,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	/** Called by the whistle: stand up and come to the owner. */
 	public void answerWhistle(Player owner) {
 		tunnel = null;
+		build = null;
 		leadingOut = false;
 		shiftEnd.setResting(false);
 		setOrderedToSit(false);
@@ -2136,6 +2253,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		if (tunnel != null) {
 			output.store("tunnel", TunnelOrder.CODEC, tunnel);
 		}
+		if (build != null) {
+			output.store("build", BuildOrder.CODEC, build);
+		}
 		writeInventoryToTag(output);
 	}
 
@@ -2155,6 +2275,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		log.load(input);
 		finds.load(input);
 		tunnel = input.read("tunnel", TunnelOrder.CODEC).orElse(null);
+		build = input.read("build", BuildOrder.CODEC).orElse(null);
 		readInventoryFromTag(input);
 
 		healOnFirstRefresh = false;

@@ -14,5 +14,7 @@
 	"block.zechenbau.bemooste_zechenziegel": "Omszałe cegły kopalniane",
 	"block.zechenbau.hunt": "Wózek kopalniany",
 	"block.zechenbau.seilscheibe": "Koło linowe",
-	"block.zechenbau.kauenhaken": "Wieszak z łaźni łańcuszkowej"
+	"block.zechenbau.kauenhaken": "Wieszak z łaźni łańcuszkowej",
+	"bauplan.zechenbau.foerdergeruest": "Wieża wyciągowa",
+	"bauplan.zechenbau.maschinenhaus": "Maszynownia"
 }

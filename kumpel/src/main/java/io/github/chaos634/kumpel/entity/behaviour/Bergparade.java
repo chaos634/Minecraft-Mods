@@ -32,9 +32,10 @@ public final class Bergparade {
 				&& (owner.getMainHandItem().is(ModItems.STEIGERHAECKEL) || owner.getOffhandItem().is(ModItems.STEIGERHAECKEL));
 	}
 
-	/** Whether this Kumpel can march along right now (not sitting, not digging a tunnel, not leading the way out). */
+	/** Whether this Kumpel can march along right now (not sitting, not digging a tunnel or building, not leading the way out). */
 	public static boolean canMarch(KumpelEntity kumpel) {
-		return kumpel.isAlive() && kumpel.isTame() && !kumpel.isOrderedToSit() && kumpel.getTunnel() == null && !kumpel.isLeadingOut();
+		return kumpel.isAlive() && kumpel.isTame() && !kumpel.isOrderedToSit() && kumpel.getTunnel() == null && kumpel.getBuild() == null
+				&& !kumpel.isLeadingOut();
 	}
 
 	/** The marchers in order: the most experienced first, ties broken the same way every time. */

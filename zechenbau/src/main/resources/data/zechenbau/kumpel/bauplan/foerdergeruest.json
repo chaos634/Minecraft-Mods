@@ -1,0 +1,108 @@
+{
+  "palette": {
+    "L": "zechenbau:foerdergeruest",
+    "T": "zechenbau:grubenlampe[hanging=true]",
+    "G": "zechenbau:stahltraeger[axis=x]",
+    "S": "zechenbau:seilscheibe[facing=north]"
+  },
+  "layers": [
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " L L ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      " LLL ",
+      " LTL ",
+      " LLL ",
+      "     "
+    ],
+    [
+      "     ",
+      "     ",
+      "GGGGG",
+      "     ",
+      "     "
+    ],
+    [
+      "     ",
+      "     ",
+      " S S ",
+      "     ",
+      "     "
+    ]
+  ]
+}

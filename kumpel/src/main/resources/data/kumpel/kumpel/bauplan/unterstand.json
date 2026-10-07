@@ -1,0 +1,29 @@
+{
+  "palette": {
+    "P": "minecraft:oak_fence",
+    "S": "minecraft:oak_slab[type=bottom]",
+    "L": "minecraft:lantern[hanging=true]"
+  },
+  "layers": [
+    [
+      "P P",
+      "   ",
+      "P P"
+    ],
+    [
+      "P P",
+      "   ",
+      "P P"
+    ],
+    [
+      "P P",
+      " L ",
+      "P P"
+    ],
+    [
+      "SSS",
+      "SSS",
+      "SSS"
+    ]
+  ]
+}

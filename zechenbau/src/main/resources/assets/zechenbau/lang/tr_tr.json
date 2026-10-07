@@ -14,5 +14,7 @@
 	"block.zechenbau.bemooste_zechenziegel": "Yosunlu Maden Tuğlası",
 	"block.zechenbau.hunt": "Maden Vagonu",
 	"block.zechenbau.seilscheibe": "Kuyu Makarası",
-	"block.zechenbau.kauenhaken": "Hamam Askısı"
+	"block.zechenbau.kauenhaken": "Hamam Askısı",
+	"bauplan.zechenbau.foerdergeruest": "Kuyu Kulesi",
+	"bauplan.zechenbau.maschinenhaus": "Makine Dairesi"
 }

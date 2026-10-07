@@ -3,12 +3,14 @@ package io.github.chaos634.kumpel;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 
 import net.minecraft.resources.Identifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.chaos634.kumpel.build.Bauplan;
 import io.github.chaos634.kumpel.command.KumpelCommand;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
@@ -28,6 +30,8 @@ public class Kumpel implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		KumpelSettings.reload();
+		// Baupläne come from data packs (data/<namespace>/kumpel/bauplan) and are sent to players, for the item names.
+		DynamicRegistries.registerSynced(Bauplan.REGISTRY, Bauplan.CODEC);
 		ModComponents.initialize();
 		ModSounds.initialize();
 		ModStats.initialize();

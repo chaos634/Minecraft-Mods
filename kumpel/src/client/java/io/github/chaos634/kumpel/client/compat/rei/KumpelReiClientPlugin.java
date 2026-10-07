@@ -47,6 +47,8 @@ public class KumpelReiClientPlugin implements REIClientPlugin {
 				.line(Component.translatable("guide.kumpel.steiger_whistle")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.STEIGERHAECKEL), Component.translatable("item.kumpel.steigerhaeckel"))
 				.line(Component.translatable("guide.kumpel.steigerhaeckel")));
+		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.BAUPLAN), Component.translatable("item.kumpel.bauplan"))
+				.line(Component.translatable("guide.kumpel.bauplan")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.CANARY_CAGE), Component.translatable("item.kumpel.canary_cage"))
 				.line(Component.translatable("guide.kumpel.canary_cage")));
 		registry.add(DefaultInformationDisplay.createFromEntry(EntryStacks.of(ModItems.FIELD_FORGE), Component.translatable("item.kumpel.field_forge"))

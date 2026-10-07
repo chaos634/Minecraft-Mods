@@ -178,3 +178,17 @@ Nach der Schicht geht's in die Kaue.
 Glück auf, der Steiger kommt!
 
 - ✅ **Steigerhäckel**: Das Paradebeil des Steigers. Wer es hält, führt die Bergparade an: Die Kumpels marschieren im Gänsemarsch hinterher, die erfahrensten vorne, und die Reihe bleibt eine Reihe, auch um Kurven.
+
+## Phase 19: Pottküche ✅
+
+Eine dritte Mod in der Sammlung: was es an der Bude neben der Zeche gibt.
+
+- ✅ **[Pottküche](../pottkueche/)**: Bratwurst, Currysoße, Currywurst, Pommes, Currywurst-Pommes, Frikadellen, Pfefferpotthast und Malzbier. Läuft auch allein.
+- ✅ **Leibgericht**: Mit Pottküche können Currywurst, Frikadelle und Pfefferpotthast das Lieblingsessen eines Kumpels sein.
+
+## Phase 20: Baumeister ✅
+
+Ein Kumpel baut auch über Tage.
+
+- ✅ **Bauplan**: Gebäude wählen, auf den Boden anwenden, und der Kumpel baut es mit den Blöcken aus seiner Kiepe. Er räumt den Bauplatz frei und sagt, was ihm fehlt.
+- ✅ **Datengetrieben**: Baupläne kommen aus Datenpaketen. Mitgeliefert: Unterstand und Zechenhaus; Zechenbau bringt Fördergerüst und Maschinenhaus mit.

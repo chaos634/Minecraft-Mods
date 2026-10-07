@@ -251,6 +251,8 @@ public final class KumpelConfig {
 		public boolean coalDust = true;
 		/** Bergparade: while you hold the Steigerhäckel, your Kumpels march behind you in single file. */
 		public boolean bergparade = true;
+		/** Baumeister: give a Kumpel a Bauplan and it builds the building, with blocks from its backpack. */
+		public boolean building = true;
 
 		/** Grubenwehr: Kumpels fight monsters that attack you or that you attack. Creepers are left alone. */
 		public boolean defendOwner = true;

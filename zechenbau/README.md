@@ -32,6 +32,10 @@ All of them are mined with a pickaxe. Seilscheibe, Hunt and Kauenhaken turn to f
 
 ![The same colliery at night, lit by its miner's lamps](../.github/media/zechenbau/nacht.jpg)
 
+## Baupläne for Kumpels
+
+With [Kumpel](../kumpel/) installed, Zechenbau adds two buildings to the Kumpels' Bauplan: a **Fördergerüst** (headframe, 14 blocks high, with its sheave wheels) and a **Maschinenhaus** (a small machine house). Fill your Kumpel's Kiepe with the blocks and it builds them for you.
+
 ## Languages
 
 English, German, Polish, Turkish, Dutch, French and Spanish: the languages of the Ruhr's miners.

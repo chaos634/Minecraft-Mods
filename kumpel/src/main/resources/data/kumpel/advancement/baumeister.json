@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:storage",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.baumeister.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.baumeister.description"
+    },
+    "icon": {
+      "id": "minecraft:bricks"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

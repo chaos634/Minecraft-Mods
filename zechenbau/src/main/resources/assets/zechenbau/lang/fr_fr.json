@@ -14,5 +14,7 @@
 	"block.zechenbau.bemooste_zechenziegel": "Briques de houillère moussues",
 	"block.zechenbau.hunt": "Berline",
 	"block.zechenbau.seilscheibe": "Molette",
-	"block.zechenbau.kauenhaken": "Crochet de salle des pendus"
+	"block.zechenbau.kauenhaken": "Crochet de salle des pendus",
+	"bauplan.zechenbau.foerdergeruest": "Chevalement",
+	"bauplan.zechenbau.maschinenhaus": "Salle des machines"
 }

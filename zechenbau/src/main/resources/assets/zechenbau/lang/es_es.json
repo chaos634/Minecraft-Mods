@@ -14,5 +14,7 @@
 	"block.zechenbau.bemooste_zechenziegel": "Ladrillos de mina musgosos",
 	"block.zechenbau.hunt": "Vagoneta",
 	"block.zechenbau.seilscheibe": "Polea de castillete",
-	"block.zechenbau.kauenhaken": "Percha de vestuario minero"
+	"block.zechenbau.kauenhaken": "Percha de vestuario minero",
+	"bauplan.zechenbau.foerdergeruest": "Castillete",
+	"bauplan.zechenbau.maschinenhaus": "Casa de máquinas"
 }
