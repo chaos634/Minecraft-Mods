@@ -42,8 +42,8 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
-import io.github.chaos634.kumpel.build.Bauplan;
-import io.github.chaos634.kumpel.build.BuildOrder;
+import io.github.chaos634.kumpel.bau.Bauplan;
+import io.github.chaos634.kumpel.bau.BuildOrder;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelPockets;
@@ -57,6 +57,7 @@ import io.github.chaos634.kumpel.block.FoerderkorbBlock;
 import io.github.chaos634.kumpel.entity.ExitTrail;
 import io.github.chaos634.kumpel.entity.Markenkontrolle;
 import io.github.chaos634.kumpel.entity.OreFinds;
+import io.github.chaos634.kumpel.entity.ShaftOrder;
 import io.github.chaos634.kumpel.entity.ShiftLog;
 import io.github.chaos634.kumpel.item.KumpelFibel;
 import io.github.chaos634.kumpel.item.KumpelSoul;
@@ -707,6 +708,74 @@ public class KumpelGameTests {
 		helper.assertTrue(kumpel.getDust() == 0 && kumpel.getDustStage() == 0, Component.literal("The bucket should wash it clean"));
 		helper.assertTrue(owner.getItemInHand(InteractionHand.MAIN_HAND).is(Items.BUCKET), Component.literal("The bucket is empty afterwards"));
 		helper.succeed();
+	}
+
+	/** A block of stone to sink shafts into: x 2..4, z 2..4, from {@code bottom} up to y 5. */
+	private static void buildShaftRock(GameTestHelper helper, int bottom) {
+		for (int x = 2; x <= 4; x++) {
+			for (int y = bottom; y <= 5; y++) {
+				for (int z = 2; z <= 4; z++) {
+					helper.setBlock(x, y, z, Blocks.STONE);
+				}
+			}
+		}
+	}
+
+	private static KumpelEntity shaftSinker(GameTestHelper helper) {
+		Player owner = ownerAt(helper, 6, 6);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 3, 6, 3);
+		kumpel.tame(owner);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+		kumpel.getPockets().addToPockets(new ItemStack(Items.LADDER, 8));
+		return kumpel;
+	}
+
+	@GameTest(maxTicks = 800)
+	public void sinksAShaftWithLadders(GameTestHelper helper) {
+		buildShaftRock(helper, 0);
+		KumpelEntity kumpel = shaftSinker(helper);
+		kumpel.startShaft(new ShaftOrder(helper.absolutePos(new BlockPos(3, 5, 3)), Direction.NORTH, 4, 0));
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(kumpel.getShaft() == null, Component.literal("The shaft should be done (stopped: " + kumpel.getLastTunnelStop() + ")"));
+			for (int y = 2; y <= 5; y++) {
+				helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(3, y, 3))).is(Blocks.LADDER),
+						Component.literal("A ladder should be at depth " + (6 - y)));
+			}
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(3, 1, 3))).is(Blocks.STONE),
+					Component.literal("The shaft should be exactly 4 deep"));
+			helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.SHAFTS_SUNK) == 1, Component.literal("The shaft goes into the shift log"));
+		});
+	}
+
+	@GameTest(maxTicks = 600)
+	public void shaftStopsWhenItBreaksIntoACave(GameTestHelper helper) {
+		buildShaftRock(helper, 3);
+		KumpelEntity kumpel = shaftSinker(helper);
+		kumpel.startShaft(new ShaftOrder(helper.absolutePos(new BlockPos(3, 5, 3)), Direction.NORTH, 4, 0));
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(kumpel.getShaft() == null && kumpel.getLastTunnelStop().startsWith("cave"),
+					Component.literal("The Kumpel should stop above the cave, got " + kumpel.getLastTunnelStop()));
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(3, 3, 3))).is(Blocks.STONE),
+					Component.literal("The block over the cave stays"));
+		});
+	}
+
+	@GameTest(maxTicks = 800)
+	public void shaftGetsALiftWithTwoCages(GameTestHelper helper) {
+		buildShaftRock(helper, 0);
+		KumpelEntity kumpel = shaftSinker(helper);
+		kumpel.getPockets().addToPockets(new ItemStack(ModBlocks.FOERDERKORB, 2));
+		kumpel.startShaft(new ShaftOrder(helper.absolutePos(new BlockPos(3, 5, 3)), Direction.NORTH, 4, 0));
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(kumpel.getShaft() == null, Component.literal("The shaft should be done (stopped: " + kumpel.getLastTunnelStop() + ")"));
+			BlockPos top = helper.absolutePos(new BlockPos(3, 5, 4));
+			helper.assertTrue(helper.getLevel().getBlockState(top).is(ModBlocks.FOERDERKORB), Component.literal("A cage at the top"));
+			helper.assertTrue(helper.absolutePos(new BlockPos(3, 1, 4)).equals(FoerderkorbBlock.findCage(helper.getLevel(), top, false)),
+					Component.literal("The top cage should lead down to the bottom cage"));
+		});
 	}
 
 	private static final ResourceKey<Bauplan> UNTERSTAND = ResourceKey.create(Bauplan.REGISTRY, Kumpel.id("unterstand"));

@@ -34,7 +34,7 @@ public final class Bergparade {
 
 	/** Whether this Kumpel can march along right now (not sitting, not digging a tunnel or building, not leading the way out). */
 	public static boolean canMarch(KumpelEntity kumpel) {
-		return kumpel.isAlive() && kumpel.isTame() && !kumpel.isOrderedToSit() && kumpel.getTunnel() == null && kumpel.getBuild() == null
+		return kumpel.isAlive() && kumpel.isTame() && !kumpel.isOrderedToSit() && kumpel.getTunnel() == null && kumpel.getBuild() == null && kumpel.getShaft() == null
 				&& !kumpel.isLeadingOut();
 	}
 

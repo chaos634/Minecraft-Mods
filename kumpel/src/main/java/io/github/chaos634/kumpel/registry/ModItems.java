@@ -35,7 +35,7 @@ import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 
 import io.github.chaos634.kumpel.Kumpel;
-import io.github.chaos634.kumpel.build.Bauplan;
+import io.github.chaos634.kumpel.bau.Bauplan;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.item.BauplanItem;

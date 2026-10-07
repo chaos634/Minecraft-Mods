@@ -192,3 +192,10 @@ Ein Kumpel baut auch über Tage.
 
 - ✅ **Bauplan**: Gebäude wählen, auf den Boden anwenden, und der Kumpel baut es mit den Blöcken aus seiner Kiepe. Er räumt den Bauplatz frei und sagt, was ihm fehlt.
 - ✅ **Datengetrieben**: Baupläne kommen aus Datenpaketen. Mitgeliefert: Unterstand und Zechenhaus; Zechenbau bringt Fördergerüst und Maschinenhaus mit.
+
+## Phase 21: Abteufen ✅
+
+Nicht nur in die Breite, auch in die Tiefe.
+
+- ✅ **Schacht abteufen**: Senkrecht nach unten schauen und schleichend pfeifen: Der Hauer teuft einen Schacht ab, mit Leitern aus der Kiepe, dämmt Wasser und Lava ab und hält beim Durchschlag in eine Höhle an.
+- ✅ **Aufzug**: Mit zwei Förderkörben in der Kiepe baut er oben einen Korb und unten in einer Nische den zweiten. Fertig ist die Seilfahrt.

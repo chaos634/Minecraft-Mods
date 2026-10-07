@@ -20,8 +20,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import io.github.chaos634.kumpel.build.Bauplan;
-import io.github.chaos634.kumpel.build.BuildOrder;
+import io.github.chaos634.kumpel.bau.Bauplan;
+import io.github.chaos634.kumpel.bau.BuildOrder;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.registry.ModComponents;
 

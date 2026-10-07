@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.chaos634.kumpel.build.Bauplan;
+import io.github.chaos634.kumpel.bau.Bauplan;
 import io.github.chaos634.kumpel.command.KumpelCommand;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;

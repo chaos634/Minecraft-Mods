@@ -74,6 +74,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.InfestedBlock;
+import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -94,8 +95,8 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelConfig;
 import io.github.chaos634.kumpel.config.KumpelSettings;
-import io.github.chaos634.kumpel.build.Bauplan;
-import io.github.chaos634.kumpel.build.BuildOrder;
+import io.github.chaos634.kumpel.bau.Bauplan;
+import io.github.chaos634.kumpel.bau.BuildOrder;
 import io.github.chaos634.kumpel.entity.ai.BuildGoal;
 import io.github.chaos634.kumpel.entity.ai.CollectItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DefendOwnerGoal;
@@ -104,6 +105,7 @@ import io.github.chaos634.kumpel.entity.ai.DigTunnelGoal;
 import io.github.chaos634.kumpel.entity.ai.LeadOutGoal;
 import io.github.chaos634.kumpel.entity.ai.MineOreGoal;
 import io.github.chaos634.kumpel.entity.ai.ParadeGoal;
+import io.github.chaos634.kumpel.entity.ai.ShaftGoal;
 import io.github.chaos634.kumpel.entity.ai.WashGoal;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.Bergparade;
@@ -217,6 +219,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private Identifier favoriteFood;
 	private int dust;
 	private BuildOrder build;
+	private ShaftOrder shaft;
 	/** The blocks of the plan being built, so they stay in the Kiepe. */
 	private Set<Item> buildMaterials = Set.of();
 	private ResourceKey<Bauplan> buildMaterialsFor;
@@ -258,6 +261,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		this.goalSelector.addGoal(4, new DeliverItemsGoal(this, 1.15));
 		this.goalSelector.addGoal(5, new DigTunnelGoal(this, 1.0));
 		this.goalSelector.addGoal(5, new BuildGoal(this, 1.0));
+		this.goalSelector.addGoal(5, new ShaftGoal(this));
 		this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
 		this.goalSelector.addGoal(6, new WashGoal(this, 1.0));
 		this.goalSelector.addGoal(7, new CollectItemsGoal(this, 1.15));
@@ -409,6 +413,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	public void startBuilding(BuildOrder order) {
 		tunnel = null;
+		shaft = null;
 		build = order;
 		lastAskedFor = null;
 		shiftEnd.setResting(false);
@@ -1121,6 +1126,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	public void answerWhistle(Player owner) {
 		tunnel = null;
 		build = null;
+		shaft = null;
 		leadingOut = false;
 		shiftEnd.setResting(false);
 		setOrderedToSit(false);
@@ -1411,6 +1417,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	}
 
 	public void startTunnel(BlockPos start, Direction direction, int length) {
+		shaft = null;
+		build = null;
 		tunnel = new TunnelOrder(start.immutable(), direction, Mth.clamp(length, 1, 64), 0);
 		shiftEnd.setResting(false);
 		setOrderedToSit(false);
@@ -1456,6 +1464,137 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 		tunnel = null;
 		setMining(false);
+	}
+
+	// ------------------------------------------------------------------
+	// Abteufen
+
+	public ShaftOrder getShaft() {
+		return shaft;
+	}
+
+	public void startShaft(ShaftOrder order) {
+		tunnel = null;
+		build = null;
+		shaft = order;
+		shiftEnd.setResting(false);
+		setOrderedToSit(false);
+	}
+
+	public boolean canDigShaft() {
+		return shaft != null && !isOrderedToSit() && isHauer() && !pockets.pocketsFull() && behaviour().shafts && canMineAtAll();
+	}
+
+	public void advanceShaft() {
+		if (shaft != null) {
+			shaft = shaft.advance();
+		}
+	}
+
+	/** Gives up on the shaft and tells the owner why ({@code message.kumpel.shaft.stopped.<reason>}). */
+	public void stopShaft(String reason, BlockPos where) {
+		if (shaft == null) {
+			return;
+		}
+
+		lastTunnelStop = reason + " at " + where.toShortString() + " after " + shaft.progress();
+		if (getOwner() instanceof Player owner) {
+			owner.sendSystemMessage(Component.translatable("message.kumpel.shaft.stopped." + reason, getDisplayName(),
+					level().getBlockState(where).getBlock().getName(), shaft.progress()).withStyle(ChatFormatting.YELLOW));
+		}
+		shaft = null;
+		setMining(false);
+	}
+
+	/**
+	 * Why the shaft can't go deeper here ({@code cave} when the block under the cell is open, {@code blocked} when the
+	 * pickaxe can't handle the cell), or {@code null}.
+	 */
+	public String shaftProblem(ServerLevel level, BlockPos cell) {
+		if (!isOpen(cell) && !isDiggable(cell)) {
+			return "blocked";
+		}
+		BlockPos below = cell.below();
+		if (level.getBlockState(below).getCollisionShape(level, below).isEmpty() && level.getFluidState(below).isEmpty()) {
+			return "cave";
+		}
+		return null;
+	}
+
+	/** Water or lava next to (or under) the cell about to be dug, that a block from the backpack can close. */
+	public BlockPos findShaftLeak(ServerLevel level, BlockPos cell) {
+		for (Direction direction : Direction.values()) {
+			if (direction == Direction.UP) {
+				continue;
+			}
+			BlockPos neighbour = cell.relative(direction);
+			if (!level.getFluidState(neighbour).isEmpty() && level.getBlockState(neighbour).canBeReplaced()) {
+				return neighbour.immutable();
+			}
+		}
+		return null;
+	}
+
+	/** A ladder from the backpack against the wall on the given side, if there is none yet. */
+	public void placeShaftLadder(ServerLevel level, BlockPos pos, Direction side) {
+		BlockState ladder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, side.getOpposite());
+		if (level.getBlockState(pos).is(Blocks.LADDER) || !level.getBlockState(pos).canBeReplaced() || !ladder.canSurvive(level, pos)) {
+			return;
+		}
+		if (pockets.takeOne(stack -> stack.is(Items.LADDER)).isEmpty()) {
+			return;
+		}
+		level.setBlockAndUpdate(pos, ladder);
+		level.playSound(null, pos, SoundEvents.LADDER_PLACE, SoundSource.NEUTRAL, 0.8F, 1.0F);
+	}
+
+	/** The last ladder, and with two Förderkörbe in the backpack a lift: one cage at the top, one in a niche at the bottom. */
+	public void finishShaft(ServerLevel level) {
+		if (shaft == null) {
+			return;
+		}
+
+		ShaftOrder order = shaft;
+		BlockPos bottom = order.cell(order.depth() - 1);
+		placeShaftLadder(level, bottom, order.ladderSide());
+		boolean lift = order.depth() >= 3 && pockets.count(stack -> stack.is(ModBlocks.FOERDERKORB.asItem())) >= 2 && buildLift(level, order, bottom);
+
+		record(ShiftLog.Entry.SHAFTS_SUNK);
+		if (getOwner() instanceof Player owner) {
+			owner.sendSystemMessage(Component.translatable(lift ? "message.kumpel.shaft.done_lift" : "message.kumpel.shaft.done", getDisplayName(),
+					order.depth()).withStyle(ChatFormatting.GOLD));
+			KumpelAdvancements.award(owner, KumpelAdvancements.ABTEUFEN);
+		}
+		playSound(ModSounds.KUMPEL_CHEER, 1.0F, 1.0F);
+		shaft = null;
+		setMining(false);
+	}
+
+	private boolean buildLift(ServerLevel level, ShaftOrder order, BlockPos bottom) {
+		Direction side = order.liftSide();
+		BlockPos topCage = order.top().relative(side);
+		BlockPos bottomCage = bottom.below().relative(side);
+		List<BlockPos> niche = List.of(bottom.relative(side), bottom.above().relative(side));
+		for (BlockPos pos : List.of(topCage, bottomCage, niche.get(0), niche.get(1))) {
+			if (!isOpen(pos) && !isDiggable(pos)) {
+				return false;
+			}
+		}
+
+		for (BlockPos pos : niche) {
+			if (!isOpen(pos)) {
+				digBlock(level, pos);
+			}
+		}
+		for (BlockPos pos : List.of(topCage, bottomCage)) {
+			if (!level.getBlockState(pos).canBeReplaced()) {
+				digBlock(level, pos);
+			}
+			pockets.takeOne(stack -> stack.is(ModBlocks.FOERDERKORB.asItem()));
+			level.setBlockAndUpdate(pos, ModBlocks.FOERDERKORB.defaultBlockState());
+		}
+		level.playSound(null, topCage, ModSounds.FOERDERKORB_UP, SoundSource.BLOCKS, 1.0F, 1.0F);
+		return true;
 	}
 
 	/** Can the Kumpel walk through here (air, torches, grass …) without fluids? */
@@ -2256,6 +2395,9 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		if (build != null) {
 			output.store("build", BuildOrder.CODEC, build);
 		}
+		if (shaft != null) {
+			output.store("shaft", ShaftOrder.CODEC, shaft);
+		}
 		writeInventoryToTag(output);
 	}
 
@@ -2276,6 +2418,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		finds.load(input);
 		tunnel = input.read("tunnel", TunnelOrder.CODEC).orElse(null);
 		build = input.read("build", BuildOrder.CODEC).orElse(null);
+		shaft = input.read("shaft", ShaftOrder.CODEC).orElse(null);
 		readInventoryFromTag(input);
 
 		healOnFirstRefresh = false;

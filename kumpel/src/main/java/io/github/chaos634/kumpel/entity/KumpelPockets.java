@@ -13,10 +13,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.behaviour.FieldForge;
+import io.github.chaos634.kumpel.registry.ModBlocks;
 
 /**
  * The Kumpel's backpack ("Kiepe"). It always has room for six rows, but the Kumpel only fills
@@ -177,6 +179,10 @@ public class KumpelPockets extends SimpleContainer {
 				return true;
 			}
 			if (owner.isBuildingMaterial(stack)) {
+				return true;
+			}
+			// Ladders and Förderkörbe for the shaft being sunk.
+			if (owner.getShaft() != null && (stack.is(Items.LADDER) || stack.is(ModBlocks.FOERDERKORB.asItem()))) {
 				return true;
 			}
 			if (keepFuel && FieldForge.isFuel(stack)) {

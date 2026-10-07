@@ -229,6 +229,13 @@ public final class KumpelConfig {
 		 */
 		public boolean sealTunnels = true;
 		/**
+		 * Abteufen: looking straight down, sneak-use the whistle on the ground and the nearest Hauer sinks a shaft there, with
+		 * ladders from its backpack (and, with two Förderkörbe in it, a lift).
+		 */
+		public boolean shafts = true;
+		/** How deep such a shaft goes (2 to 64). */
+		public int shaftDepth = 16;
+		/**
 		 * Streckenausbau: every few blocks, the tunnel digger sets a support frame (Türstock) of logs or steel girders
 		 * ({@code #kumpel:tunnel_supports}) from its backpack, with a lamp ({@code #kumpel:tunnel_lamps}) in it if it has one.
 		 */

@@ -34,7 +34,7 @@ public class WashGoal extends Goal {
 	}
 
 	private boolean wantsToWash() {
-		return KumpelSettings.get().behaviour().coalDust && kumpel.isTame() && !kumpel.isOrderedToSit() && kumpel.getTunnel() == null
+		return KumpelSettings.get().behaviour().coalDust && kumpel.isTame() && !kumpel.isOrderedToSit() && kumpel.getTunnel() == null && kumpel.getShaft() == null
 				&& kumpel.getDust() >= CoalDust.WASH_AT;
 	}
 

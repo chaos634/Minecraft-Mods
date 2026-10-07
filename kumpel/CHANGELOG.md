@@ -10,6 +10,12 @@ All notable changes to Kumpel are listed here.
 - Two buildings come with the mod (Unterstand and Zechenhaus); Baupläne are data, so data packs and other mods can add more. Zechenbau brings a headframe and a machine house.
 - Builders keep their building blocks; blocks built count in the shift log and the statistics. One more advancement (Master Builder) and a new Kumpelfibel page.
 
+### Abteufen
+
+- Look straight down and sneak-use the whistle: the nearest Hauer sinks a shaft, with ladders from its Kiepe, sealing water and lava and stopping when it breaks into a cave.
+- With two Förderkörbe in its Kiepe, it builds a lift: a cage at the top and one in a niche at the bottom.
+- Shafts count in the shift log and the statistics; one more advancement (Shaft Sinker) and a Kumpelfibel page.
+
 ## 0.13.0
 
 ### Bergparade

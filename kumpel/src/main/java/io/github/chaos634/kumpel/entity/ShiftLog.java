@@ -25,7 +25,8 @@ public class ShiftLog {
 		LEAKS_SEALED("leaks_sealed"),
 		COKE_MADE("coke_made"),
 		SUPPORTS_SET("supports_set"),
-		BLOCKS_BUILT("blocks_built");
+		BLOCKS_BUILT("blocks_built"),
+		SHAFTS_SUNK("shafts_sunk");
 
 		private final String key;
 

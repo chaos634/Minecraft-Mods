@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 
 import io.github.chaos634.kumpel.Kumpel;
-import io.github.chaos634.kumpel.build.Bauplan;
+import io.github.chaos634.kumpel.bau.Bauplan;
 import io.github.chaos634.kumpel.item.KumpelSoul;
 
 public final class ModComponents {

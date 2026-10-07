@@ -24,7 +24,8 @@ public final class MinerLamp {
 	public static boolean tryPlaceTorch(KumpelEntity kumpel, ServerLevel level) {
 		KumpelSettings settings = KumpelSettings.get();
 		KumpelConfig.Behaviour behaviour = settings.behaviour();
-		if (!behaviour.placeTorches || !kumpel.onGround() || kumpel.isInWater()) {
+		// In a shaft, the ladders need the room.
+		if (!behaviour.placeTorches || !kumpel.onGround() || kumpel.isInWater() || kumpel.getShaft() != null) {
 			return false;
 		}
 

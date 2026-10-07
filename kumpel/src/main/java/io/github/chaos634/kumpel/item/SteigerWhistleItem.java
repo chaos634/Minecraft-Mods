@@ -26,6 +26,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
+import io.github.chaos634.kumpel.entity.ShaftOrder;
 import io.github.chaos634.kumpel.registry.ModSounds;
 
 /**
@@ -36,6 +37,8 @@ public class SteigerWhistleItem extends Item {
 	private static final int COOLDOWN_TICKS = 20;
 	private static final int FULL_CREW = 5;
 	private static final double TUNNEL_ORDER_RANGE = 16.0;
+	/** Looking down at least this steeply orders a shaft instead of a break. */
+	private static final float SHAFT_PITCH = 60.0F;
 
 	public SteigerWhistleItem(Properties properties) {
 		super(properties);
@@ -70,13 +73,17 @@ public class SteigerWhistleItem extends Item {
 		// and everything else (like the ground) falls through to sending everyone on a break.
 		boolean container = level.getBlockEntity(pos) != null;
 		boolean wall = context.getClickedFace().getAxis().isHorizontal() && !level.getBlockState(pos).isAir();
-		if (!container && !wall) {
+		// Looking straight down at the ground: a shaft goes down right there.
+		boolean shaft = context.getClickedFace() == Direction.UP && player.getXRot() >= SHAFT_PITCH && !level.getBlockState(pos).isAir();
+		if (!container && !wall && !shaft) {
 			return InteractionResult.PASS;
 		}
 
 		if (level instanceof ServerLevel serverLevel) {
 			if (container) {
 				markStorage(serverLevel, player, pos);
+			} else if (shaft) {
+				orderShaft(serverLevel, player, pos);
 			} else {
 				orderTunnel(serverLevel, player, pos, context.getClickedFace());
 			}
@@ -162,7 +169,8 @@ public class SteigerWhistleItem extends Item {
 	 * Vortrieb: the nearest Kumpel with a pickaxe digs a tunnel into the clicked wall. The tunnel starts at the height
 	 * of the player's feet if they clicked the block in front of their feet or head.
 	 */
-	public static void orderTunnel(ServerLevel level, Player player, BlockPos clicked, Direction face) {
+	/** The Hauer nearest to the player, or {@code null}. */
+	private static KumpelEntity nearestHauer(ServerLevel level, Player player) {
 		KumpelEntity hauer = null;
 		double nearest = Double.MAX_VALUE;
 		for (KumpelEntity kumpel : KumpelEntity.findOwnedBy(level, player, TUNNEL_ORDER_RANGE)) {
@@ -172,7 +180,30 @@ public class SteigerWhistleItem extends Item {
 				nearest = distance;
 			}
 		}
+		return hauer;
+	}
 
+	/** Abteufen: the nearest Hauer sinks a shaft from the clicked block down, ladders on the far wall. */
+	public static void orderShaft(ServerLevel level, Player player, BlockPos clicked) {
+		KumpelEntity hauer = nearestHauer(level, player);
+		if (hauer == null) {
+			player.sendOverlayMessage(Component.translatable("message.kumpel.tunnel.no_hauer"));
+			return;
+		}
+		if (!KumpelSettings.get().behaviour().shafts || !hauer.canDigHere()) {
+			player.sendOverlayMessage(Component.translatable("message.kumpel.shaft.disabled"));
+			return;
+		}
+
+		int depth = Math.clamp(KumpelSettings.get().behaviour().shaftDepth, 2, 64);
+		hauer.startShaft(new ShaftOrder(clicked.immutable(), player.getDirection(), depth, 0));
+		whistle(level, player, ModSounds.WHISTLE_ORDER);
+		level.sendParticles(ParticleTypes.WAX_OFF, clicked.getX() + 0.5, clicked.getY() + 1.1, clicked.getZ() + 0.5, 12, 0.3, 0.2, 0.3, 0.0);
+		player.sendOverlayMessage(Component.translatable("message.kumpel.shaft.started", hauer.getDisplayName(), depth));
+	}
+
+	public static void orderTunnel(ServerLevel level, Player player, BlockPos clicked, Direction face) {
+		KumpelEntity hauer = nearestHauer(level, player);
 		if (hauer == null) {
 			player.sendOverlayMessage(Component.translatable("message.kumpel.tunnel.no_hauer"));
 			return;
@@ -211,5 +242,6 @@ public class SteigerWhistleItem extends Item {
 		tooltip.accept(Component.translatable("item.kumpel.steiger_whistle.break").withStyle(ChatFormatting.GRAY));
 		tooltip.accept(Component.translatable("item.kumpel.steiger_whistle.storage").withStyle(ChatFormatting.GRAY));
 		tooltip.accept(Component.translatable("item.kumpel.steiger_whistle.tunnel").withStyle(ChatFormatting.GRAY));
+		tooltip.accept(Component.translatable("item.kumpel.steiger_whistle.shaft").withStyle(ChatFormatting.GRAY));
 	}
 }
