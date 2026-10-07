@@ -184,28 +184,28 @@ public class ZechenbauClientGameTest implements FabricClientGameTest {
 			}
 		}
 
-		// A train of coal tubs on the track to the right of the yard.
-		for (int x = -15; x <= -8; x++) {
-			build.set(x, 0, 9, x >= -14 && x <= -11
+		// A train of coal tubs on the track in front of the yard.
+		for (int x = -10; x <= -2; x++) {
+			build.set(x, 0, 3, x >= -7 && x <= -5
 					? ZechenbauBlocks.HUNT.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.EAST)
 					: Blocks.RAIL.defaultBlockState().setValue(RailBlock.SHAPE, RailShape.EAST_WEST));
 		}
 
 		// Left of the yard, an open shelter where the miners' clothes hang on their hooks, like in the Waschkaue.
 		for (int x : new int[] {9, 13}) {
-			for (int z : new int[] {7, 10}) {
-				for (int y = 0; y <= 3; y++) {
+			for (int z : new int[] {8, 11}) {
+				for (int y = 0; y <= 2; y++) {
 					build.set(x, y, z, pillar);
 				}
 			}
 		}
 		for (int x = 9; x <= 13; x++) {
-			for (int z = 7; z <= 10; z++) {
-				build.set(x, 4, z, ZechenbauBlocks.ZECHENZIEGEL_SLAB.defaultBlockState());
+			for (int z = 8; z <= 11; z++) {
+				build.set(x, 3, z, ZechenbauBlocks.ZECHENZIEGEL_SLAB.defaultBlockState());
 			}
 		}
 		for (int x = 10; x <= 12; x++) {
-			build.set(x, 3, 8, ZechenbauBlocks.KAUENHAKEN.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH));
+			build.set(x, 2, 9, ZechenbauBlocks.KAUENHAKEN.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH));
 		}
 	}
 
