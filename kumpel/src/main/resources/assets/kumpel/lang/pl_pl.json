@@ -237,7 +237,8 @@
 	"fibel.kumpel.page.12": "§lZapiski§r\n\nDaj mu książkę: zapisze raport ze zmiany ze swoimi najlepszymi znaleziskami. Tablica marek pokazuje wszystkich twoich Kumpli, także tych daleko.",
 	"fibel.kumpel.page.13": "§lFajrant§r\n\nGdy śpisz, twoi Kumple siadają i odpoczywają. Tańczą przy szafach grających, a przy własnej płycie, Glück auf, śpiewają.",
 	"fibel.kumpel.page.14": "§lObudowa§r\n\nDaj rębaczowi pnie albo stalowe dźwigary: co 4 bloki sztolni stawia odrzwia. Z latarniami lub lampami górniczymi w plecaku odrzwia dostają też światło.",
-	"fibel.kumpel.page.15": "§lBarbórka§r\n\n4 grudnia, w dzień świętej Barbary, Kumple noszą kwitnącą gałązkę, a karmienie daje podwójne PD.\n\n\n§oGlück auf, Kumplu!§r",
+	"fibel.kumpel.page.15": "§lPył węglowy§r\n\nPrzy kopaniu Kumpel brudzi się pyłem, najbardziej od węgla. Woda i deszcz go zmywają, wiadro wody od razu, a brudny Kumpel myje się przy kotle z wodą w pobliżu: w łaźni.",
+	"fibel.kumpel.page.16": "§lBarbórka§r\n\n4 grudnia, w dzień świętej Barbary, Kumple noszą kwitnącą gałązkę, a karmienie daje podwójne PD.\n\n\n§oGlück auf, Kumplu!§r",
 	"item.kumpel.knifte": "Kanapka górnicza",
 	"guide.kumpel.knifte": "Kanapka górnika z menażki: gruba kromka chleba z szynką. Syci i jest ulubionym jedzeniem wielu Kumpli. Z chleba i pieczonego schabu albo steku.",
 	"item.kumpel.muckefuck": "Kawa zbożowa",
@@ -317,5 +318,10 @@
 	"config.kumpel.tunnel_supports": "Obudowa: odrzwia w sztolniach",
 	"config.kumpel.support_interval": "Bloki między odrzwiami",
 	"advancements.kumpel.streckenausbau.title": "Obudowa chodnika",
-	"advancements.kumpel.streckenausbau.description": "Niech Kumpel postawi odrzwia w swojej sztolni"
+	"advancements.kumpel.streckenausbau.description": "Niech Kumpel postawi odrzwia w swojej sztolni",
+	"message.kumpel.dusty": "%s: Uff, jestem czarny jak węgiel. Czas do łaźni!",
+	"message.kumpel.washed": "%s zmył z siebie pył węglowy. Ach, świeżo!",
+	"config.kumpel.coal_dust": "Pył węglowy: brudzić się, myć w łaźni",
+	"advancements.kumpel.waschkaue.title": "Łaźnia górnicza",
+	"advancements.kumpel.waschkaue.description": "Doprowadź do tego, by Kumpel zmył pył węglowy"
 }

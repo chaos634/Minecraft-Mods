@@ -1,0 +1,24 @@
+{
+  "parent": "kumpel:hauer",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.kumpel.waschkaue.title"
+    },
+    "description": {
+      "translate": "advancements.kumpel.waschkaue.description"
+    },
+    "icon": {
+      "id": "minecraft:water_bucket"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

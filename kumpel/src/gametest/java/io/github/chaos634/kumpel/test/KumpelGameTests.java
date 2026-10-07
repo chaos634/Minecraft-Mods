@@ -45,6 +45,7 @@ import io.github.chaos634.kumpel.entity.KumpelPockets;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.entity.OreRule;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
+import io.github.chaos634.kumpel.entity.behaviour.CoalDust;
 import io.github.chaos634.kumpel.entity.behaviour.OreGlimmer;
 import io.github.chaos634.kumpel.block.FoerderkorbBlock;
 import io.github.chaos634.kumpel.entity.ExitTrail;
@@ -660,6 +661,63 @@ public class KumpelGameTests {
 		helper.assertTrue(loot.size() == 1 && loot.getFirst().is(Items.SPRUCE_LOG),
 				Component.literal("A Hauer keeps one stack of logs and one of lamps, got " + loot));
 		helper.succeed();
+	}
+
+	@GameTest
+	public void diggingMakesAKumpelDusty(GameTestHelper helper) {
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_PICKAXE));
+		helper.setBlock(3, 1, 1, Blocks.STONE);
+		kumpel.digBlock(helper.getLevel(), helper.absolutePos(new BlockPos(3, 1, 1)));
+		helper.assertTrue(kumpel.getDust() == 1 && kumpel.getDustStage() == 0, Component.literal("A little stone dust, not visible yet"));
+
+		for (int i = 0; i < 10; i++) {
+			helper.setBlock(3, 1, 1, Blocks.COAL_ORE);
+			kumpel.digBlock(helper.getLevel(), helper.absolutePos(new BlockPos(3, 1, 1)));
+		}
+		helper.assertTrue(kumpel.getDust() == 41 && kumpel.getDustStage() == 2,
+				Component.literal("Coal makes it really dusty, got " + kumpel.getDust() + " (stage " + kumpel.getDustStage() + ")"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 200)
+	public void waterWashesTheDustOff(GameTestHelper helper) {
+		buildFloor(helper);
+		helper.setBlock(2, 1, 2, Blocks.WATER);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 2, 1, 2);
+		kumpel.addDust(CoalDust.MAX);
+		helper.assertTrue(kumpel.getDustStage() == CoalDust.STAGES, Component.literal("Fully dusty to begin with"));
+		helper.succeedWhen(() -> helper.assertTrue(kumpel.getDust() == 0, Component.literal("The water should wash it clean, dust " + kumpel.getDust())));
+	}
+
+	@GameTest
+	public void aBucketOfWaterWashesAtOnce(GameTestHelper helper) {
+		Player owner = ownerAt(helper, 2, 2);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+		kumpel.addDust(CoalDust.MAX);
+		owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
+		kumpel.mobInteract(owner, InteractionHand.MAIN_HAND);
+		helper.assertTrue(kumpel.getDust() == 0 && kumpel.getDustStage() == 0, Component.literal("The bucket should wash it clean"));
+		helper.assertTrue(owner.getItemInHand(InteractionHand.MAIN_HAND).is(Items.BUCKET), Component.literal("The bucket is empty afterwards"));
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 400)
+	public void dustyKumpelWashesInTheKaue(GameTestHelper helper) {
+		buildFloor(helper);
+		BlockPos cauldron = new BlockPos(6, 1, 6);
+		helper.setBlock(cauldron, Blocks.WATER_CAULDRON.defaultBlockState().setValue(net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL, 3));
+		Player owner = ownerAt(helper, 2, 2);
+		KumpelEntity kumpel = helper.spawn(ModEntities.KUMPEL, 1, 1, 1);
+		kumpel.tame(owner);
+		kumpel.addDust(CoalDust.MAX);
+
+		helper.succeedWhen(() -> {
+			helper.assertTrue(kumpel.getDust() == 0, Component.literal("The Kumpel should wash at the cauldron, dust " + kumpel.getDust()));
+			helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(cauldron)).getValue(net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL) == 2,
+					Component.literal("Washing takes a level of water"));
+		});
 	}
 
 	@GameTest(maxTicks = 400)

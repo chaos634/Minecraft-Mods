@@ -237,7 +237,8 @@
 	"fibel.kumpel.page.12": "§lAdministratie§r\n\nGeef hem een boek: hij schrijft zijn dienstrapport met zijn beste ertsvondsten. Een penningbord toont al je Kumpels, ook die ver weg.",
 	"fibel.kumpel.page.13": "§lSchaft§r\n\nAls je slaapt, gaan je Kumpels zitten en rusten. Ze dansen bij jukeboxen, en bij hun eigen plaat, Glück auf, zingen ze mee.",
 	"fibel.kumpel.page.14": "§lStreckenausbau§r\n\nGeef een houwer stammen of stalen balken: om de 4 blokken tunnel zet hij een stutraam. Met lantaarns of mijnlampen in zijn rugzak krijgt het raam ook licht.",
-	"fibel.kumpel.page.15": "§lBarbaradag§r\n\nOp 4 december, de dag van de heilige Barbara, dragen Kumpels een bloeiende tak en geeft voeren dubbele XP.\n\n\n§oGlück auf, Kumpel!§r",
+	"fibel.kumpel.page.15": "§lKolenstof§r\n\nVan graven wordt je Kumpel stoffig, van kolen het meest. Water en regen wassen het af, een emmer water in één keer, en een stoffige Kumpel wast zich bij een waterketel in de buurt: de badzaal.",
+	"fibel.kumpel.page.16": "§lBarbaradag§r\n\nOp 4 december, de dag van de heilige Barbara, dragen Kumpels een bloeiende tak en geeft voeren dubbele XP.\n\n\n§oGlück auf, Kumpel!§r",
 	"item.kumpel.knifte": "Knifte",
 	"guide.kumpel.knifte": "De boterham van de mijnwerker uit de Henkelmann: een dikke snee brood met ham. Vult goed en is het lievelingseten van veel Kumpels. Van brood en een gebraden karbonade of biefstuk.",
 	"item.kumpel.muckefuck": "Muckefuck",
@@ -317,5 +318,10 @@
 	"config.kumpel.tunnel_supports": "Gangondersteuning: stutramen in tunnels",
 	"config.kumpel.support_interval": "Blokken tussen twee stutramen",
 	"advancements.kumpel.streckenausbau.title": "Gangondersteuning",
-	"advancements.kumpel.streckenausbau.description": "Laat een Kumpel een stutraam in zijn tunnel zetten"
+	"advancements.kumpel.streckenausbau.description": "Laat een Kumpel een stutraam in zijn tunnel zetten",
+	"message.kumpel.dusty": "%s: Pff, ik ben zo zwart als kolen. Tijd voor de badzaal!",
+	"message.kumpel.washed": "%s heeft het kolenstof afgewassen. Ahh, fris!",
+	"config.kumpel.coal_dust": "Kolenstof: vies worden, wassen in de badzaal",
+	"advancements.kumpel.waschkaue.title": "Badzaal",
+	"advancements.kumpel.waschkaue.description": "Laat een Kumpel het kolenstof afwassen"
 }

@@ -164,3 +164,11 @@ Ein richtiger Stollen braucht Ausbau, und Licht.
 - ✅ **Türstöcke**: Alle 4 Blöcke setzt der Hauer im Stollen einen Türstock aus Holzstämmen, oder aus Stahlträgern von Zechenbau. Was er dafür herausbricht, kommt in die Kiepe.
 - ✅ **Stollenlampen**: Laternen und Grubenlampen (Zechenbau) aus der Kiepe kommen auf einen der Stempel, abwechselnd links und rechts.
 - ✅ **Gezähe bereithalten**: Ein Hauer behält einen Stapel Stämme und einen Stapel Lampen in der Kiepe.
+
+## Phase 16: Kohlenstaub & Waschkaue ✅
+
+Nach der Schicht geht's in die Kaue.
+
+- ✅ **Kohlenstaub**: Beim Graben wird der Kumpel staubig, von Kohle am meisten, sichtbar in drei Stufen bis schwarz wie Kohle.
+- ✅ **Waschkaue**: Wasser und Regen waschen ihn, ein Eimer Wasser auf einmal. Ein staubiger Kumpel geht von selbst zu einem Wasserkessel in der Nähe und wäscht sich dort.
+- ✅ **Leuchtende Helmlampe**: Die Lampe am Helm (und das Feuer der Feldschmiede) leuchtet im Dunkeln.

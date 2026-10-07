@@ -66,11 +66,14 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.InfestedBlock;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -96,8 +99,10 @@ import io.github.chaos634.kumpel.entity.ai.DeliverItemsGoal;
 import io.github.chaos634.kumpel.entity.ai.DigTunnelGoal;
 import io.github.chaos634.kumpel.entity.ai.LeadOutGoal;
 import io.github.chaos634.kumpel.entity.ai.MineOreGoal;
+import io.github.chaos634.kumpel.entity.ai.WashGoal;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
 import io.github.chaos634.kumpel.entity.behaviour.CanaryWarning;
+import io.github.chaos634.kumpel.entity.behaviour.CoalDust;
 import io.github.chaos634.kumpel.entity.behaviour.DangerSense;
 import io.github.chaos634.kumpel.entity.behaviour.FieldForge;
 import io.github.chaos634.kumpel.entity.behaviour.MinerLamp;
@@ -126,6 +131,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_CANARY = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> DATA_FORGE = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.BOOLEAN);
+	/** How dusty it looks (0 is clean, up to {@link CoalDust#STAGES}). */
+	private static final EntityDataAccessor<Integer> DATA_DUST = SynchedEntityData.defineId(KumpelEntity.class, EntityDataSerializers.INT);
 
 	private static final double MAX_SENSE_DISTANCE_FROM_OWNER_SQ = 24.0 * 24.0;
 	private static final double MAX_MINE_DISTANCE_FROM_OWNER_SQ = 16.0 * 16.0;
@@ -133,6 +140,8 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private static final int STORAGE_RETRY_TICKS = 600;
 	/** Blocks harder than this (obsidian, ancient debris …) stop a tunnel. */
 	private static final float MAX_TUNNEL_HARDNESS = 25.0F;
+	/** Health a good wash brings back. */
+	private static final float WASH_HEAL = 4.0F;
 	private static final int SILVERFISH_RADIUS = 12;
 	private static final int SILVERFISH_WARNING_COOLDOWN = 1200;
 	private static final int SILVERFISH_GLOW_LIMIT = 16;
@@ -196,6 +205,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 	private long lastSingAlong = Long.MIN_VALUE / 2;
 	/** Leibgericht: chosen when first needed, from {@code favorite_foods} in the config. */
 	private Identifier favoriteFood;
+	private int dust;
 	/** Whether the owner was close by at the last check, in this dimension. */
 	private boolean nearOwnerBefore;
 	private final ExitTrail exitTrail = new ExitTrail();
@@ -229,6 +239,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		this.goalSelector.addGoal(4, new DeliverItemsGoal(this, 1.15));
 		this.goalSelector.addGoal(5, new DigTunnelGoal(this, 1.0));
 		this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.1, 10.0F, 3.0F));
+		this.goalSelector.addGoal(6, new WashGoal(this, 1.0));
 		this.goalSelector.addGoal(7, new CollectItemsGoal(this, 1.15));
 		this.goalSelector.addGoal(8, new MineOreGoal(this, 1.1));
 		this.goalSelector.addGoal(9, new WaterAvoidingRandomStrollGoal(this, 0.8));
@@ -249,6 +260,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		builder.define(DATA_DANCING, false);
 		builder.define(DATA_CANARY, false);
 		builder.define(DATA_FORGE, false);
+		builder.define(DATA_DUST, 0);
 	}
 
 	private static KumpelConfig.Behaviour behaviour() {
@@ -322,6 +334,62 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 	public FieldForge getForge() {
 		return forge;
+	}
+
+	// ------------------------------------------------------------------
+	// Kohlenstaub & Waschkaue
+
+	public int getDust() {
+		return dust;
+	}
+
+	/** How dusty it looks: 0 (clean) to {@link CoalDust#STAGES}. */
+	public int getDustStage() {
+		return this.entityData.get(DATA_DUST);
+	}
+
+	private void setDust(int amount) {
+		dust = Mth.clamp(amount, 0, CoalDust.MAX);
+		this.entityData.set(DATA_DUST, CoalDust.stage(dust));
+	}
+
+	/** Digging and coking raise dust; when it gets really black, the Kumpel says so. */
+	public void addDust(int amount) {
+		if (!behaviour().coalDust || amount <= 0) {
+			return;
+		}
+
+		int before = CoalDust.stage(dust);
+		setDust(dust + amount);
+		if (before < CoalDust.STAGES && CoalDust.stage(dust) == CoalDust.STAGES && getOwner() instanceof Player owner) {
+			owner.sendOverlayMessage(Component.translatable("message.kumpel.dusty", getDisplayName()));
+		}
+	}
+
+	/** Washes some dust off. */
+	public void wash(int amount) {
+		setDust(dust - amount);
+	}
+
+	/** Waschkaue: washes in a water cauldron, which loses a level of water, and feels better for it. */
+	public void washInCauldron(ServerLevel level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+		if (!state.is(Blocks.WATER_CAULDRON) || dust == 0) {
+			return;
+		}
+
+		LayeredCauldronBlock.lowerFillLevel(state, level, pos);
+		washClean(level);
+	}
+
+	private void washClean(ServerLevel level) {
+		setDust(0);
+		heal(WASH_HEAL);
+		CoalDust.splash(level, this);
+		KumpelAdvancements.award(getOwner(), KumpelAdvancements.WASCHKAUE);
+		if (getOwner() instanceof Player owner && distanceToSqr(owner) < 32.0 * 32.0) {
+			owner.sendOverlayMessage(Component.translatable("message.kumpel.washed", getDisplayName()));
+		}
 	}
 
 	/** Takes over the experience and settings stored in a Kumpel Core. */
@@ -734,6 +802,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				|| stack.is(Items.BOOK)
 				|| (stack.is(ModItems.CANARY_CAGE) && !hasCanary())
 				|| (stack.is(ModItems.FIELD_FORGE) && !hasForge())
+				|| (stack.is(Items.WATER_BUCKET) && dust > 0)
 				|| KumpelPockets.isTorch(stack)
 				|| settings.isRepairItem(stack)
 				|| settings.feedExperience(stack) > 0
@@ -749,6 +818,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 
 		if (packing) {
 			packInto(player, stack);
+		} else if (stack.is(Items.WATER_BUCKET)) {
+			// A bucket of water over its head washes it clean at once.
+			player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
+			washClean((ServerLevel) level());
 		} else if (stack.is(ItemTags.PICKAXES)) {
 			// Swap pickaxes: the Kumpel takes yours and hands back the one it had, if any.
 			ItemStack previous = getMainHandItem();
@@ -1141,6 +1214,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		level.destroyBlock(pos, false, this);
 		finds.forget(pos);
 		Block.dropResources(state, level, pos, blockEntity, this, tool);
+		addDust(CoalDust.fromDigging(state));
 		tool.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
 		checkToolWear();
 		record(ShiftLog.Entry.ORES_MINED);
@@ -1350,6 +1424,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		level.destroyBlock(pos, false, this);
 		finds.forget(pos);
 		record(ShiftLog.Entry.BLOCKS_DUG);
+		addDust(CoalDust.fromDigging(state));
 		for (ItemStack drop : drops) {
 			ItemStack rest = pockets.addToPockets(drop);
 			if (!rest.isEmpty()) {
@@ -1507,6 +1582,10 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		if (tickCount % 20 == 15) {
 			equipToolFromPockets(level);
 			updateDancing(level);
+		}
+
+		if (tickCount % 20 == 7) {
+			CoalDust.tick(this);
 		}
 
 		if (hasForge() && tickCount % FieldForge.INTERVAL == 3) {
@@ -2027,6 +2106,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		}
 		output.putBoolean("canary", hasCanary());
 		output.putBoolean("field_forge", hasForge());
+		output.putInt("coal_dust", dust);
 		forge.save(output);
 		log.save(output);
 		finds.save(output);
@@ -2047,6 +2127,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 		favoriteFood = Identifier.tryParse(input.getStringOr("favorite_food", ""));
 		setCanary(input.getBooleanOr("canary", false));
 		setForge(input.getBooleanOr("field_forge", false));
+		setDust(input.getIntOr("coal_dust", 0));
 		forge.load(input);
 		log.load(input);
 		finds.load(input);

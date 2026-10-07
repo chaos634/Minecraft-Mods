@@ -12,4 +12,6 @@ public class KumpelRenderState extends ArmedEntityRenderState {
 	public boolean barbaraDay;
 	public boolean canary;
 	public boolean forge;
+	/** Dust stage, 0 (clean) to 3. */
+	public int dust;
 }

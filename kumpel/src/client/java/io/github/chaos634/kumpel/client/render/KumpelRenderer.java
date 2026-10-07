@@ -14,6 +14,8 @@ public class KumpelRenderer extends MobRenderer<KumpelEntity, KumpelRenderState,
 		super(context, new KumpelModel(context.bakeLayer(KumpelModel.LAYER)), 0.35F);
 		// Shows the pickaxe of a Kumpel in Hauer mode.
 		addLayer(new ItemInHandLayer<>(this));
+		addLayer(new KumpelDustLayer(this));
+		addLayer(new KumpelLampLayer(this));
 	}
 
 	@Override
@@ -35,6 +37,7 @@ public class KumpelRenderer extends MobRenderer<KumpelEntity, KumpelRenderState,
 				|| (entity.getCustomName() != null && entity.getCustomName().getString().equalsIgnoreCase("Barbara"));
 		state.canary = entity.hasCanary();
 		state.forge = entity.hasForge();
+		state.dust = entity.getDustStage();
 	}
 
 	@Override

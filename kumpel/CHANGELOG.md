@@ -2,6 +2,15 @@
 
 All notable changes to Kumpel are listed here.
 
+## 0.12.0
+
+### Kohlenstaub & Waschkaue
+
+- Digging makes Kumpels dusty, coal most of all, in three stages you can see on them.
+- Water and rain wash the dust off, a bucket of water at once; a dusty Kumpel walks to a water cauldron nearby and washes there.
+- The helmet lamp (and the field forge's fire) glow in the dark.
+- One more advancement (Pithead Baths) and a new page in the Kumpelfibel.
+
 ## 0.11.0
 
 ### Streckenausbau

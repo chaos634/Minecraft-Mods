@@ -242,6 +242,11 @@ public final class KumpelConfig {
 		public List<String> smeltTags = new ArrayList<>(List.of("c:raw_materials", "c:ores"));
 		/** Kokerei: when the field forge has nothing to smelt, it turns coal from the backpack into coke. */
 		public boolean coking = true;
+		/**
+		 * Kohlenstaub &amp; Waschkaue: digging makes Kumpels dusty; water, rain and a bucket of water wash them, and a dusty
+		 * Kumpel goes to wash in a water cauldron nearby.
+		 */
+		public boolean coalDust = true;
 
 		/** Grubenwehr: Kumpels fight monsters that attack you or that you attack. Creepers are left alone. */
 		public boolean defendOwner = true;

@@ -237,7 +237,8 @@
 	"fibel.kumpel.page.12": "§lBuchführung§r\n\nGib ihm ein Buch: Er schreibt seinen Schichtbericht mit seinen besten Erzfunden. Eine Markentafel zeigt alle deine Kumpels, auch die weit weg.",
 	"fibel.kumpel.page.13": "§lFeierabend§r\n\nWenn du schläfst, setzen sich deine Kumpels und ruhen sich aus. Sie tanzen zu Jukeboxen, und zu ihrer eigenen Platte, Glück auf, singen sie mit.",
 	"fibel.kumpel.page.14": "§lStreckenausbau§r\n\nGib einem Hauer Holzstämme oder Stahlträger: Alle 4 Blöcke setzt er im Stollen einen Türstock. Mit Laternen oder Grubenlampen in der Kiepe bekommt der Türstock auch Licht.",
-	"fibel.kumpel.page.15": "§lBarbaratag§r\n\nAm 4. Dezember, dem Tag der heiligen Barbara, tragen Kumpels einen blühenden Zweig, und Füttern gibt doppelte EP.\n\n\n§oGlück auf, Kumpel!§r",
+	"fibel.kumpel.page.15": "§lKohlenstaub§r\n\nBeim Graben wird dein Kumpel staubig, von Kohle am meisten. Wasser und Regen waschen ihn ab, ein Eimer Wasser auf einmal, und ein staubiger Kumpel wäscht sich an einem Wasserkessel in der Nähe: der Kaue.",
+	"fibel.kumpel.page.16": "§lBarbaratag§r\n\nAm 4. Dezember, dem Tag der heiligen Barbara, tragen Kumpels einen blühenden Zweig, und Füttern gibt doppelte EP.\n\n\n§oGlück auf, Kumpel!§r",
 	"item.kumpel.knifte": "Knifte",
 	"guide.kumpel.knifte": "Das Butterbrot aus dem Henkelmann: eine dicke Scheibe Brot mit Schinken. Macht satt und ist das Leibgericht vieler Kumpels. Aus Brot und einem gebratenen Kotelett oder Steak.",
 	"item.kumpel.muckefuck": "Muckefuck",
@@ -317,5 +318,10 @@
 	"config.kumpel.tunnel_supports": "Streckenausbau: Türstöcke im Stollen",
 	"config.kumpel.support_interval": "Blöcke zwischen zwei Türstöcken",
 	"advancements.kumpel.streckenausbau.title": "Streckenausbau",
-	"advancements.kumpel.streckenausbau.description": "Lass einen Kumpel einen Türstock in seinen Stollen setzen"
+	"advancements.kumpel.streckenausbau.description": "Lass einen Kumpel einen Türstock in seinen Stollen setzen",
+	"message.kumpel.dusty": "%s: Puh, ich bin schwarz wie Kohle. Ab in die Kaue!",
+	"message.kumpel.washed": "%s hat sich den Kohlenstaub abgewaschen. Ahh, frisch!",
+	"config.kumpel.coal_dust": "Kohlenstaub: schmutzig werden, in der Kaue waschen",
+	"advancements.kumpel.waschkaue.title": "Waschkaue",
+	"advancements.kumpel.waschkaue.description": "Wasch einem Kumpel den Kohlenstaub ab"
 }

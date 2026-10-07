@@ -79,6 +79,7 @@ public class FieldForge {
 			pockets.addToPockets(new ItemStack(ModItems.COKE));
 			fuel--;
 			kumpel.record(ShiftLog.Entry.COKE_MADE);
+			kumpel.addDust(1);
 			KumpelAdvancements.award(kumpel.getOwner(), KumpelAdvancements.ZOLLVEREIN);
 			return;
 		}

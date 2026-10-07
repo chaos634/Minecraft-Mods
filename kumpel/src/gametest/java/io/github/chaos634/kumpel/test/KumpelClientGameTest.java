@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -13,6 +14,9 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -24,6 +28,7 @@ import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelTier;
 import io.github.chaos634.kumpel.entity.behaviour.BarbaraDay;
+import io.github.chaos634.kumpel.entity.behaviour.CoalDust;
 import io.github.chaos634.kumpel.registry.ModBlocks;
 import io.github.chaos634.kumpel.registry.ModEntities;
 import io.github.chaos634.kumpel.registry.ModItems;
@@ -36,11 +41,16 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 	/** Chat messages (like command feedback) fade out after 200 ticks. */
 	private static final int CHAT_FADE_TICKS = 220;
 
-	/** A tamed Kumpel of the given level that sits still (its AI still runs, so its helmet lamp and forge work). */
+	/** A tamed Kumpel of the given level that sits still (its AI still runs, so its helmet lamp and forge work), dusty if asked. */
 	private static KumpelEntity sittingKumpel(ServerLevel level, ServerPlayer owner, double x, double y, double z, float yaw, int tier) {
+		return sittingKumpel(level, owner, x, y, z, yaw, tier, 0);
+	}
+
+	private static KumpelEntity sittingKumpel(ServerLevel level, ServerPlayer owner, double x, double y, double z, float yaw, int tier, int dust) {
 		KumpelEntity kumpel = new KumpelEntity(ModEntities.KUMPEL, level);
 		kumpel.snapTo(x, y, z, yaw, 0.0F);
 		kumpel.addExperience(KumpelSettings.get().tier(tier).requiredExperience());
+		kumpel.addDust(dust);
 		kumpel.tame(owner);
 		kumpel.setOrderedToSit(true);
 		kumpel.setOreSensing(false);
@@ -183,6 +193,60 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 			singleplayer.getConnection().waitForChunksRender();
 			context.waitTicks(CHAT_FADE_TICKS);
 			context.takeScreenshot("kumpel_unter_tage");
+
+			// Strecke: a gallery with support frames and lanterns, coal in the walls, and Kumpels black with coal dust;
+			// a water cauldron for the Kaue waits by the entrance.
+			server.runCommand("execute as @p at @s run tp @s ~30 ~ ~ 0 8");
+			singleplayer.getConnection().waitForChunksRender();
+			server.runOnServer(minecraftServer -> {
+				ServerLevel level = singleplayer.getConnection().getServerLevel();
+				ServerPlayer player = singleplayer.getConnection().getServerPlayer();
+				BlockPos origin = player.blockPosition();
+				for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-4, -1, -2), origin.offset(4, 4, 16))) {
+					boolean gallery = Math.abs(pos.getX() - origin.getX()) <= 1 && pos.getY() >= origin.getY() && pos.getY() <= origin.getY() + 2
+							&& pos.getZ() - origin.getZ() < 15;
+					level.setBlockAndUpdate(pos, gallery ? Blocks.AIR.defaultBlockState() : Blocks.STONE.defaultBlockState());
+				}
+				BlockState post = Blocks.OAK_LOG.defaultBlockState();
+				BlockState cap = post.setValue(RotatedPillarBlock.AXIS, Direction.Axis.X);
+				for (int z = 2, frame = 0; z <= 14; z += 4, frame++) {
+					for (int y = 0; y <= 2; y++) {
+						level.setBlockAndUpdate(origin.offset(-2, y, z), post);
+						level.setBlockAndUpdate(origin.offset(2, y, z), post);
+					}
+					for (int x = -2; x <= 2; x++) {
+						level.setBlockAndUpdate(origin.offset(x, 3, z), cap);
+					}
+					level.setBlockAndUpdate(origin.offset(frame % 2 == 0 ? 2 : -2, 2, z), Blocks.LANTERN.defaultBlockState());
+				}
+				for (BlockPos coal : List.of(origin.offset(-2, 1, 4), origin.offset(2, 0, 8), origin.offset(-2, 2, 9), origin.offset(2, 1, 12),
+						origin.offset(-1, 1, 15), origin.offset(0, 2, 15), origin.offset(1, 0, 15), origin.offset(0, 0, 15))) {
+					level.setBlockAndUpdate(coal, Blocks.COAL_ORE.defaultBlockState());
+				}
+				level.setBlockAndUpdate(origin.offset(-1, 0, 3), Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3));
+
+				// Dust first, then the owner, so nobody calls out for the Kaue during the picture.
+				KumpelEntity hauer = new KumpelEntity(ModEntities.KUMPEL, level);
+				hauer.snapTo(origin.getX() - 0.3, origin.getY(), origin.getZ() + 5.5, 165.0F, 0.0F);
+				hauer.addExperience(KumpelSettings.get().tier(3).requiredExperience());
+				hauer.addDust(CoalDust.MAX);
+				hauer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+				hauer.setNoAi(true);
+				level.addFreshEntity(hauer);
+
+				sittingKumpel(level, player, origin.getX() + 1.5, origin.getY(), origin.getZ() + 7.5, 200.0F, 2, CoalDust.WASH_AT);
+
+				KumpelEntity smith = new KumpelEntity(ModEntities.KUMPEL, level);
+				smith.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 10.5, 180.0F, 0.0F);
+				smith.addExperience(KumpelSettings.get().tier(4).requiredExperience());
+				smith.addDust(CoalDust.WASH_AT / 2);
+				smith.setForge(true);
+				smith.setNoAi(true);
+				level.addFreshEntity(smith);
+			});
+			singleplayer.getConnection().waitForChunksRender();
+			context.waitTicks(CHAT_FADE_TICKS);
+			context.takeScreenshot("kumpel_strecke");
 			KumpelSettings.get().behaviour().chatter = true;
 			KumpelSettings.get().behaviour().timeAnnouncements = true;
 		}

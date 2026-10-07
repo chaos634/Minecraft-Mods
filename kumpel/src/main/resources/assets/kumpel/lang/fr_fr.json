@@ -237,7 +237,8 @@
 	"fibel.kumpel.page.12": "§lRegistres§r\n\nDonnez-lui un livre : il écrit son rapport de poste avec ses meilleures trouvailles. Un tableau des jetons montre tous vos Kumpels, même les plus lointains.",
 	"fibel.kumpel.page.13": "§lFin de poste§r\n\nQuand vous dormez, vos Kumpels s'assoient et se reposent. Ils dansent près des juke-box, et sur leur propre disque, Glück auf, ils chantent.",
 	"fibel.kumpel.page.14": "§lBoisage§r\n\nDonnez des bûches ou des poutres en acier à un haveur : tous les 4 blocs de galerie, il pose un cadre. Avec des lanternes ou des lampes de mineur dans sa hotte, le cadre a aussi sa lampe.",
-	"fibel.kumpel.page.15": "§lSainte-Barbe§r\n\nLe 4 décembre, jour de la Sainte-Barbe, les Kumpels portent une branche fleurie et les nourrir donne le double d'XP.\n\n\n§oGlück auf, Kumpel !§r",
+	"fibel.kumpel.page.15": "§lPoussière§r\n\nEn creusant, votre Kumpel se couvre de poussière, surtout de charbon. L'eau et la pluie le lavent, un seau d'eau d'un coup, et un Kumpel sale va se laver à un chaudron d'eau proche : la salle des pendus.",
+	"fibel.kumpel.page.16": "§lSainte-Barbe§r\n\nLe 4 décembre, jour de la Sainte-Barbe, les Kumpels portent une branche fleurie et les nourrir donne le double d'XP.\n\n\n§oGlück auf, Kumpel !§r",
 	"item.kumpel.knifte": "Casse-croûte",
 	"guide.kumpel.knifte": "Le casse-croûte du mineur : une épaisse tranche de pain avec du jambon. Nourrissant, et le plat préféré de bien des Kumpels. Avec du pain et une côtelette ou un steak cuits.",
 	"item.kumpel.muckefuck": "Café d'orge",
@@ -317,5 +318,10 @@
 	"config.kumpel.tunnel_supports": "Boisage : cadres dans les galeries",
 	"config.kumpel.support_interval": "Blocs entre deux cadres",
 	"advancements.kumpel.streckenausbau.title": "Boisage",
-	"advancements.kumpel.streckenausbau.description": "Faites poser un cadre de boisage à un Kumpel dans sa galerie"
+	"advancements.kumpel.streckenausbau.description": "Faites poser un cadre de boisage à un Kumpel dans sa galerie",
+	"message.kumpel.dusty": "%s : Ouf, je suis noir comme du charbon. Direction la salle des pendus !",
+	"message.kumpel.washed": "%s s'est lavé de la poussière de charbon. Ahh, tout propre !",
+	"config.kumpel.coal_dust": "Poussière de charbon : se salir, se laver",
+	"advancements.kumpel.waschkaue.title": "Salle des pendus",
+	"advancements.kumpel.waschkaue.description": "Faites laver un Kumpel de sa poussière de charbon"
 }
