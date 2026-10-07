@@ -16,6 +16,12 @@ All notable changes to Kumpel are listed here.
 - With two Förderkörbe in its Kiepe, it builds a lift: a cage at the top and one in a niche at the bottom.
 - Shafts count in the shift log and the statistics; one more advancement (Shaft Sinker) and a Kumpelfibel page.
 
+### Fixes
+
+- Ausfahrt: whether you are back under open sky is now told from the blocks above you rather than from sky light, which lags behind when blocks change, so the Kumpel no longer gives up on the way out right after it started.
+- Marchers in a Bergparade step onto their spot in the column instead of stopping just short of it.
+- A new screenshot: a small settlement built from Baupläne.
+
 ## 0.13.0
 
 ### Bergparade

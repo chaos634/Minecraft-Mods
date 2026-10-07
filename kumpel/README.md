@@ -67,6 +67,8 @@ Everything the mod adds is in its own **Kumpel** creative tab.
 
 ![A gallery with support frames and lanterns: Kumpels black with coal dust, a field forge glowing, coal in the walls](../.github/media/kumpel/strecke.jpg)
 
+![A small settlement built by Kumpels from Baupläne: an Unterstand with a lantern and a water cauldron, and a Zechenhaus of bricks and logs](../.github/media/kumpel/siedlung.jpg)
+
 ## Controls
 
 | Action | Effect |

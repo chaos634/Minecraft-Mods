@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+import io.github.chaos634.kumpel.entity.ExitTrail;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 
 /**
@@ -65,7 +66,7 @@ public class LeadOutGoal extends Goal {
 			kumpel.finishLeadingOut(false);
 			return;
 		}
-		if (level.canSeeSky(owner.blockPosition()) || points.isEmpty()) {
+		if (!ExitTrail.isUnderground(level, owner.blockPosition()) || points.isEmpty()) {
 			kumpel.finishLeadingOut(true);
 			return;
 		}

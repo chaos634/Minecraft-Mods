@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 /**
  * Ausfahrt: the way the owner walked underground, from the last place with open sky. Recorded every few blocks;
@@ -74,6 +75,14 @@ public class ExitTrail {
 	/** From the way out (index 0) to the deepest point. */
 	public List<BlockPos> points() {
 		return points;
+	}
+
+	/**
+	 * Is there rock (or anything else solid) overhead? Uses the heightmap rather than sky light, which lags behind
+	 * when blocks change and would end an Ausfahrt before it has started.
+	 */
+	public static boolean isUnderground(Level level, BlockPos pos) {
+		return pos.getY() < level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 	}
 
 	public boolean knowsTheWay() {

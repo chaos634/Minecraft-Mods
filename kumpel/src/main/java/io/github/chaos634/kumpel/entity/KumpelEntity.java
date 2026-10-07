@@ -1929,7 +1929,7 @@ public class KumpelEntity extends TamableAnimal implements InventoryCarrier {
 				announceTime(level, owner);
 			}
 			if (tickCount % 20 == 12 && !leadingOut && distanceSq < 32.0 * 32.0) {
-				exitTrail.record(level, owner.blockPosition(), !level.canSeeSky(owner.blockPosition()));
+				exitTrail.record(level, owner.blockPosition(), ExitTrail.isUnderground(level, owner.blockPosition()));
 			}
 		}
 	}
