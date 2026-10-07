@@ -55,28 +55,12 @@ jobs:
           java-version: '25'
           distribution: 'microsoft'
       - name: install virtual display and software renderer
-        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri mesa-vulkan-drivers python3-pil
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri mesa-vulkan-drivers
       - name: run client game tests
         run: |
           chmod +x ./gradlew
           xvfb-run -a -s "-screen 0 1920x1080x24 +extension GLX +render -noreset" \
             timeout 900 ./gradlew runClientGameTest --stacktrace
-      # TEMPORARY: prints the screenshots so they can be put into the README. Removed again after use.
-      - name: print screenshots
-        if: always()
-        run: |
-          python3 - <<'EOF'
-          import base64, glob, io
-          from PIL import Image
-          for path in sorted(glob.glob('**/screenshots/*.png', recursive=True)):
-              buffer = io.BytesIO()
-              Image.open(path).convert('RGB').save(buffer, 'JPEG', quality=85)
-              data = base64.b64encode(buffer.getvalue()).decode()
-              print('=====BEGIN', path)
-              for i in range(0, len(data), 120):
-                  print(data[i:i + 120])
-              print('=====END', path)
-          EOF
       - name: upload screenshots
         if: always()
         uses: actions/upload-artifact@v7
