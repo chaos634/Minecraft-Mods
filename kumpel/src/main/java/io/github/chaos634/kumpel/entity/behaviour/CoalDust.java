@@ -1,10 +1,14 @@
 package io.github.chaos634.kumpel.entity.behaviour;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import io.github.chaos634.kumpel.entity.KumpelEntity;
@@ -27,6 +31,8 @@ public final class CoalDust {
 	/** Dust washed off per second standing in water, or in the rain. */
 	private static final int WATER_WASH = 10;
 	private static final int RAIN_WASH = 3;
+	/** Coal ores, modded ones included. */
+	private static final TagKey<Block> COAL_ORES = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("c", "ores/coal"));
 
 	private CoalDust() {
 	}
@@ -37,7 +43,8 @@ public final class CoalDust {
 
 	/** How much dust digging this block raises. */
 	public static int fromDigging(BlockState state) {
-		return state.is(BlockTags.COAL_ORES) ? PER_COAL : PER_BLOCK;
+		boolean coal = state.is(COAL_ORES) || state.is(Blocks.COAL_ORE) || state.is(Blocks.DEEPSLATE_COAL_ORE);
+		return coal ? PER_COAL : PER_BLOCK;
 	}
 
 	/** Called once a second: water and rain wash the dust off. */
