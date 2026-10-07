@@ -1023,8 +1023,9 @@ public class KumpelGameTests {
 
 		ItemStack book = kumpel.writeShiftReport();
 		WrittenBookContent content = book.get(DataComponents.WRITTEN_BOOK_CONTENT);
-		helper.assertTrue(book.is(Items.WRITTEN_BOOK) && content != null && content.pages().size() == 3,
-				Component.literal("The report should be a written book with a cover and two pages of log"));
+		int logPages = kumpel.getLog().pages().size();
+		helper.assertTrue(book.is(Items.WRITTEN_BOOK) && content != null && content.pages().size() == 1 + logPages,
+				Component.literal("The report should be a written book with a cover and " + logPages + " pages of log"));
 		helper.assertTrue(kumpel.getLog().get(ShiftLog.Entry.BLOCKS_DUG) == 42, Component.literal("The log keeps counting"));
 		helper.succeed();
 	}
@@ -1152,7 +1153,8 @@ public class KumpelGameTests {
 		// The coal ore was never placed, so those finds are gone; the diamond is still there.
 		WrittenBookContent content = kumpel.writeShiftReport().get(DataComponents.WRITTEN_BOOK_CONTENT);
 		helper.assertTrue(kumpel.getFinds().finds().size() == 1, Component.literal("Ores that are gone are forgotten, left: " + kumpel.getFinds().finds()));
-		helper.assertTrue(content != null && content.pages().size() == 4, Component.literal("Cover, two log pages and one page of finds"));
+		int logPages = kumpel.getLog().pages().size();
+		helper.assertTrue(content != null && content.pages().size() == 2 + logPages, Component.literal("Cover, " + logPages + " log pages and one page of finds"));
 
 		helper.setBlock(4, 1, 4, Blocks.AIR);
 		kumpel.getFinds().tidyUp(helper.getLevel());

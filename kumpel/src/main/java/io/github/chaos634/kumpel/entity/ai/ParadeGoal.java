@@ -18,13 +18,16 @@ import io.github.chaos634.kumpel.entity.behaviour.Bergparade;
 public class ParadeGoal extends Goal {
 	/** Distance kept to the one in front. */
 	private static final double SPACING = 1.5;
-	private static final double CLOSE_ENOUGH_SQ = 0.6 * 0.6;
+	private static final double CLOSE_ENOUGH_SQ = 0.4 * 0.4;
+	/** Closer than this, the Kumpel steps straight to its spot: the path finder would call it "arrived" too early. */
+	private static final double STEP_IN_SQ = 2.0 * 2.0;
 	private static final double TELEPORT_SQ = 20.0 * 20.0;
 	private static final int REORDER_INTERVAL = 10;
 
 	private final KumpelEntity kumpel;
 	private final double speedModifier;
 	private LivingEntity leader;
+	private Vec3 target;
 	private int reorderCooldown;
 
 	public ParadeGoal(KumpelEntity kumpel, double speedModifier) {
@@ -61,6 +64,7 @@ public class ParadeGoal extends Goal {
 	@Override
 	public void stop() {
 		leader = null;
+		target = null;
 		kumpel.getNavigation().stop();
 	}
 
@@ -85,14 +89,19 @@ public class ParadeGoal extends Goal {
 				kumpel.headParade(owner, column.size());
 			}
 			Vec3 target = placeBehind(leader, aheadOfLeader);
+			this.target = target;
 			if (kumpel.distanceToSqr(target) > TELEPORT_SQ) {
 				kumpel.snapTo(target.x, target.y, target.z, leader.getYRot(), 0.0F);
 				kumpel.getNavigation().stop();
-			} else if (kumpel.distanceToSqr(target) > CLOSE_ENOUGH_SQ) {
+			} else if (kumpel.distanceToSqr(target) > STEP_IN_SQ) {
 				kumpel.getNavigation().moveTo(target.x, target.y, target.z, speedModifier);
 			} else {
 				kumpel.getNavigation().stop();
 			}
+		}
+
+		if (this.target != null && kumpel.distanceToSqr(this.target) <= STEP_IN_SQ && kumpel.distanceToSqr(this.target) > CLOSE_ENOUGH_SQ) {
+			kumpel.getMoveControl().setWantedPosition(this.target.x, this.target.y, this.target.z, speedModifier);
 		}
 
 		kumpel.getLookControl().setLookAt(leader, 30.0F, 30.0F);
