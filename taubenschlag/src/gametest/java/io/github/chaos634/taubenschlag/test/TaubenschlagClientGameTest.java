@@ -3,6 +3,7 @@ package io.github.chaos634.taubenschlag.test;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -37,7 +38,7 @@ public class TaubenschlagClientGameTest implements FabricClientGameTest {
 			TestServerContext server = singleplayer.getServer();
 			server.runCommand("time set noon");
 			server.runCommand("weather clear");
-			server.runCommand("execute as @p at @s run tp @s ~ ~ ~ 0 15");
+			server.runCommand("execute as @p at @s run tp @s ~ ~ ~ 0 5");
 			server.runCommand("item replace entity @p weapon.mainhand with taubenschlag:reisekorb");
 			singleplayer.getConnection().waitForChunksRender();
 			server.runOnServer(minecraftServer -> {
@@ -61,15 +62,17 @@ public class TaubenschlagClientGameTest implements FabricClientGameTest {
 
 		BlockState loft = TaubenschlagBlocks.TAUBENSCHLAG.defaultBlockState().setValue(TaubenschlagBlock.FACING, Direction.NORTH);
 		// The big loft, up on two posts like on the allotments in the Ruhr.
-		level.setBlockAndUpdate(origin.offset(-1, 0, 6), Blocks.OAK_FENCE.defaultBlockState());
-		level.setBlockAndUpdate(origin.offset(-1, 1, 6), Blocks.OAK_FENCE.defaultBlockState());
-		level.setBlockAndUpdate(origin.offset(-1, 2, 6), loft);
+		BlockPos highLoft = origin.offset(-1, 2, 5);
+		level.setBlockAndUpdate(highLoft.below(2), Blocks.OAK_FENCE.defaultBlockState());
+		level.setBlockAndUpdate(highLoft.below(), Blocks.OAK_FENCE.defaultBlockState());
+		level.setBlockAndUpdate(highLoft, loft);
 		// A second one on the ground beside it.
-		level.setBlockAndUpdate(origin.offset(2, 0, 6), loft);
+		BlockPos lowLoft = origin.offset(2, 0, 5);
+		level.setBlockAndUpdate(lowLoft, loft);
 
 		// A low fence round the garden, a patch of wheat and some flowers.
 		for (int x = -6; x <= 6; x++) {
-			level.setBlockAndUpdate(origin.offset(x, 0, 9), Blocks.OAK_FENCE.defaultBlockState());
+			level.setBlockAndUpdate(origin.offset(x, 0, 8), Blocks.OAK_FENCE.defaultBlockState());
 		}
 		for (int x = 4; x <= 6; x++) {
 			for (int z = 4; z <= 7; z++) {
@@ -82,14 +85,14 @@ public class TaubenschlagClientGameTest implements FabricClientGameTest {
 		level.setBlockAndUpdate(origin.offset(-4, 0, 7), Blocks.CORNFLOWER.defaultBlockState());
 
 		// Pigeons of every plumage: on the roof, on the landing board, on the ground.
-		spawnPigeon(level, player, origin.getX() - 0.5, origin.getY() + 3.0, origin.getZ() + 6.6, 160.0F, BrieftaubeVariant.BLAU);
-		spawnPigeon(level, player, origin.getX() - 0.75, origin.getY() + 2.25, origin.getZ() + 6.1, 200.0F, BrieftaubeVariant.WEISS);
-		spawnPigeon(level, player, origin.getX() + 2.5, origin.getY() + 1.0, origin.getZ() + 6.6, 180.0F, BrieftaubeVariant.ROT);
-		spawnPigeon(level, player, origin.getX() + 0.8, origin.getY(), origin.getZ() + 4.2, 140.0F, BrieftaubeVariant.GEHAEMMERT);
-		spawnPigeon(level, player, origin.getX() + 1.6, origin.getY(), origin.getZ() + 3.4, 220.0F, BrieftaubeVariant.BLAU);
+		spawnPigeon(level, player, highLoft, origin.getX() - 0.5, origin.getY() + 3.0, origin.getZ() + 5.6, 160.0F, BrieftaubeVariant.BLAU);
+		spawnPigeon(level, player, highLoft, origin.getX() - 0.7, origin.getY() + 2.25, origin.getZ() + 5.1, 200.0F, BrieftaubeVariant.WEISS);
+		spawnPigeon(level, player, lowLoft, origin.getX() + 2.5, origin.getY() + 1.0, origin.getZ() + 5.6, 180.0F, BrieftaubeVariant.ROT);
+		spawnPigeon(level, player, lowLoft, origin.getX() + 0.9, origin.getY(), origin.getZ() + 3.6, 140.0F, BrieftaubeVariant.GEHAEMMERT);
+		spawnPigeon(level, player, lowLoft, origin.getX() + 1.8, origin.getY(), origin.getZ() + 2.9, 220.0F, BrieftaubeVariant.BLAU);
 	}
 
-	private static void spawnPigeon(ServerLevel level, ServerPlayer owner, double x, double y, double z, float yRot, BrieftaubeVariant variant) {
+	private static void spawnPigeon(ServerLevel level, ServerPlayer owner, BlockPos loft, double x, double y, double z, float yRot, BrieftaubeVariant variant) {
 		BrieftaubeEntity pigeon = TaubenschlagEntities.BRIEFTAUBE.create(level, EntitySpawnReason.COMMAND);
 		if (pigeon == null) {
 			throw new IllegalStateException("Could not create a pigeon");
@@ -100,6 +103,8 @@ public class TaubenschlagClientGameTest implements FabricClientGameTest {
 		pigeon.setYBodyRot(yRot);
 		pigeon.setVariant(variant);
 		pigeon.tameBy(owner);
+		// Already at home, so there is nothing to tell in the chat.
+		pigeon.setHome(GlobalPos.of(level.dimension(), loft));
 		pigeon.setNoAi(true);
 		level.addFreshEntity(pigeon);
 	}
