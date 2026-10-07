@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -13,9 +14,11 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
@@ -23,7 +26,10 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 
+import io.github.chaos634.kumpel.Kumpel;
 import io.github.chaos634.kumpel.advancement.KumpelAdvancements;
+import io.github.chaos634.kumpel.bau.Bauplan;
+import io.github.chaos634.kumpel.bau.BuildOrder;
 import io.github.chaos634.kumpel.config.KumpelSettings;
 import io.github.chaos634.kumpel.entity.KumpelEntity;
 import io.github.chaos634.kumpel.entity.KumpelTier;
@@ -56,6 +62,18 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 		kumpel.setOreSensing(false);
 		level.addFreshEntity(kumpel);
 		return kumpel;
+	}
+
+	/** Puts up a building from one of the Kumpels' Baupläne at once, facing the player (who looks south). */
+	private static void buildFromPlan(ServerLevel level, String name, BlockPos origin) {
+		ResourceKey<Bauplan> key = ResourceKey.create(Bauplan.REGISTRY, Kumpel.id(name));
+		Bauplan bauplan = level.registryAccess().lookupOrThrow(Bauplan.REGISTRY).getValue(key);
+		BuildOrder order = new BuildOrder(key, origin, Rotation.NONE, 0);
+		for (Bauplan.Piece piece : bauplan.pieces()) {
+			BlockPos pos = order.worldPos(bauplan, piece);
+			BlockState shaped = Block.updateFromNeighbourShapes(order.worldState(piece), level, pos);
+			level.setBlockAndUpdate(pos, shaped.isAir() ? order.worldState(piece) : shaped);
+		}
 	}
 
 	@Override
@@ -249,6 +267,40 @@ public class KumpelClientGameTest implements FabricClientGameTest {
 			singleplayer.getConnection().waitForChunksRender();
 			context.waitTicks(CHAT_FADE_TICKS);
 			context.takeScreenshot("kumpel_strecke");
+
+			// Siedlung: a Zechenhaus and an Unterstand from the Kumpels' Baupläne, by day, with the builders in front.
+			server.runCommand("time set noon");
+			server.runCommand("execute as @p at @s run tp @s ~40 ~ ~ 0 5");
+			singleplayer.getConnection().waitForChunksRender();
+			server.runOnServer(minecraftServer -> {
+				ServerLevel level = singleplayer.getConnection().getServerLevel();
+				ServerPlayer player = singleplayer.getConnection().getServerPlayer();
+				BlockPos origin = player.blockPosition();
+				for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-10, 0, -2), origin.offset(10, 8, 14))) {
+					level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+				}
+				for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-10, -1, -2), origin.offset(10, -1, 14))) {
+					level.setBlockAndUpdate(pos, Blocks.GRASS_BLOCK.defaultBlockState());
+				}
+				buildFromPlan(level, "zechenhaus", origin.offset(-3, 0, 6));
+				buildFromPlan(level, "unterstand", origin.offset(4, 0, 6));
+				for (int x = -1; x <= 1; x++) {
+					level.setBlockAndUpdate(origin.offset(x - 3, -1, 5), Blocks.DIRT_PATH.defaultBlockState());
+					level.setBlockAndUpdate(origin.offset(x - 3, -1, 4), Blocks.DIRT_PATH.defaultBlockState());
+				}
+
+				KumpelEntity builder = new KumpelEntity(ModEntities.KUMPEL, level);
+				builder.snapTo(origin.getX() - 1.0, origin.getY(), origin.getZ() + 4.0, 200.0F, 0.0F);
+				builder.addExperience(KumpelSettings.get().tier(3).requiredExperience());
+				builder.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.BAUPLAN));
+				builder.setNoAi(true);
+				level.addFreshEntity(builder);
+				KumpelEntity resting = sittingKumpel(level, player, origin.getX() + 4.5, origin.getY(), origin.getZ() + 7.5, 180.0F, 2);
+				resting.setCanary(true);
+			});
+			singleplayer.getConnection().waitForChunksRender();
+			context.waitTicks(CHAT_FADE_TICKS);
+			context.takeScreenshot("kumpel_siedlung");
 			KumpelSettings.get().behaviour().chatter = true;
 			KumpelSettings.get().behaviour().timeAnnouncements = true;
 		}
