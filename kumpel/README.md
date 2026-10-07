@@ -188,7 +188,7 @@ Which items give how much XP, by `item` or by item `tag`.
 | `mine_ores`, `mine_radius`, `experience_per_ore_mined` | on, 6, 2 | Hauer mode (also needs the `mobGriefing` game rule) |
 | `protect_tools` | on | Hackenschutz: put pickaxes away before they break |
 | `apprenticeship` | on | Lehrhauer: young Kumpels learn from older ones |
-| `favorite_foods` | Knifte, bread, baked potato, cooked porkchop and beef, pumpkin pie, cookie, mushroom stew | What a Kumpel's favourite food can be |
+| `favorite_foods` | Knifte, bread, baked potato, cooked porkchop and beef, pumpkin pie, cookie, mushroom stew, and with [Pottküche](../pottkueche/) Currywurst, Currywurst-Pommes, Frikadelle and Pfefferpotthast | What a Kumpel's favourite food can be |
 | `dowsing_level`, `dowsing_glow_ticks` | 4, 100 | Wünschelrute (`0` turns it off) |
 | `dance_to_jukebox` | on | Steigerlied |
 | `barbara_day` | on | Barbaratag |
@@ -221,6 +221,7 @@ Which items give how much XP, by `item` or by item `tag`.
 - **Modded ores** are found through the `c:ores` tags, **modded storage** through the Fabric Transfer API.
 - **Modded stone** can be used for Abdämmen by adding it to the item tag `#kumpel:tunnel_fillers`; modded logs, girders and lamps for the Streckenausbau go into `#kumpel:tunnel_supports` and `#kumpel:tunnel_lamps`.
 - **[Zechenbau](../zechenbau/)**: its steel girders and Grubenlampen work as tunnel supports and lamps.
+- **[Pottküche](../pottkueche/)**: Currywurst, Frikadellen and Pfefferpotthast can be a Kumpel's favourite food.
 - **Mod Menu** + **Cloth Config**: an in-game settings screen for every behaviour option (both optional).
 - **Statistics**: everything your Kumpels count in their shift logs also adds up in your statistics screen (ores mined by Kumpels, blocks dug, items delivered …), plus how many Kumpels you have awakened.
 - **Languages**: English, German, Polish, Turkish, Dutch, French and Spanish.

@@ -186,7 +186,9 @@ public final class KumpelConfig {
 		public boolean apprenticeship = true;
 		/** Leibgericht: every Kumpel picks its favourite food from this list; feeding it heals the Kumpel completely. */
 		public List<String> favoriteFoods = new ArrayList<>(List.of("kumpel:knifte", "minecraft:bread", "minecraft:baked_potato",
-				"minecraft:cooked_porkchop", "minecraft:cooked_beef", "minecraft:pumpkin_pie", "minecraft:cookie", "minecraft:mushroom_stew"));
+				"minecraft:cooked_porkchop", "minecraft:cooked_beef", "minecraft:pumpkin_pie", "minecraft:cookie", "minecraft:mushroom_stew",
+				// From Pottküche, if it is installed.
+				"pottkueche:currywurst", "pottkueche:currywurst_pommes", "pottkueche:frikadelle", "pottkueche:pfefferpotthast"));
 		/** Hackenschutz: the Kumpel puts a pickaxe away (and tells you) before it breaks, instead of using it up. */
 		public boolean protectTools = true;
 		/** How far from the Kumpel it looks for ores to mine. */

@@ -9,6 +9,7 @@ All notable changes to Kumpel are listed here.
 - The Steigerhäckel: hold it, and your Kumpels march behind you in single file, the most experienced first.
 - One more advancement (Bergparade) and a new page in the Kumpelfibel.
 - A new screenshot: a gallery with support frames, lanterns and Kumpels black with coal dust.
+- With Pottküche installed, Currywurst, Currywurst-Pommes, Frikadelle and Pfefferpotthast can be a Kumpel's favourite food.
 
 ## 0.12.0
 
