@@ -1,0 +1,75 @@
+# TEMPORARY: prints Minecraft 26.3 class signatures and JEI/REI versions. Removed again after use.
+
+name: api-probe
+
+on:
+  push:
+    branches: [claude/fervent-cray-y1lqfh]
+    paths: ['.github/workflows/api-probe.yml']
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [w]
+    defaults:
+      run:
+        working-directory: kumpel
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: resolve classpath
+        if: matrix.group != 'versions'
+        run: |
+          chmod +x ./gradlew
+          cat >> build.gradle <<'EOF'
+          tasks.register('printClientCp') {
+            def cp = sourceSets.client.compileClasspath
+            doLast { println "CP=" + cp.asPath }
+          }
+          EOF
+          ./gradlew --no-configuration-cache -q printClientCp | grep '^CP=' | sed 's/^CP=//' > /tmp/cp.txt
+      - name: javap
+        if: matrix.group != 'versions'
+        env:
+          GROUP: ${{ matrix.group }}
+        run: |
+          CP=$(cat /tmp/cp.txt)
+          MCJARS=$(tr ':' '\n' < /tmp/cp.txt | grep -E 'minecraft-(common|clientOnly)')
+          p() {
+            echo "##### $1"
+            if [ -n "$2" ]; then javap -cp "$CP" -protected "$1" 2>&1 | grep -E "$2" || true
+            else javap -cp "$CP" -protected "$1" 2>&1 || true; fi
+          }
+          ls_jar() {
+            echo "##### jar entries matching $1"
+            for j in $MCJARS; do unzip -Z1 "$j" | grep -E "$1" | grep -v '\$' || true; done | sort -u
+          }
+          case "$GROUP" in
+            w)
+              ls_jar '/(Parrot|ParrotModel|ParrotRenderer|FlyingMoveControl|FlyingPathNavigation|ChestBlockEntity|BarrelBlockEntity|BaseContainerBlockEntity|Containers|BlockEntityType)\.class'
+              p net.minecraft.world.entity.ai.control.FlyingMoveControl 'FlyingMoveControl\('
+              p net.minecraft.world.entity.ai.navigation.FlyingPathNavigation 'FlyingPathNavigation\(|setCanOpenDoors|setCanFloat|setCanPassDoors'
+              p net.minecraft.world.entity.Mob 'createNavigation|setPathfindingMalus'
+              p net.minecraft.world.entity.ai.attributes.Attributes 'FLYING_SPEED|MOVEMENT_SPEED'
+              p net.minecraft.world.level.block.entity.BlockEntityType 'BlockEntityType\(|public static'
+              p net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder
+              p net.minecraft.world.level.block.entity.BaseContainerBlockEntity
+              p net.minecraft.world.level.block.entity.BarrelBlockEntity
+              p net.minecraft.world.Containers 'public static'
+              p net.minecraft.world.inventory.ChestMenu 'public static'
+              p net.minecraft.world.level.block.BaseEntityBlock
+              p net.minecraft.world.level.block.EntityBlock
+              p net.minecraft.world.level.block.Block 'affectNeighborsAfterRemoval|onRemove|playerWillDestroy|useWithoutItem'
+              p net.fabricmc.fabric.api.biome.v1.BiomeModifications 'addSpawn'
+              p net.fabricmc.fabric.api.biome.v1.BiomeSelectors 'public static'
+              p net.minecraft.world.entity.SpawnPlacements 'register'
+              p net.minecraft.world.entity.animal.Animal 'checkAnimalSpawnRules|isFood'
+              ;;
+          esac
