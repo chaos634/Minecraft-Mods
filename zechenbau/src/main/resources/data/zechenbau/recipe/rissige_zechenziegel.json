@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": "zechenbau:zechenziegel",
+  "result": {
+    "id": "zechenbau:rissige_zechenziegel"
+  }
+}

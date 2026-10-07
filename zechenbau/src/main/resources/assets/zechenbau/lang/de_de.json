@@ -9,5 +9,10 @@
 	"block.zechenbau.stahltraeger": "Stahlträger",
 	"block.zechenbau.foerdergeruest": "Fördergerüst",
 	"block.zechenbau.grubenlampe": "Grubenlampe",
-	"block.zechenbau.schlaegel_und_eisen": "Schlägel-und-Eisen-Fliese"
+	"block.zechenbau.schlaegel_und_eisen": "Schlägel-und-Eisen-Fliese",
+	"block.zechenbau.rissige_zechenziegel": "Rissige Zechenziegel",
+	"block.zechenbau.bemooste_zechenziegel": "Bemooste Zechenziegel",
+	"block.zechenbau.hunt": "Hunt",
+	"block.zechenbau.seilscheibe": "Seilscheibe",
+	"block.zechenbau.kauenhaken": "Kauenhaken"
 }

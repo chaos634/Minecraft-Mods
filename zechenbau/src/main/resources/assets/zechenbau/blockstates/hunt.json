@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "zechenbau:block/hunt"
+    },
+    "facing=east": {
+      "model": "zechenbau:block/hunt",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "zechenbau:block/hunt",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "zechenbau:block/hunt",
+      "y": 270
+    }
+  }
+}

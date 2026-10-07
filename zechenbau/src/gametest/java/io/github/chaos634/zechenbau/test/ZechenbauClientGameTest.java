@@ -2,6 +2,7 @@ package io.github.chaos634.zechenbau.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.core.BlockPos;
@@ -9,10 +10,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.LanternBlock;
+import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.RailShape;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -162,6 +166,47 @@ public class ZechenbauClientGameTest implements FabricClientGameTest {
 			build.set(x, 17, 15, pillar.setValue(RotatedPillarBlock.AXIS, Direction.Axis.X));
 		}
 		build.set(11, 16, 15, lamp.setValue(LanternBlock.HANGING, true));
+		for (int x : new int[] {10, 12}) {
+			build.set(x, 18, 15, ZechenbauBlocks.SEILSCHEIBE.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH));
+		}
+
+		// Years of coal smoke and rain: some bricks cracked, some grown over with moss, mostly low down.
+		Random weather = new Random(1880);
+		for (int x = -8; x <= 8; x++) {
+			for (int y = 0; y <= 9; y++) {
+				for (int z = 12; z <= 18; z++) {
+					BlockPos pos = origin.offset(x, y, z);
+					if (level.getBlockState(pos).is(ZechenbauBlocks.ZECHENZIEGEL) && weather.nextFloat() < 0.14F) {
+						boolean mossy = weather.nextFloat() < 0.7F - y * 0.07F;
+						level.setBlockAndUpdate(pos, (mossy ? ZechenbauBlocks.BEMOOSTE_ZECHENZIEGEL : ZechenbauBlocks.RISSIGE_ZECHENZIEGEL).defaultBlockState());
+					}
+				}
+			}
+		}
+
+		// A train of coal tubs on the track to the right of the yard.
+		for (int x = -15; x <= -8; x++) {
+			build.set(x, 0, 9, x >= -14 && x <= -11
+					? ZechenbauBlocks.HUNT.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.EAST)
+					: Blocks.RAIL.defaultBlockState().setValue(RailBlock.SHAPE, RailShape.EAST_WEST));
+		}
+
+		// Left of the yard, an open shelter where the miners' clothes hang on their hooks, like in the Waschkaue.
+		for (int x : new int[] {9, 13}) {
+			for (int z : new int[] {7, 10}) {
+				for (int y = 0; y <= 3; y++) {
+					build.set(x, y, z, pillar);
+				}
+			}
+		}
+		for (int x = 9; x <= 13; x++) {
+			for (int z = 7; z <= 10; z++) {
+				build.set(x, 4, z, ZechenbauBlocks.ZECHENZIEGEL_SLAB.defaultBlockState());
+			}
+		}
+		for (int x = 10; x <= 12; x++) {
+			build.set(x, 3, 8, ZechenbauBlocks.KAUENHAKEN.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH));
+		}
 	}
 
 	private record Builder(ServerLevel level, BlockPos origin) {

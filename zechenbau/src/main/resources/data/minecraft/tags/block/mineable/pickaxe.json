@@ -10,6 +10,11 @@
     "zechenbau:stahltraeger",
     "zechenbau:foerdergeruest",
     "zechenbau:grubenlampe",
-    "zechenbau:schlaegel_und_eisen"
+    "zechenbau:schlaegel_und_eisen",
+    "zechenbau:rissige_zechenziegel",
+    "zechenbau:bemooste_zechenziegel",
+    "zechenbau:seilscheibe",
+    "zechenbau:hunt",
+    "zechenbau:kauenhaken"
   ]
 }

@@ -9,5 +9,10 @@
 	"block.zechenbau.stahltraeger": "Stalen balk",
 	"block.zechenbau.foerdergeruest": "Schachtbokvakwerk",
 	"block.zechenbau.grubenlampe": "Mijnlamp",
-	"block.zechenbau.schlaegel_und_eisen": "Hamer-en-beiteltegel"
+	"block.zechenbau.schlaegel_und_eisen": "Hamer-en-beiteltegel",
+	"block.zechenbau.rissige_zechenziegel": "Gebarsten mijnbakstenen",
+	"block.zechenbau.bemooste_zechenziegel": "Bemoste mijnbakstenen",
+	"block.zechenbau.hunt": "Mijnwagen",
+	"block.zechenbau.seilscheibe": "Kabelschijf",
+	"block.zechenbau.kauenhaken": "Badzaalhaak"
 }

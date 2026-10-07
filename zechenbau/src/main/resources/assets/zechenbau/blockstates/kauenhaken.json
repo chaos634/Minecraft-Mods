@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "zechenbau:block/kauenhaken"
+    },
+    "facing=east": {
+      "model": "zechenbau:block/kauenhaken",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "zechenbau:block/kauenhaken",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "zechenbau:block/kauenhaken",
+      "y": 270
+    }
+  }
+}

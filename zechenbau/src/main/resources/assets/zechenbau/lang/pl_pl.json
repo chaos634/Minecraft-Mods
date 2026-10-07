@@ -9,5 +9,10 @@
 	"block.zechenbau.stahltraeger": "Dźwigar stalowy",
 	"block.zechenbau.foerdergeruest": "Kratownica wieży wyciągowej",
 	"block.zechenbau.grubenlampe": "Lampa górnicza",
-	"block.zechenbau.schlaegel_und_eisen": "Płytka z pyrlikiem i żelazkiem"
+	"block.zechenbau.schlaegel_und_eisen": "Płytka z pyrlikiem i żelazkiem",
+	"block.zechenbau.rissige_zechenziegel": "Popękane cegły kopalniane",
+	"block.zechenbau.bemooste_zechenziegel": "Omszałe cegły kopalniane",
+	"block.zechenbau.hunt": "Wózek kopalniany",
+	"block.zechenbau.seilscheibe": "Koło linowe",
+	"block.zechenbau.kauenhaken": "Wieszak z łaźni łańcuszkowej"
 }

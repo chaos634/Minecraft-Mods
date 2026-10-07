@@ -9,5 +9,10 @@
 	"block.zechenbau.stahltraeger": "Poutre en acier",
 	"block.zechenbau.foerdergeruest": "Treillis de chevalement",
 	"block.zechenbau.grubenlampe": "Lampe de mineur",
-	"block.zechenbau.schlaegel_und_eisen": "Carreau marteau et pic"
+	"block.zechenbau.schlaegel_und_eisen": "Carreau marteau et pic",
+	"block.zechenbau.rissige_zechenziegel": "Briques de houillère craquelées",
+	"block.zechenbau.bemooste_zechenziegel": "Briques de houillère moussues",
+	"block.zechenbau.hunt": "Berline",
+	"block.zechenbau.seilscheibe": "Molette",
+	"block.zechenbau.kauenhaken": "Crochet de salle des pendus"
 }

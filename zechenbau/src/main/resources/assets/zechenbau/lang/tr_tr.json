@@ -9,5 +9,10 @@
 	"block.zechenbau.stahltraeger": "Çelik Kiriş",
 	"block.zechenbau.foerdergeruest": "Kuyu Kulesi Kafesi",
 	"block.zechenbau.grubenlampe": "Madenci Lambası",
-	"block.zechenbau.schlaegel_und_eisen": "Çekiç ve Kazma Karosu"
+	"block.zechenbau.schlaegel_und_eisen": "Çekiç ve Kazma Karosu",
+	"block.zechenbau.rissige_zechenziegel": "Çatlak Maden Tuğlası",
+	"block.zechenbau.bemooste_zechenziegel": "Yosunlu Maden Tuğlası",
+	"block.zechenbau.hunt": "Maden Vagonu",
+	"block.zechenbau.seilscheibe": "Kuyu Makarası",
+	"block.zechenbau.kauenhaken": "Hamam Askısı"
 }

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "zechenbau:block/seilscheibe"
+    },
+    "facing=east": {
+      "model": "zechenbau:block/seilscheibe",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "zechenbau:block/seilscheibe",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "zechenbau:block/seilscheibe",
+      "y": 270
+    }
+  }
+}

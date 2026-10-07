@@ -10,6 +10,7 @@ import java.util.Set;
 import com.google.gson.JsonParser;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -20,10 +21,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.phys.AABB;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
@@ -35,11 +38,12 @@ public class ZechenbauGameTests {
 	private static final List<String> RECIPES = List.of("zechenziegel", "zechenziegel_stairs", "zechenziegel_slab", "zechenziegel_wall",
 			"zechenziegel_stairs_from_zechenziegel_stonecutting", "zechenziegel_slab_from_zechenziegel_stonecutting",
 			"zechenziegel_wall_from_zechenziegel_stonecutting", "schlaegel_und_eisen_from_zechenziegel_stonecutting",
-			"stahlfachwerk", "fachwerk_fenster", "stahltraeger", "foerdergeruest", "grubenlampe");
+			"stahlfachwerk", "fachwerk_fenster", "stahltraeger", "foerdergeruest", "grubenlampe",
+			"rissige_zechenziegel", "bemooste_zechenziegel_from_vine", "bemooste_zechenziegel_from_moss_block", "hunt", "seilscheibe", "kauenhaken");
 
 	@GameTest
 	public void everyBlockHasAnItem(GameTestHelper helper) {
-		helper.assertTrue(ZechenbauBlocks.all().size() == 10, Component.literal("Expected 10 blocks, got " + ZechenbauBlocks.all().size()));
+		helper.assertTrue(ZechenbauBlocks.all().size() == 15, Component.literal("Expected 15 blocks, got " + ZechenbauBlocks.all().size()));
 		for (Block block : ZechenbauBlocks.all()) {
 			helper.assertTrue(block.asItem() != Items.AIR, Component.literal(BuiltInRegistries.BLOCK.getKey(block) + " has no item"));
 		}
@@ -104,6 +108,21 @@ public class ZechenbauGameTests {
 			helper.assertFalse(block.defaultBlockState().isSuffocating(helper.getLevel(), pos),
 					Component.literal(BuiltInRegistries.BLOCK.getKey(block) + " should not suffocate"));
 		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void decorBlocksTurnTheirShapeWithThem(GameTestHelper helper) {
+		BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+		AABB north = ZechenbauBlocks.SEILSCHEIBE.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
+				.getShape(helper.getLevel(), pos).bounds();
+		AABB east = ZechenbauBlocks.SEILSCHEIBE.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.EAST)
+				.getShape(helper.getLevel(), pos).bounds();
+		helper.assertTrue(north.getZsize() < 0.5 && north.getXsize() == 1.0, Component.literal("Facing north, the wheel is thin north to south: " + north));
+		helper.assertTrue(east.getXsize() < 0.5 && east.getZsize() == 1.0, Component.literal("Facing east, the wheel is thin east to west: " + east));
+
+		AABB hunt = ZechenbauBlocks.HUNT.defaultBlockState().getShape(helper.getLevel(), pos).bounds();
+		helper.assertTrue(hunt.getYsize() < 1.0, Component.literal("A Hunt is lower than a block: " + hunt));
 		helper.succeed();
 	}
 

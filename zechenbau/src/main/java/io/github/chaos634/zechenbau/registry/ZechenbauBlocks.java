@@ -29,6 +29,7 @@ import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 
 import io.github.chaos634.zechenbau.Zechenbau;
+import io.github.chaos634.zechenbau.block.FacingDecorBlock;
 
 /** Every block of the mod, each with its item, in the order they appear in the creative tab. */
 public final class ZechenbauBlocks {
@@ -39,6 +40,8 @@ public final class ZechenbauBlocks {
 			properties -> new StairBlock(ZECHENZIEGEL.defaultBlockState(), properties), brick());
 	public static final Block ZECHENZIEGEL_SLAB = register("zechenziegel_slab", SlabBlock::new, brick());
 	public static final Block ZECHENZIEGEL_WALL = register("zechenziegel_wall", WallBlock::new, brick().forceSolidOn());
+	public static final Block RISSIGE_ZECHENZIEGEL = register("rissige_zechenziegel", Block::new, brick());
+	public static final Block BEMOOSTE_ZECHENZIEGEL = register("bemooste_zechenziegel", Block::new, brick());
 	public static final Block STAHLFACHWERK = register("stahlfachwerk", Block::new, brick());
 	public static final Block FACHWERK_FENSTER = register("fachwerk_fenster", TransparentBlock::new, seeThrough(steel()));
 	public static final Block STAHLTRAEGER = register("stahltraeger", RotatedPillarBlock::new, steel());
@@ -46,6 +49,16 @@ public final class ZechenbauBlocks {
 	public static final Block GRUBENLAMPE = register("grubenlampe", LanternBlock::new, BlockBehaviour.Properties.of()
 			.mapColor(MapColor.METAL).forceSolidOn().strength(3.5F).sound(SoundType.LANTERN).lightLevel(state -> 14).noOcclusion());
 	public static final Block SCHLAEGEL_UND_EISEN = register("schlaegel_und_eisen", Block::new, brick());
+	/** Seilscheibe: the big wheel at the top of a headframe that the hoisting rope runs over. */
+	public static final Block SEILSCHEIBE = register("seilscheibe",
+			properties -> new FacingDecorBlock(properties, 0, 0, 6, 16, 16, 10), steel().noOcclusion());
+	/** Hunt: a mine tub full of coal. */
+	public static final Block HUNT = register("hunt",
+			properties -> new FacingDecorBlock(properties, 1, 0, 1, 15, 13, 15), steel().noOcclusion());
+	/** Kauenhaken: in the Waschkaue, the miners' clothes hung on hooks pulled up to the ceiling on chains. */
+	public static final Block KAUENHAKEN = register("kauenhaken",
+			properties -> new FacingDecorBlock(properties, 3, 1, 6, 13, 16, 10), BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLUE).strength(0.8F).sound(SoundType.CHAIN).noOcclusion());
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Zechenbau.id("zechenbau"));
 	public static final CreativeModeTab CREATIVE_TAB = FabricCreativeModeTab.builder()

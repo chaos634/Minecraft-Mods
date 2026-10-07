@@ -1,0 +1,95 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "wheel": "zechenbau:block/seilscheibe",
+    "rim": "zechenbau:block/seilscheibe_rim",
+    "axle": "zechenbau:block/stahltraeger_top",
+    "particle": "zechenbau:block/seilscheibe"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        7
+      ],
+      "to": [
+        16,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wheel"
+        },
+        "south": {
+          "texture": "#wheel"
+        }
+      }
+    },
+    {
+      "from": [
+        0.5,
+        0,
+        7
+      ],
+      "to": [
+        15.5,
+        0.5,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rim"
+        },
+        "east": {
+          "texture": "#rim"
+        },
+        "south": {
+          "texture": "#rim"
+        },
+        "west": {
+          "texture": "#rim"
+        },
+        "up": {
+          "texture": "#rim"
+        },
+        "down": {
+          "texture": "#rim"
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        6.5,
+        4
+      ],
+      "to": [
+        9.5,
+        9.5,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#axle"
+        },
+        "east": {
+          "texture": "#axle"
+        },
+        "south": {
+          "texture": "#axle"
+        },
+        "west": {
+          "texture": "#axle"
+        },
+        "up": {
+          "texture": "#axle"
+        },
+        "down": {
+          "texture": "#axle"
+        }
+      }
+    }
+  ]
+}

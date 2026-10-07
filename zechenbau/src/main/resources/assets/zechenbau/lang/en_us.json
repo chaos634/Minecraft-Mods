@@ -9,5 +9,10 @@
 	"block.zechenbau.stahltraeger": "Steel Girder",
 	"block.zechenbau.foerdergeruest": "Headframe Lattice",
 	"block.zechenbau.grubenlampe": "Miner's Lamp",
-	"block.zechenbau.schlaegel_und_eisen": "Hammer and Pick Tile"
+	"block.zechenbau.schlaegel_und_eisen": "Hammer and Pick Tile",
+	"block.zechenbau.rissige_zechenziegel": "Cracked Colliery Bricks",
+	"block.zechenbau.bemooste_zechenziegel": "Mossy Colliery Bricks",
+	"block.zechenbau.hunt": "Coal Tub",
+	"block.zechenbau.seilscheibe": "Sheave Wheel",
+	"block.zechenbau.kauenhaken": "Pithead Bath Hanger"
 }
