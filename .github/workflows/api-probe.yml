@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [u]
+        group: [v]
     defaults:
       run:
         working-directory: kumpel
@@ -427,5 +427,21 @@ jobs:
                   if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f" | head -80; echo; fi
                 done
               done
+              ;;
+            v)
+              for jar in $(tr ':' '\n' < /tmp/cp.txt | grep -i fabric); do unzip -Z1 "$jar" 2>/dev/null | grep -E 'DynamicRegistries|ResourceLoader|ResourceManagerHelper' | sed "s|^|$(basename $jar): |" || true; done
+              p net.fabricmc.fabric.api.event.registry.DynamicRegistries
+              p 'net.fabricmc.fabric.api.event.registry.DynamicRegistries$SyncOption'
+              p net.minecraft.commands.arguments.blocks.BlockStateParser 'public static'
+              p 'net.minecraft.commands.arguments.blocks.BlockStateParser$BlockResult'
+              p net.minecraft.core.Registry 'interface|asLookup|HolderLookup'
+              p net.minecraft.world.level.block.state.BlockState 'rotate|mirror'
+              p net.minecraft.world.level.block.state.BlockBehaviour\$BlockStateBase 'rotate\(|mirror\('
+              p net.minecraft.world.level.block.Rotation
+              p net.minecraft.world.item.CreativeModeTab\$ItemDisplayParameters
+              p net.minecraft.core.HolderLookup\$Provider 'lookup'
+              p net.minecraft.core.HolderLookup\$RegistryLookup
+              p net.minecraft.core.BlockPos 'rotate'
+              p net.minecraft.world.level.Level 'registryAccess'
               ;;
           esac
