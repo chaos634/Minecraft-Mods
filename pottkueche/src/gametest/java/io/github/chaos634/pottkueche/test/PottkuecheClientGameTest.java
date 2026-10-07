@@ -42,6 +42,8 @@ public class PottkuecheClientGameTest implements FabricClientGameTest {
 				ServerLevel level = singleplayer.getConnection().getServerLevel();
 				buildBude(level, singleplayer.getConnection().getServerPlayer().blockPosition());
 			});
+			// Step back a little, so the lanterns and the roof are in the picture.
+			server.runCommand("execute as @p at @s run tp @s ~ ~ ~-2 0 8");
 			singleplayer.getConnection().waitForChunksRender();
 			context.waitTicks(CHAT_FADE_TICKS);
 			context.takeScreenshot("pottkueche_bude");
@@ -61,7 +63,8 @@ public class PottkuecheClientGameTest implements FabricClientGameTest {
 
 		List<Item> dishes = PottkuecheItems.all();
 		for (int i = 0; i < dishes.size(); i++) {
-			BlockPos pos = origin.offset(-2 + i % 5, 2 - i / 5, 3);
+			// Looking south, east (+x) is on the left: fill each row from there, so the dishes read left to right.
+			BlockPos pos = origin.offset(2 - i % 5, 2 - i / 5, 3);
 			ItemFrame frame = new ItemFrame(level, pos, Direction.NORTH);
 			frame.setItem(new ItemStack(dishes.get(i)));
 			level.addFreshEntity(frame);
