@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [s]
+        group: [t]
     defaults:
       run:
         working-directory: kumpel
@@ -408,5 +408,17 @@ jobs:
                   if unzip -l "$j" "$f" >/dev/null 2>&1; then echo "##### $f"; unzip -p "$j" "$f"; echo; fi
                 done
               done
+              ;;
+            t)
+              ls_jar '/(RenderLayer|SheepWoolLayer|RenderTypes|RenderType|SubmitNodeCollector|OrderedSubmitNodeCollector|EyesLayer|SlimeOuterLayer|WolfCollarLayer|IronGolemCrackinessLayer|CustomHeadLayer)\.class'
+              p net.minecraft.client.renderer.entity.layers.RenderLayer
+              p net.minecraft.client.renderer.entity.layers.EyesLayer
+              p net.minecraft.client.renderer.entity.layers.IronGolemCrackinessLayer
+              p net.minecraft.client.renderer.entity.layers.WolfCollarLayer
+              p net.minecraft.client.renderer.SubmitNodeCollector
+              p net.minecraft.client.renderer.OrderedSubmitNodeCollector
+              p net.minecraft.client.renderer.rendertype.RenderTypes 'entityCutout|entityTranslucent|eyes|entityDecal|entityCutoutNoCull'
+              p net.minecraft.client.renderer.RenderTypes 'entityCutout|entityTranslucent|eyes|entityDecal|entityCutoutNoCull'
+              p net.minecraft.client.renderer.entity.LivingEntityRenderer 'addLayer|getModel|layers'
               ;;
           esac
