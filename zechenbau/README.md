@@ -6,7 +6,7 @@ A companion to [Kumpel](../kumpel/), but it works on its own.
 
 **Minecraft 26.3 · Fabric Loader ≥ 0.19.5 · Fabric API · Java 25**
 
-![A machine hall with steel-framed windows, girders and lamps, and a headframe behind it](../.github/media/zechenbau/zeche.jpg)
+![A machine hall with steel-framed windows, girders, lamps and weathered bricks, a headframe with its sheave wheels, a shelter with clothes hangers and a train of coal tubs](../.github/media/zechenbau/zeche.jpg)
 
 ## Blocks
 
