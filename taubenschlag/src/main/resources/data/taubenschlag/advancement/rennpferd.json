@@ -1,0 +1,24 @@
+{
+  "parent": "taubenschlag:root",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.taubenschlag.rennpferd.title"
+    },
+    "description": {
+      "translate": "advancements.taubenschlag.rennpferd.description"
+    },
+    "icon": {
+      "id": "minecraft:wheat_seeds"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

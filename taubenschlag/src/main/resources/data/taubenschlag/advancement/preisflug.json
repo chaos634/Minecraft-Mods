@@ -1,0 +1,25 @@
+{
+  "parent": "taubenschlag:luftpost",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.taubenschlag.preisflug.title"
+    },
+    "description": {
+      "translate": "advancements.taubenschlag.preisflug.description"
+    },
+    "icon": {
+      "id": "minecraft:clock"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

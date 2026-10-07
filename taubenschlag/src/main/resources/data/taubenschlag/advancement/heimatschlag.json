@@ -1,0 +1,24 @@
+{
+  "parent": "taubenschlag:rennpferd",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.taubenschlag.heimatschlag.title"
+    },
+    "description": {
+      "translate": "advancements.taubenschlag.heimatschlag.description"
+    },
+    "icon": {
+      "id": "taubenschlag:taubenschlag"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}

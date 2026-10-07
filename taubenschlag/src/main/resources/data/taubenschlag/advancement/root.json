@@ -1,0 +1,33 @@
+{
+  "criteria": {
+    "has_loft": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "taubenschlag:taubenschlag"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.taubenschlag.root.title"
+    },
+    "description": {
+      "translate": "advancements.taubenschlag.root.description"
+    },
+    "icon": {
+      "id": "taubenschlag:taubenschlag"
+    },
+    "background": "minecraft:gui/advancements/backgrounds/husbandry",
+    "announce_to_chat": false,
+    "show_toast": false
+  },
+  "requirements": [
+    [
+      "has_loft"
+    ]
+  ]
+}

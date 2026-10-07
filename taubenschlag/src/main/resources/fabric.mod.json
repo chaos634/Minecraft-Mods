@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "taubenschlag",
+	"version": "${version}",
+	"name": "Taubenschlag",
+	"description": "Homing pigeons, the racehorses of the Ruhr miners. Tame them, give them a loft, carry them away in a basket and let them fly home, with post if you like.",
+	"authors": [
+		"chaos634"
+	],
+	"contact": {
+		"homepage": "https://github.com/chaos634/Minecraft-Mods/tree/main/taubenschlag",
+		"sources": "https://github.com/chaos634/Minecraft-Mods",
+		"issues": "https://github.com/chaos634/Minecraft-Mods/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/taubenschlag/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.chaos634.taubenschlag.Taubenschlag"
+		],
+		"client": [
+			"io.github.chaos634.taubenschlag.client.TaubenschlagClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"kumpel": "*"
+	}
+}

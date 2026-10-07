@@ -1,0 +1,16 @@
+{
+  "brieftaube.gurren": {
+    "subtitle": "subtitles.taubenschlag.brieftaube.gurren",
+    "sounds": [
+      "taubenschlag:gurren1",
+      "taubenschlag:gurren2",
+      "taubenschlag:gurren3"
+    ]
+  },
+  "brieftaube.auflassen": {
+    "subtitle": "subtitles.taubenschlag.brieftaube.auflassen",
+    "sounds": [
+      "taubenschlag:fluegelschlag"
+    ]
+  }
+}

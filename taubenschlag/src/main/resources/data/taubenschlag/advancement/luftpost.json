@@ -1,0 +1,24 @@
+{
+  "parent": "taubenschlag:heimatschlag",
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.taubenschlag.luftpost.title"
+    },
+    "description": {
+      "translate": "advancements.taubenschlag.luftpost.description"
+    },
+    "icon": {
+      "id": "minecraft:paper"
+    }
+  },
+  "requirements": [
+    [
+      "code"
+    ]
+  ]
+}
