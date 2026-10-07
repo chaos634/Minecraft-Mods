@@ -1,0 +1,18 @@
+{
+	"schemaVersion": 1,
+	"id": "pottkueche-gametest",
+	"version": "1.0.0",
+	"name": "Pottküche Game Tests",
+	"environment": "*",
+	"entrypoints": {
+		"fabric-gametest": [
+			"io.github.chaos634.pottkueche.test.PottkuecheGameTests"
+		],
+		"fabric-client-gametest": [
+			"io.github.chaos634.pottkueche.test.PottkuecheClientGameTest"
+		]
+	},
+	"depends": {
+		"pottkueche": "*"
+	}
+}

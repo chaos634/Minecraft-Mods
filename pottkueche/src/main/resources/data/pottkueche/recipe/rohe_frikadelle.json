@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:beef",
+    "minecraft:bread",
+    "minecraft:egg"
+  ],
+  "result": {
+    "id": "pottkueche:rohe_frikadelle",
+    "count": 3
+  }
+}

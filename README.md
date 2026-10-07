@@ -6,6 +6,7 @@ A collection of Minecraft mods. Every mod lives in its own folder and is a compl
 | --- | --- | --- | --- |
 | [Kumpel](kumpel/) | Fabric | 26.3 | A small mining golem that follows you, collects items, senses and mines ores, and levels up from copper to netherite. Configurable, with JEI and REI support. |
 | [Zechenbau](zechenbau/) | Fabric | 26.3 | Building blocks of the Ruhr's collieries: colliery bricks, steel framework, girders, headframe lattice, sheave wheels, coal tubs and miner's lamps. |
+| [Pottküche](pottkueche/) | Fabric | 26.3 | Food from the Ruhr: Currywurst and Pommes, Bratwurst, Frikadellen, Pfefferpotthast and Malzbier. The Kumpels' favourite food. |
 
 ## Layout
 

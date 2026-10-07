@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "pottkueche:bratwurst",
+    "pottkueche:currysosse"
+  ],
+  "result": {
+    "id": "pottkueche:currywurst"
+  }
+}

@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "pottkueche",
+	"version": "${version}",
+	"name": "Pottküche",
+	"description": "Food from the Ruhr: Currywurst and Pommes, Bratwurst, Frikadellen, Pfefferpotthast and Malzbier. Your Kumpels love it.",
+	"authors": [
+		"chaos634"
+	],
+	"contact": {
+		"homepage": "https://github.com/chaos634/Minecraft-Mods/tree/main/pottkueche",
+		"sources": "https://github.com/chaos634/Minecraft-Mods",
+		"issues": "https://github.com/chaos634/Minecraft-Mods/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/pottkueche/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.chaos634.pottkueche.Pottkueche"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"kumpel": "*"
+	}
+}
