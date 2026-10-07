@@ -14,7 +14,6 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
@@ -63,7 +62,13 @@ public class TaubenschlagGameTests {
 
 	@GameTest
 	public void pigeonsDoNotTakeFallDamage(GameTestHelper helper) {
-		helper.assertTrue(TaubenschlagEntities.BRIEFTAUBE.is(EntityTypeTags.FALL_DAMAGE_IMMUNE), Component.literal("Pigeons fly, they don't fall"));
+		buildFloor(helper);
+		BrieftaubeEntity pigeon = helper.spawn(TaubenschlagEntities.BRIEFTAUBE, 2, 1, 2);
+		float health = pigeon.getHealth();
+
+		pigeon.causeFallDamage(20.0, 1.0F, helper.getLevel().damageSources().fall());
+
+		helper.assertTrue(pigeon.getHealth() == health, Component.literal("Pigeons fly, they don't fall"));
 		helper.succeed();
 	}
 

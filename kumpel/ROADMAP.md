@@ -199,3 +199,10 @@ Nicht nur in die Breite, auch in die Tiefe.
 
 - ✅ **Schacht abteufen**: Senkrecht nach unten schauen und schleichend pfeifen: Der Hauer teuft einen Schacht ab, mit Leitern aus der Kiepe, dämmt Wasser und Lava ab und hält beim Durchschlag in eine Höhle an.
 - ✅ **Aufzug**: Mit zwei Förderkörben in der Kiepe baut er oben einen Korb und unten in einer Nische den zweiten. Fertig ist die Seilfahrt.
+
+## Phase 22: Taubenschlag ✅
+
+Eine vierte Mod in der Sammlung: das Rennpferd des kleinen Mannes.
+
+- ✅ **[Taubenschlag](../taubenschlag/)**: Brieftauben in vier Farbschlägen, mit Körnern gezähmt und beringt. Sie gewöhnen sich in einem Taubenschlag ein und fliegen von überall dorthin zurück, auf Wunsch mit Post, die im Schlag landet.
+- ✅ **Reisekorb**: Tauben mitnehmen, woanders auflassen oder in einen neuen Schlag umsetzen. Läuft auch allein.
