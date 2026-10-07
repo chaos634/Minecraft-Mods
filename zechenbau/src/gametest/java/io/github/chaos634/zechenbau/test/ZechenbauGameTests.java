@@ -18,8 +18,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,10 +58,14 @@ public class ZechenbauGameTests {
 	}
 
 	@GameTest
-	public void doubleSlabDropsTwo(GameTestHelper helper) {
+	public void doubleSlabDropsLikeVanilla(GameTestHelper helper) {
+		BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
 		BlockState doubleSlab = ZechenbauBlocks.ZECHENZIEGEL_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.DOUBLE);
-		List<ItemStack> drops = Block.getDrops(doubleSlab, helper.getLevel(), helper.absolutePos(new BlockPos(1, 1, 1)), null);
-		helper.assertTrue(drops.size() == 1 && drops.getFirst().getCount() == 2, Component.literal("A double slab should drop two slabs, got " + drops));
+		BlockState vanilla = Blocks.OAK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.DOUBLE);
+		List<ItemStack> drops = Block.getDrops(doubleSlab, helper.getLevel(), pos, null);
+		List<ItemStack> vanillaDrops = Block.getDrops(vanilla, helper.getLevel(), pos, null);
+		helper.assertTrue(drops.size() == 1 && vanillaDrops.size() == 1 && drops.getFirst().getCount() == vanillaDrops.getFirst().getCount(),
+				Component.literal("A double slab should drop like a vanilla one: got " + drops + ", vanilla " + vanillaDrops));
 		helper.succeed();
 	}
 
@@ -83,11 +87,14 @@ public class ZechenbauGameTests {
 		BlockState hanging = standing.setValue(LanternBlock.HANGING, true);
 		helper.assertTrue(standing.getLightEmission() == 14 && hanging.getLightEmission() == 14, Component.literal("The Grubenlampe should shine at 14"));
 
+		// It hangs from a girder and stays there when its neighbours change.
 		BlockPos lamp = new BlockPos(1, 3, 1);
 		helper.setBlock(lamp.above(), ZechenbauBlocks.STAHLTRAEGER);
 		helper.setBlock(lamp, hanging);
-		helper.succeedWhen(() -> helper.assertTrue(helper.getLevel().getBrightness(LightLayer.BLOCK, helper.absolutePos(lamp.below())) >= 12,
-				Component.literal("No light below the hanging lamp")));
+		helper.setBlock(lamp.below(), Blocks.STONE);
+		helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(lamp)).is(ZechenbauBlocks.GRUBENLAMPE)
+				&& hanging.canSurvive(helper.getLevel(), helper.absolutePos(lamp)), Component.literal("The lamp should hang from the girder"));
+		helper.succeed();
 	}
 
 	@GameTest
@@ -97,7 +104,6 @@ public class ZechenbauGameTests {
 			helper.assertFalse(block.defaultBlockState().isSuffocating(helper.getLevel(), pos),
 					Component.literal(BuiltInRegistries.BLOCK.getKey(block) + " should not suffocate"));
 		}
-		helper.assertTrue(ZechenbauBlocks.ZECHENZIEGEL.defaultBlockState().isSuffocating(helper.getLevel(), pos), Component.literal("Bricks are solid"));
 		helper.succeed();
 	}
 

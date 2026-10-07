@@ -38,12 +38,13 @@ public class ZechenbauClientGameTest implements FabricClientGameTest {
 			TestServerContext server = singleplayer.getServer();
 			server.runCommand("time set noon");
 			server.runCommand("weather clear");
-			server.runCommand("execute as @p at @s run tp @s ~ ~ ~ 0 -18");
 			singleplayer.getConnection().waitForChunksRender();
 			server.runOnServer(minecraftServer -> {
 				ServerLevel level = singleplayer.getConnection().getServerLevel();
 				buildColliery(level, singleplayer.getConnection().getServerPlayer().blockPosition());
 			});
+			// Step back a little, so the whole headframe is in the picture.
+			server.runCommand("execute as @p at @s run tp @s ~2 ~ ~-6 0 -16");
 			singleplayer.getConnection().waitForChunksRender();
 			context.waitTicks(CHAT_FADE_TICKS);
 			context.takeScreenshot("zechenbau_zeche");
@@ -55,7 +56,7 @@ public class ZechenbauClientGameTest implements FabricClientGameTest {
 		}
 	}
 
-	/** The machine hall faces the player (who looks south), its front 12 blocks away; the headframe stands behind it, to the right. */
+	/** The machine hall faces south (towards the player), its front 12 blocks from {@code origin}; the headframe stands behind it, to the east. */
 	private static void buildColliery(ServerLevel level, BlockPos origin) {
 		Builder build = new Builder(level, origin);
 		BlockState brick = ZechenbauBlocks.ZECHENZIEGEL.defaultBlockState();
@@ -68,7 +69,7 @@ public class ZechenbauClientGameTest implements FabricClientGameTest {
 
 		// A clean lawn to build on.
 		for (int x = -15; x <= 15; x++) {
-			for (int z = -4; z <= 26; z++) {
+			for (int z = -9; z <= 26; z++) {
 				build.set(x, -1, z, Blocks.GRASS_BLOCK.defaultBlockState());
 				for (int y = 0; y <= 22; y++) {
 					build.set(x, y, z, Blocks.AIR.defaultBlockState());
